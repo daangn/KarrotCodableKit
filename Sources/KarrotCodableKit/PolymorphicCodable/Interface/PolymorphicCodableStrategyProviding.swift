@@ -1,0 +1,32 @@
+//
+//  PolymorphicCodableStrategyProviding.swift
+//  KarrotCodableKit
+//
+//  Created by Elon on 10/16/24.
+//  Copyright © 2025 Danggeun Market Inc. All rights reserved.
+//
+
+import Foundation
+
+/**
+ A macro for creating a polymorphic codable strategy.
+
+ This macro generates a type-safe decoding strategy for polymorphic types based on an identifier
+ field. It creates a strategy that can be used with different polymorphic decodable types
+ to handle type-based deserialization.
+
+ - Parameters:
+   - identifierCodingKey: The key name in the JSON used to determine the concrete type.
+   - matchingTypes: An array of polymorphic types that this strategy will handle.
+   - fallbackType: Optional type to use when no matching type is found. If nil, decoding will fail
+                   when no matching type is found.
+ */
+@attached(peer, names: suffixed(CodableStrategy))
+public macro PolymorphicCodableStrategyProviding(
+  identifierCodingKey: String,
+  matchingTypes: [PolymorphicDecodableType.Type],
+  fallbackType: PolymorphicDecodableType.Type?
+) = #externalMacro(
+  module: "KarrotCodableKitMacros",
+  type: "PolymorphicCodableStrategyProvidingMacro"
+)
