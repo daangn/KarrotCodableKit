@@ -2,7 +2,7 @@
 //  StringSnakeCaseTests.swift
 //  KarrotCodableKit
 //
-//  Created by elon on 1/4/23.
+//  Created by Elon on 1/4/23.
 //
 //  Based on code from the Swift.org open source project.
 //
