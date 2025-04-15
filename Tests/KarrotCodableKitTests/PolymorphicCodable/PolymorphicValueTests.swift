@@ -28,7 +28,7 @@ class PolymorphicValueTests: XCTestCase {
           title: "test_title",
           description: "test",
           key: "key"
-        )
+        ),
       ]
     )
 
@@ -103,7 +103,7 @@ class PolymorphicValueTests: XCTestCase {
     XCTAssertEqual(result.notices.count, 3)
     XCTAssertEqual(result.notices[0].type, .actionableCallout)
     XCTAssertEqual(result.notices[1].type, .dismissibleCallout)
-    XCTAssertEqual(result.notices[2].type, .undefindCallout)
+    XCTAssertEqual(result.notices[2].type, .undefinedCallout)
   }
 
   func testDecodingUndefinedPolymorphicValue() throws {
@@ -128,9 +128,9 @@ class PolymorphicValueTests: XCTestCase {
     let result = try JSONDecoder().decode(DummyResponse.self, from: Data(jsonData.utf8))
 
     // then
-    XCTAssertEqual(result.notice.type, .undefindCallout)
+    XCTAssertEqual(result.notice.type, .undefinedCallout)
     XCTAssertEqual(result.notices.count, 1)
-    XCTAssertEqual(result.notices[0].type, .undefindCallout)
+    XCTAssertEqual(result.notices[0].type, .undefinedCallout)
   }
 }
 
@@ -173,7 +173,7 @@ extension PolymorphicValueTests {
     XCTAssertEqual(result.notices.count, 3)
     XCTAssertEqual(result.notices[0].type, .actionableCallout)
     XCTAssertEqual(result.notices[1].type, .dismissibleCallout)
-    XCTAssertEqual(result.notices[2].type, .undefindCallout)
+    XCTAssertEqual(result.notices[2].type, .undefinedCallout)
   }
 }
 

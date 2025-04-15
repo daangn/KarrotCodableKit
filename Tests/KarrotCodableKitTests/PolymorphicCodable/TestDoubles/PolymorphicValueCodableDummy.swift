@@ -74,12 +74,12 @@ public protocol DummyNotice: Codable {
 
 public enum DummyNoticeType: String, Codable, DefaultCodableStrategy {
 
-  public static let defaultValue = DummyNoticeType.undefindCallout
+  public static let defaultValue = DummyNoticeType.undefinedCallout
 
   case callout
   case actionableCallout = "actionable-callout"
   case dismissibleCallout = "dismissible-callout"
-  case undefindCallout = "undefind-callout"
+  case undefinedCallout = "undefined-callout"
 }
 
 @PolymorphicCodable(identifier: "callout", codingKeyStyle: .snakeCase)
@@ -106,10 +106,10 @@ struct DummyDismissibleCallout: DummyNotice {
   let key: String
 }
 
-@PolymorphicCodable(identifier: "undefind-callout", codingKeyStyle: .snakeCase)
+@PolymorphicCodable(identifier: "undefined-callout", codingKeyStyle: .snakeCase)
 struct DummyUndefinedCallout: DummyNotice {
   @DefaultCodable
-  var type = DummyNoticeType.undefindCallout
+  var type = DummyNoticeType.undefinedCallout
   let title: String?
   let description: String
 }
