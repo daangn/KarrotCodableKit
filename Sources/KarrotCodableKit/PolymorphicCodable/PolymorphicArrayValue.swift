@@ -8,10 +8,19 @@
 
 import Foundation
 
+/// A property wrapper that decodes an array of polymorphic objects based on a specified strategy.
+///
+/// This wrapper iterates through a JSON array and attempts to decode each element
+/// using `PolymorphicValue<PolymorphicType>`. It requires that each element in the array
+/// conforms to the polymorphic structure defined by the `PolymorphicType` strategy.
+/// If decoding any element fails according to the strategy's rules, the entire array decoding will fail.
+///
 @propertyWrapper
 public struct PolymorphicArrayValue<PolymorphicType: PolymorphicCodableStrategy> {
+  /// The decoded array of values, each conforming to the expected polymorphic type.
   public var wrappedValue: [PolymorphicType.ExpectedType]
 
+  /// Initializes the property wrapper with a pre-decoded array of values.
   public init(wrappedValue: [PolymorphicType.ExpectedType]) {
     self.wrappedValue = wrappedValue
   }

@@ -113,7 +113,7 @@ extension User: Codable {
   ],
   fallbackType: UndefinedViewItem.self
 )
-protocol ViewItem {
+protocol ViewItem: Codable {
   var id: String { get }
 }
 

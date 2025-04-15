@@ -14,6 +14,8 @@ import Foundation
  deserialized based on a type identifier. It generates the necessary coding keys,
  initializer, and encoding methods.
 
+ Each enum case must have exactly one associated value, and the type of that value must conform to `PolymorphicIdentifiable`.
+
  - Parameter identifierCodingKey: The key name in the JSON used to store the type identifier.
  */
 @attached(extension, conformances: Codable, names: named(PolymorphicMetaCodingKey), named(init), named(encode))
