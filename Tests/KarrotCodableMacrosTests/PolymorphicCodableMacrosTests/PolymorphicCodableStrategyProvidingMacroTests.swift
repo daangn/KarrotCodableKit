@@ -80,6 +80,59 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
     #endif
   }
 
+  func testPolymorphicCodableStrategyProvidingMacroWithDefaultParameters() throws {
+    #if canImport(KarrotCodableKitMacros)
+    assertMacroExpansion(
+      """
+      @PolymorphicCodableStrategyProviding(
+        matchingTypes: [
+          ActionableCallout.self,
+          DismissibleCallout.self
+        ]
+      )
+      public protocol Notice: Codable {
+        var type: String { get }
+        var title: String? { get }
+        var description: String { get }
+      }
+      """,
+      expandedSource: """
+
+        public protocol Notice: Codable {
+          var type: String { get }
+          var title: String? { get }
+          var description: String { get }
+        }
+
+        public struct NoticeCodableStrategy: PolymorphicCodableStrategy {
+          enum PolymorphicMetaCodingKey: CodingKey {
+            case type
+          }
+
+          public static var polymorphicMetaCodingKey: CodingKey {
+            PolymorphicMetaCodingKey.type
+          }
+
+          public static func decode(from decoder: Decoder) throws -> Notice {
+            try decoder.decode(
+              codingKey: Self.polymorphicMetaCodingKey,
+              matchingTypes: [
+                ActionableCallout.self,
+                DismissibleCallout.self
+              ],
+              fallbackType: nil
+            )
+          }
+        }
+        """,
+      macros: testMacros,
+      indentationWidth: .spaces(2)
+    )
+    #else
+    throw XCTSkip("macros are only supported when running tests for the host platform")
+    #endif
+  }
+
   func testPolymorphicCodableStrategyProvidingMacroTypeError() {
     #if canImport(KarrotCodableKitMacros)
     assertMacroExpansion(
@@ -143,7 +196,7 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
         """,
       diagnostics: [
         DiagnosticSpec(
-          message: "Invalid or missing identifierCodingKey: expected a non-empty string.",
+          message: "Invalid identifierCodingKey: expected a non-empty string.",
           line: 1,
           column: 1
         )
