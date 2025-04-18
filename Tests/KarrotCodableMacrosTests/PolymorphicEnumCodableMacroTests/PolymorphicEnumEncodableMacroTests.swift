@@ -22,7 +22,7 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
   ]
   #endif
 
-  func testPolymorphicEnumCodableMacro() throws {
+  func testPolymorphicEnumEncodableMacro() throws {
     #if canImport(KarrotCodableKitMacros)
     assertMacroExpansion(
       """
@@ -62,7 +62,7 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
     #endif
   }
 
-  func testPolymorphicEnumCodableMacroWithDefaultParameters() throws {
+  func testPolymorphicEnumEncodableMacroWithDefaultParameters() throws {
     #if canImport(KarrotCodableKitMacros)
     assertMacroExpansion(
       """
@@ -102,7 +102,7 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
     #endif
   }
 
-  func testPolymorphicEnumCodableMacroTypeError() {
+  func testPolymorphicEnumEncodableMacroTypeError() {
     #if canImport(KarrotCodableKitMacros)
     assertMacroExpansion(
       """
@@ -135,7 +135,7 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
     #endif
   }
 
-  func testPolymorphicEnumCodableMacroIdentifierValueError() {
+  func testPolymorphicEnumEncodableMacroIdentifierValueError() {
     #if canImport(KarrotCodableKitMacros)
     assertMacroExpansion(
       """
@@ -168,7 +168,7 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
     #endif
   }
 
-  func testPolymorphicEnumCodableMacroAssociatedValueCountError() {
+  func testPolymorphicEnumEncodableMacroAssociatedValueCountError() {
     #if canImport(KarrotCodableKitMacros)
     assertMacroExpansion(
       """
@@ -201,7 +201,7 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
     #endif
   }
 
-  func testPolymorphicEnumCodableMacroMissingAssociatedValueError() {
+  func testPolymorphicEnumEncodableMacroMissingAssociatedValueError() {
     #if canImport(KarrotCodableKitMacros)
     assertMacroExpansion(
       """

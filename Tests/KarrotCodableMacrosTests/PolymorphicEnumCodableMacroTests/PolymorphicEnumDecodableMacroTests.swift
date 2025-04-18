@@ -252,3 +252,127 @@ final class PolymorphicEnumDecodableMacroTests: XCTestCase {
     #endif
   }
 }
+
+
+// MARK: - fallbackCaseName
+
+extension PolymorphicEnumDecodableMacroTests {
+  func testPolymorphicEnumDecodableMacroWithFallbackCaseNameParameter() throws {
+    #if canImport(KarrotCodableKitMacros)
+    assertMacroExpansion(
+      """
+      @PolymorphicEnumDecodable(fallbackCaseName: "undefinedCallout")
+      public enum CalloutBadge {
+        case callout(DummyCallout)
+        case actionableCallout(DummyActionableCallout)
+        case dismissibleCallout(value: DummyDismissibleCallout)
+        case undefinedCallout(DummyUndefinedCallout)
+      }
+      """,
+      expandedSource: """
+
+        public enum CalloutBadge {
+          case callout(DummyCallout)
+          case actionableCallout(DummyActionableCallout)
+          case dismissibleCallout(value: DummyDismissibleCallout)
+          case undefinedCallout(DummyUndefinedCallout)
+        }
+
+        extension CalloutBadge: Decodable {
+          enum PolymorphicMetaCodingKey: CodingKey {
+            case type
+          }
+
+          public init(from decoder: any Decoder) throws {
+            let container = try decoder.container(keyedBy: PolymorphicMetaCodingKey.self)
+            let type = try container.decode(String.self, forKey: PolymorphicMetaCodingKey.type)
+
+            switch type {
+            case DummyCallout.polymorphicIdentifier:
+              self = .callout(try DummyCallout(from: decoder))
+             case DummyActionableCallout.polymorphicIdentifier:
+              self = .actionableCallout(try DummyActionableCallout(from: decoder))
+             case DummyDismissibleCallout.polymorphicIdentifier:
+              self = .dismissibleCallout(value: try DummyDismissibleCallout(from: decoder))
+             case DummyUndefinedCallout.polymorphicIdentifier:
+              self = .undefinedCallout(try DummyUndefinedCallout(from: decoder))
+            default:
+              self = .undefinedCallout(try DummyUndefinedCallout(from: decoder))
+            }
+          }
+        }
+        """,
+      macros: testMacros,
+      indentationWidth: .spaces(2)
+    )
+    #else
+    throw XCTSkip("macros are only supported when running tests for the host platform")
+    #endif
+  }
+
+  func testPolymorphicEnumDecodableMacroFallbackCaseMissingError() {
+    #if canImport(KarrotCodableKitMacros)
+    assertMacroExpansion(
+      """
+      @PolymorphicEnumDecodable(fallbackCaseName: "undefinedCallout")
+      enum CalloutBadge {
+        case callout(DummyCallout)
+        case actionableCallout(DummyActionableCallout)
+        case dismissibleCallout(DummyDismissibleCallout)
+      }
+      """,
+      expandedSource: """
+        enum CalloutBadge {
+          case callout(DummyCallout)
+          case actionableCallout(DummyActionableCallout)
+          case dismissibleCallout(DummyDismissibleCallout)
+        }
+        """,
+      diagnostics: [
+        DiagnosticSpec(
+          message: "Missing fallback case: should be defined as `case undefinedCallout",
+          line: 1,
+          column: 1
+        )
+      ],
+      macros: testMacros,
+      indentationWidth: .spaces(2)
+    )
+    #else
+    throw XCTSkip("macros are only supported when running tests for the host platform")
+    #endif
+  }
+
+  func testPolymorphicEnumDecodableMacroFallbackCaseNameValueError() {
+    #if canImport(KarrotCodableKitMacros)
+    assertMacroExpansion(
+      """
+      @PolymorphicEnumDecodable(fallbackCaseName: "")
+      enum CalloutBadge {
+        case callout(DummyCallout)
+        case actionableCallout(DummyActionableCallout)
+        case dismissibleCallout(DummyDismissibleCallout)
+      }
+      """,
+      expandedSource: """
+        enum CalloutBadge {
+          case callout(DummyCallout)
+          case actionableCallout(DummyActionableCallout)
+          case dismissibleCallout(DummyDismissibleCallout)
+        }
+        """,
+      diagnostics: [
+        DiagnosticSpec(
+          message: "Invalid fallback case name: expected a non-empty string.",
+          line: 1,
+          column: 1
+        )
+      ],
+      macros: testMacros,
+      indentationWidth: .spaces(2)
+    )
+    #else
+    throw XCTSkip("macros are only supported when running tests for the host platform")
+    #endif
+  }
+}

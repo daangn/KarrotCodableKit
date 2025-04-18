@@ -106,7 +106,6 @@ enum PolymorphicEnumCodableFactory {
   }
 
   /// Validates and extracts the fallbackCaseName from the attribute arguments
-  @discardableResult
   static func validateFallbackCaseName(
     in node: AttributeSyntax,
     caseInfos: [CaseInfo]
