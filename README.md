@@ -1,14 +1,13 @@
 # KarrotCodableKit
 
-KarrotCodableKit is a framework that extends Swift's Codable protocol to provide more powerful and flexible data encoding and decoding capabilities. It helps handle complex JSON structures and enables type-safe transformations for various data formats.
+KarrotCodableKit is a library that extends Swift's Codable protocol to provide more powerful and flexible data encoding and decoding capabilities. It helps handle complex JSON structures and enables type-safe transformations for various data formats.
 
-This framework includes the following core components:
+This library includes the following key features:
 
 - `CustomCodable`: Custom encoding/decoding strategies with support for different coding key styles
 - `PolymorphicCodable`: Extensions for supporting polymorphic types with Codable
 - `AnyCodable`: A type-erased Codable value that can handle various types
 - `BetterCodable`: Enhanced Codable functionality with property wrappers for dates, data values, and more
-
 
 KarrotCodableKit simplifies the conversion of models from various data sources such as network responses, local storage, and enables developers to reduce development time and improve code quality.
 
@@ -104,6 +103,36 @@ extension User: Codable {
 
 `PolymorphicCodable` provides functionality to easily decode polymorphic types from JSON. It includes several interfaces like `PolymorphicIdentifiable`, `PolymorphicCodableStrategy`, and property wrappers like `PolymorphicValue` and `PolymorphicArrayValue`.
 
+**Parameters:**
+- `identifierCodingKey`: Specifies the JSON key used to determine the type of object being decoded. Defaults to "type" if not specified, allowing you to omit this parameter when using the default value.
+- `fallbackType`: Defines a default type to use when the identifier in the JSON doesn't match any of the registered types, preventing decoding failures for unknown types. If this parameter is omitted and an unknown type identifier is encountered during decoding, a decoding error will be thrown.
+
+The following example demonstrates how to decode dynamic JSON content where the type of object is determined at runtime:
+
+```json
+[
+  {
+    "type": "IMAGE_VIEW_ITEM",
+    "id": "008c377d-9ea0-4fae-9ae3-e2da27be4be7",
+    "image_url": "https://example.com/images/banner.jpg"
+  },
+  {
+    "type": "TEXT_VIEW_ITEM",
+    "id": "1fdb2bee-394e-4d61-b3b8-73f8b668d47f",
+    "title": "Welcome Message",
+    "description": "Welcome to Karrot"
+  },
+  {
+    "type": "IMAGE_VIEW_ITEM_V2",
+    "id": "acf5644d-dd46-46f4-a497-e0ea3eef23d1",
+    "title": "Karrot",
+    "banner_image_url": "https://example.com/images/banner2.jpg"
+  }
+]
+```
+
+`PolymorphicCodable` enables you to decode dynamic JSON structures where the concrete type is determined by a type identifier field. The library handles this dynamic type resolution automatically during decoding:
+
 ```swift
 @PolymorphicCodableStrategyProviding(
   identifierCodingKey: "type",
@@ -117,7 +146,10 @@ protocol ViewItem: Codable {
   var id: String { get }
 }
 
-@PolymorphicCodable(identifier: "IMAGE_VIEW_ITEM")
+@PolymorphicCodable(
+  identifier: "IMAGE_VIEW_ITEM",
+  codingKeyStyle: .snakeCase
+)
 struct ImageViewItem: ViewItem {
   let id: String
   let imageURL: URL
@@ -140,18 +172,30 @@ struct UndefinedViewItem: ViewItem {
 
 `PolymorphicEnumCodable` provides a convenient way to handle polymorphic types directly in Swift enums. Unlike `PolymorphicCodable` which works with protocol-conforming types, this macro allows you to define an enum where each case contains an associated value of a different type, and enables seamless JSON encoding and decoding.
 
-When decoding, the macro uses the value of the specified `identifierCodingKey` (in this example, "type") to determine which enum case to use. It then uses the associated type's `polymorphicIdentifier` to match and decode the data.
+When decoding, the macro uses the value of the specified `identifierCodingKey` to determine which enum case to use. It then uses the associated type's `polymorphicIdentifier` to match and decode the data.
 
-Each enum case must have exactly one associated value of a type that has `PolymorphicCodable` applied to it.
+**Parameters:**
+
+- `identifierCodingKey`: Specifies the JSON key used to determine the enum case. Defaults to "type" if not specified, making this parameter optional when using the default value.
+- `fallbackCaseName`: Defines which enum case to use when the identifier in the JSON doesn't match any of the associated types, providing graceful handling of unknown types. If this parameter is omitted and an unknown type identifier is encountered during decoding, a decoding error will be thrown.
+
+Each enum case must have exactly one associated value of a type that adopts the `PolymorphicCodableType` protocol.
 
 ```swift
-@PolymorphicEnumCodable(identifierCodingKey: "type")
+@PolymorphicEnumCodable(
+  identifierCodingKey: "type",
+  fallbackCaseName: "undefined"
+)
 enum ViewItem {
   case image(ImageViewItem)
   case text(TextViewItem)
+  case undefined(UndefinedViewItem)
 }
 
-@PolymorphicCodable(identifier: "IMAGE_VIEW_ITEM")
+@PolymorphicCodable(
+  identifier: "IMAGE_VIEW_ITEM",
+  codingKeyStyle: .snakeCase
+)
 struct ImageViewItem {
   let id: String
   let imageURL: URL
@@ -162,6 +206,11 @@ struct TextViewItem {
   let id: String
   let title: String
   let description: String
+}
+
+@PolymorphicCodable(identifier: "UNDEFINED_VIEW_ITEM")
+struct UndefinedViewItem: ViewItem {
+  let id: String
 }
 ```
 
