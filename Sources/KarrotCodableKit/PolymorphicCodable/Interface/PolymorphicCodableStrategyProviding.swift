@@ -17,15 +17,16 @@ import Foundation
 
  - Parameters:
    - identifierCodingKey: The key name in the JSON used to determine the concrete type.
+      The default value for this property is `"type"`.
    - matchingTypes: An array of polymorphic types that this strategy will handle.
    - fallbackType: Optional type to use when no matching type is found. If nil, decoding will fail
-                   when no matching type is found.
+                   when no matching type is found. The default value for this property is `nil`.
  */
 @attached(peer, names: suffixed(CodableStrategy))
 public macro PolymorphicCodableStrategyProviding(
-  identifierCodingKey: String,
+  identifierCodingKey: String = "type",
   matchingTypes: [PolymorphicDecodableType.Type],
-  fallbackType: PolymorphicDecodableType.Type?
+  fallbackType: PolymorphicDecodableType.Type? = nil
 ) = #externalMacro(
   module: "KarrotCodableKitMacros",
   type: "PolymorphicCodableStrategyProvidingMacro"

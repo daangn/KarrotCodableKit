@@ -21,17 +21,21 @@ public struct PolymorphicCodableStrategyProvidingMacro: PeerMacro {
     }
 
     guard let arguments = node.arguments?.as(LabeledExprListSyntax.self),
-          let identifierCodingKey = SyntaxHelper.findArgument(named: "identifierCodingKey", in: arguments),
-          let identifierCodingKeyString = SyntaxHelper.extractString(from: identifierCodingKey),
-          let matchingTypes = SyntaxHelper.findArgument(named: "matchingTypes", in: arguments),
-          let fallbackType = SyntaxHelper.findArgument(named: "fallbackType", in: arguments)
+          let matchingTypes = SyntaxHelper.findArgument(named: "matchingTypes", in: arguments)
     else {
       throw CodableKitError.message("Missing required arguments")
     }
 
-    guard !identifierCodingKeyString.isEmpty else {
+    let identifierCodingKeyString = SyntaxHelper.findArgument(
+      named: "identifierCodingKey",
+      in: arguments
+    ).flatMap {
+      SyntaxHelper.extractString(from: $0)
+    } ?? "type"
+
+    if identifierCodingKeyString == "" {
       throw CodableKitError.message(
-        "Invalid or missing identifierCodingKey: expected a non-empty string."
+        "Invalid identifierCodingKey: expected a non-empty string."
       )
     }
 
@@ -42,6 +46,8 @@ public struct PolymorphicCodableStrategyProvidingMacro: PeerMacro {
     let formattedMatchingTypes = matchingTypes
       .formatted(using: .init(initialIndentation: .spaces(4)))
       .trimmed
+
+    let fallbackType = SyntaxHelper.findArgument(named: "fallbackType", in: arguments)
 
     return [
       DeclSyntax(
@@ -59,7 +65,7 @@ public struct PolymorphicCodableStrategyProvidingMacro: PeerMacro {
             try decoder.decode(
               codingKey: Self.polymorphicMetaCodingKey,
               matchingTypes: \(raw: formattedMatchingTypes),
-              fallbackType: \(raw: fallbackType)
+              fallbackType: \(raw: fallbackType ?? "nil")
             )
           }
         }
