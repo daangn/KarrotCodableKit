@@ -63,6 +63,10 @@ class PolymorphicEnumCodableTests: XCTestCase {
         "description" : "test",
         "key" : "hi",
         "type" : "dismissible-callout"
+      },
+      {
+        "description" : "test",
+        "type" : "unknown-callout-type"
       }
     ]
     """#
@@ -77,6 +81,10 @@ class PolymorphicEnumCodableTests: XCTestCase {
     if case .dismissibleCallout(let value) = result.last {
       XCTAssertEqual(value.type, .dismissibleCallout)
       XCTAssertEqual(value.key, "hi")
+    }
+    if case .undefinedCallout(let value) = result.last {
+      XCTAssertEqual(value.type, .undefinedCallout)
+      XCTAssertEqual(value.description, "test")
     }
 
     // when
@@ -96,6 +104,10 @@ class PolymorphicEnumCodableTests: XCTestCase {
         "description" : "test",
         "key" : "hi",
         "type" : "dismissible-callout"
+      },
+      {
+        "description" : "test",
+        "type" : "undefined-callout"
       }
     ]
     """#

@@ -29,6 +29,12 @@ public struct PolymorphicEnumCodableMacro: ExtensionMacro {
     // Extract case information from the enum
     let caseInfos = try PolymorphicEnumCodableFactory.extractCaseInfos(from: enumDecl)
 
+    // Validate and extract fallbackCaseName if provided
+    let fallbackCaseName = try PolymorphicEnumCodableFactory.validateFallbackCaseName(
+      in: node,
+      caseInfos: caseInfos
+    )
+
     let polymorphicMetaCodingKeySyntax = PolymorphicEnumCodableFactory.makePolymorphicMetaCodingKey(
       with: identifierCodingKey
     )
@@ -38,7 +44,8 @@ public struct PolymorphicEnumCodableMacro: ExtensionMacro {
     let initFromDecoderSyntax = PolymorphicEnumCodableFactory.makeInitFromDecoder(
       with: caseInfos,
       identifierCodingKey: identifierCodingKey,
-      accessLevel: accessLevel
+      accessLevel: accessLevel,
+      fallbackCaseName: fallbackCaseName
     )
 
     let encodeToEncoderSyntax = PolymorphicEnumCodableFactory.makeEncodeToEncoder(
