@@ -73,15 +73,16 @@ enum PolymorphicEnumCodableFactory {
 
   /// Validates and extracts the identifierCodingKey from the attribute arguments
   @discardableResult static func validateIdentifierCodingKey(in node: AttributeSyntax) throws -> String {
-    guard let arguments = node.arguments?.as(LabeledExprListSyntax.self),
-          let identifierCodingKey = SyntaxHelper.findArgument(named: "identifierCodingKey", in: arguments),
-          let identifierCodingKeyString = SyntaxHelper.extractString(from: identifierCodingKey)
-    else {
-      throw CodableKitError.message("Invalid or missing identifierCodingKey argument.")
-    }
-
+    let identifierCodingKeyString = node.arguments?.as(LabeledExprListSyntax.self)
+      .flatMap {
+        SyntaxHelper.findArgument(named: "identifierCodingKey", in: $0)
+      }
+      .flatMap {
+        SyntaxHelper.extractString(from: $0)
+      } ?? "type"
+    
     guard !identifierCodingKeyString.isEmpty else {
-      throw CodableKitError.message("Invalid or missing polymorphic identifier: expected a non-empty string.")
+      throw CodableKitError.message("Invalid polymorphic identifier: expected a non-empty string.")
     }
 
     return identifierCodingKeyString

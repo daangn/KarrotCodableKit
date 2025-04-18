@@ -71,6 +71,55 @@ final class PolymorphicEnumDecodableMacroTests: XCTestCase {
     #endif
   }
 
+  func testPolymorphicEnumDecodableMacroWithDefaultParameters() throws {
+    #if canImport(KarrotCodableKitMacros)
+    assertMacroExpansion(
+      """
+      @PolymorphicEnumDecodable
+      public enum CalloutBadge {
+        case callout(DummyCallout)
+        case actionableCallout(DummyActionableCallout)
+        case dismissibleCallout(value: DummyDismissibleCallout)
+      }
+      """,
+      expandedSource: """
+
+        public enum CalloutBadge {
+          case callout(DummyCallout)
+          case actionableCallout(DummyActionableCallout)
+          case dismissibleCallout(value: DummyDismissibleCallout)
+        }
+
+        extension CalloutBadge: Decodable {
+          enum PolymorphicMetaCodingKey: CodingKey {
+            case type
+          }
+
+          public init(from decoder: any Decoder) throws {
+            let container = try decoder.container(keyedBy: PolymorphicMetaCodingKey.self)
+            let type = try container.decode(String.self, forKey: PolymorphicMetaCodingKey.type)
+
+            switch type {
+            case DummyCallout.polymorphicIdentifier:
+              self = .callout(try DummyCallout(from: decoder))
+             case DummyActionableCallout.polymorphicIdentifier:
+              self = .actionableCallout(try DummyActionableCallout(from: decoder))
+             case DummyDismissibleCallout.polymorphicIdentifier:
+              self = .dismissibleCallout(value: try DummyDismissibleCallout(from: decoder))
+            default:
+              throw PolymorphicCodableError.unableToFindPolymorphicType(type)
+            }
+          }
+        }
+        """,
+      macros: testMacros,
+      indentationWidth: .spaces(2)
+    )
+    #else
+    throw XCTSkip("macros are only supported when running tests for the host platform")
+    #endif
+  }
+
   func testPolymorphicEnumDecodableMacroTypeError() {
     #if canImport(KarrotCodableKitMacros)
     assertMacroExpansion(
@@ -124,7 +173,7 @@ final class PolymorphicEnumDecodableMacroTests: XCTestCase {
         """,
       diagnostics: [
         DiagnosticSpec(
-          message: "Invalid or missing polymorphic identifier: expected a non-empty string.",
+          message: "Invalid polymorphic identifier: expected a non-empty string.",
           line: 1,
           column: 1
         )
