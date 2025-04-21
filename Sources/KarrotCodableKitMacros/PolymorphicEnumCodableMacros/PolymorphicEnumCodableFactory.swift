@@ -28,7 +28,8 @@ enum PolymorphicEnumCodableFactory {
   static func makeInitFromDecoder(
     with caseInfos: [CaseInfo],
     identifierCodingKey: String,
-    accessLevel: String
+    accessLevel: String,
+    fallbackCaseName: String?
   ) -> String {
     let caseSwitches = caseInfos.map { caseInfo in
       """
@@ -37,6 +38,22 @@ enum PolymorphicEnumCodableFactory {
       """
     }.joined(separator: "\n   ")
 
+    var defaultCase: String {
+      if let fallbackCaseName {
+        let fallbackCase = caseInfos.first { $0.name == fallbackCaseName }
+        guard let fallbackCase else { return "" } // This will be caught by validateFallbackCaseName
+        return """
+          default:
+              self = .\(fallbackCaseName)(\(fallbackCase.parameterName)try \(fallbackCase.associatedType)(from: decoder))
+          """
+      } else {
+        return """
+          default:
+              throw PolymorphicCodableError.unableToFindPolymorphicType(type)
+          """
+      }
+    }
+
     return """
       \(accessLevel)init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: PolymorphicMetaCodingKey.self)
@@ -44,8 +61,7 @@ enum PolymorphicEnumCodableFactory {
 
         switch type {
         \(caseSwitches)
-        default:
-          throw PolymorphicCodableError.unableToFindPolymorphicType(type)
+        \(defaultCase)
         }
       }
       """
@@ -72,19 +88,51 @@ enum PolymorphicEnumCodableFactory {
   }
 
   /// Validates and extracts the identifierCodingKey from the attribute arguments
-  @discardableResult static func validateIdentifierCodingKey(in node: AttributeSyntax) throws -> String {
-    guard let arguments = node.arguments?.as(LabeledExprListSyntax.self),
-          let identifierCodingKey = SyntaxHelper.findArgument(named: "identifierCodingKey", in: arguments),
-          let identifierCodingKeyString = SyntaxHelper.extractString(from: identifierCodingKey)
-    else {
-      throw CodableKitError.message("Invalid or missing identifierCodingKey argument.")
-    }
+  @discardableResult
+  static func validateIdentifierCodingKey(in node: AttributeSyntax) throws -> String {
+    let identifierCodingKeyString = node.arguments?.as(LabeledExprListSyntax.self)
+      .flatMap {
+        SyntaxHelper.findArgument(named: "identifierCodingKey", in: $0)
+      }
+      .flatMap {
+        SyntaxHelper.extractString(from: $0)
+      } ?? "type"
 
     guard !identifierCodingKeyString.isEmpty else {
-      throw CodableKitError.message("Invalid or missing polymorphic identifier: expected a non-empty string.")
+      throw CodableKitError.message("Invalid polymorphic identifier: expected a non-empty string.")
     }
 
     return identifierCodingKeyString
+  }
+
+  /// Validates and extracts the fallbackCaseName from the attribute arguments
+  static func validateFallbackCaseName(
+    in node: AttributeSyntax,
+    caseInfos: [CaseInfo]
+  ) throws -> String? {
+    let fallbackCaseNameString = node.arguments?.as(LabeledExprListSyntax.self)
+      .flatMap {
+        SyntaxHelper.findArgument(named: "fallbackCaseName", in: $0)
+      }
+      .flatMap {
+        SyntaxHelper.extractString(from: $0)
+      }
+
+    guard let fallbackCaseNameString, !fallbackCaseNameString.isEmpty else {
+      // fallbackCaseName is nil or empty
+      if let fallbackCaseNameString, fallbackCaseNameString.isEmpty {
+        throw CodableKitError.message("Invalid fallback case name: expected a non-empty string.")
+      }
+      return nil
+    }
+
+    // Verify the fallback case exists in the enum
+    let fallbackCaseExists = caseInfos.contains { $0.name == fallbackCaseNameString }
+    guard fallbackCaseExists else {
+      throw CodableKitError.message("Missing fallback case: should be defined as `case \(fallbackCaseNameString)")
+    }
+
+    return fallbackCaseNameString
   }
 
   /// Extracts case information from the Enum declaration and ensures cases have a single associated value
@@ -117,6 +165,4 @@ enum PolymorphicEnumCodableFactory {
         )
       }
   }
-
-
 }

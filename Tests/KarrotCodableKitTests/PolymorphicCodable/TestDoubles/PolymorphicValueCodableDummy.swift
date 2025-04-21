@@ -10,11 +10,12 @@ import Foundation
 
 import KarrotCodableKit
 
-@PolymorphicEnumCodable(identifierCodingKey: "type")
+@PolymorphicEnumCodable(fallbackCaseName: "undefinedCallout")
 enum CalloutBadge {
   case callout(_ a: DummyCallout)
   case actionableCallout(DummyActionableCallout)
   case dismissibleCallout(value: DummyDismissibleCallout)
+  case undefinedCallout(DummyUndefinedCallout)
 }
 
 @CustomCodable(codingKeyStyle: .snakeCase)

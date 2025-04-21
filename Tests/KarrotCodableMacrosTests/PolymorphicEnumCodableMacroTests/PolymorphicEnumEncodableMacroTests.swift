@@ -22,7 +22,7 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
   ]
   #endif
 
-  func testPolymorphicEnumCodableMacro() throws {
+  func testPolymorphicEnumEncodableMacro() throws {
     #if canImport(KarrotCodableKitMacros)
     assertMacroExpansion(
       """
@@ -62,7 +62,47 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
     #endif
   }
 
-  func testPolymorphicEnumCodableMacroTypeError() {
+  func testPolymorphicEnumEncodableMacroWithDefaultParameters() throws {
+    #if canImport(KarrotCodableKitMacros)
+    assertMacroExpansion(
+      """
+      @PolymorphicEnumEncodable
+      public enum CalloutBadge {
+        case callout(DummyCallout)
+        case actionableCallout(DummyActionableCallout)
+        case dismissibleCallout(value: DummyDismissibleCallout)
+      }
+      """,
+      expandedSource: """
+
+        public enum CalloutBadge {
+          case callout(DummyCallout)
+          case actionableCallout(DummyActionableCallout)
+          case dismissibleCallout(value: DummyDismissibleCallout)
+        }
+
+        extension CalloutBadge: Encodable {
+          public func encode(to encoder: any Encoder) throws {
+            switch self {
+            case .callout(let value):
+              try value.encode(to: encoder)
+             case .actionableCallout(let value):
+              try value.encode(to: encoder)
+             case .dismissibleCallout(let value):
+              try value.encode(to: encoder)
+            }
+          }
+        }
+        """,
+      macros: testMacros,
+      indentationWidth: .spaces(2)
+    )
+    #else
+    throw XCTSkip("macros are only supported when running tests for the host platform")
+    #endif
+  }
+
+  func testPolymorphicEnumEncodableMacroTypeError() {
     #if canImport(KarrotCodableKitMacros)
     assertMacroExpansion(
       """
@@ -95,7 +135,7 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
     #endif
   }
 
-  func testPolymorphicEnumCodableMacroIdentifierValueError() {
+  func testPolymorphicEnumEncodableMacroIdentifierValueError() {
     #if canImport(KarrotCodableKitMacros)
     assertMacroExpansion(
       """
@@ -115,7 +155,7 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
         """,
       diagnostics: [
         DiagnosticSpec(
-          message: "Invalid or missing polymorphic identifier: expected a non-empty string.",
+          message: "Invalid polymorphic identifier: expected a non-empty string.",
           line: 1,
           column: 1
         )
@@ -128,7 +168,7 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
     #endif
   }
 
-  func testPolymorphicEnumCodableMacroAssociatedValueCountError() {
+  func testPolymorphicEnumEncodableMacroAssociatedValueCountError() {
     #if canImport(KarrotCodableKitMacros)
     assertMacroExpansion(
       """
@@ -161,7 +201,7 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
     #endif
   }
 
-  func testPolymorphicEnumCodableMacroMissingAssociatedValueError() {
+  func testPolymorphicEnumEncodableMacroMissingAssociatedValueError() {
     #if canImport(KarrotCodableKitMacros)
     assertMacroExpansion(
       """

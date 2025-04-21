@@ -82,6 +82,66 @@ final class PolymorphicEnumCodableMacroTests: XCTestCase {
     #endif
   }
 
+  func testPolymorphicCodableStrategyProvidingMacroWithDefaultParameters() throws {
+    #if canImport(KarrotCodableKitMacros)
+    assertMacroExpansion(
+      """
+      @PolymorphicEnumCodable
+      public enum CalloutBadge {
+        case callout(DummyCallout)
+        case actionableCallout(DummyActionableCallout)
+        case dismissibleCallout(value: DummyDismissibleCallout)
+      }
+      """,
+      expandedSource: """
+
+        public enum CalloutBadge {
+          case callout(DummyCallout)
+          case actionableCallout(DummyActionableCallout)
+          case dismissibleCallout(value: DummyDismissibleCallout)
+        }
+
+        extension CalloutBadge: Codable {
+          enum PolymorphicMetaCodingKey: CodingKey {
+            case type
+          }
+
+          public init(from decoder: any Decoder) throws {
+            let container = try decoder.container(keyedBy: PolymorphicMetaCodingKey.self)
+            let type = try container.decode(String.self, forKey: PolymorphicMetaCodingKey.type)
+
+            switch type {
+            case DummyCallout.polymorphicIdentifier:
+              self = .callout(try DummyCallout(from: decoder))
+             case DummyActionableCallout.polymorphicIdentifier:
+              self = .actionableCallout(try DummyActionableCallout(from: decoder))
+             case DummyDismissibleCallout.polymorphicIdentifier:
+              self = .dismissibleCallout(value: try DummyDismissibleCallout(from: decoder))
+            default:
+              throw PolymorphicCodableError.unableToFindPolymorphicType(type)
+            }
+          }
+
+          public func encode(to encoder: any Encoder) throws {
+            switch self {
+            case .callout(let value):
+              try value.encode(to: encoder)
+             case .actionableCallout(let value):
+              try value.encode(to: encoder)
+             case .dismissibleCallout(let value):
+              try value.encode(to: encoder)
+            }
+          }
+        }
+        """,
+      macros: testMacros,
+      indentationWidth: .spaces(2)
+    )
+    #else
+    throw XCTSkip("macros are only supported when running tests for the host platform")
+    #endif
+  }
+
   func testPolymorphicEnumCodableMacroTypeError() {
     #if canImport(KarrotCodableKitMacros)
     assertMacroExpansion(
@@ -135,7 +195,7 @@ final class PolymorphicEnumCodableMacroTests: XCTestCase {
         """,
       diagnostics: [
         DiagnosticSpec(
-          message: "Invalid or missing polymorphic identifier: expected a non-empty string.",
+          message: "Invalid polymorphic identifier: expected a non-empty string.",
           line: 1,
           column: 1
         )
@@ -202,6 +262,143 @@ final class PolymorphicEnumCodableMacroTests: XCTestCase {
       diagnostics: [
         DiagnosticSpec(
           message: "Polymorphic Enum cases should have one associated value",
+          line: 1,
+          column: 1
+        )
+      ],
+      macros: testMacros,
+      indentationWidth: .spaces(2)
+    )
+    #else
+    throw XCTSkip("macros are only supported when running tests for the host platform")
+    #endif
+  }
+}
+
+
+// MARK: - fallbackCaseName
+
+extension PolymorphicEnumCodableMacroTests {
+  func testPolymorphicEnumCodableMacroWithFallbackCaseNameParameter() throws {
+    #if canImport(KarrotCodableKitMacros)
+    assertMacroExpansion(
+      """
+      @PolymorphicEnumCodable(fallbackCaseName: "undefinedCallout")
+      public enum CalloutBadge {
+        case callout(DummyCallout)
+        case actionableCallout(DummyActionableCallout)
+        case dismissibleCallout(value: DummyDismissibleCallout)
+        case undefinedCallout(DummyUndefinedCallout)
+      }
+      """,
+      expandedSource: """
+
+        public enum CalloutBadge {
+          case callout(DummyCallout)
+          case actionableCallout(DummyActionableCallout)
+          case dismissibleCallout(value: DummyDismissibleCallout)
+          case undefinedCallout(DummyUndefinedCallout)
+        }
+
+        extension CalloutBadge: Codable {
+          enum PolymorphicMetaCodingKey: CodingKey {
+            case type
+          }
+
+          public init(from decoder: any Decoder) throws {
+            let container = try decoder.container(keyedBy: PolymorphicMetaCodingKey.self)
+            let type = try container.decode(String.self, forKey: PolymorphicMetaCodingKey.type)
+
+            switch type {
+            case DummyCallout.polymorphicIdentifier:
+              self = .callout(try DummyCallout(from: decoder))
+             case DummyActionableCallout.polymorphicIdentifier:
+              self = .actionableCallout(try DummyActionableCallout(from: decoder))
+             case DummyDismissibleCallout.polymorphicIdentifier:
+              self = .dismissibleCallout(value: try DummyDismissibleCallout(from: decoder))
+             case DummyUndefinedCallout.polymorphicIdentifier:
+              self = .undefinedCallout(try DummyUndefinedCallout(from: decoder))
+            default:
+              self = .undefinedCallout(try DummyUndefinedCallout(from: decoder))
+            }
+          }
+
+          public func encode(to encoder: any Encoder) throws {
+            switch self {
+            case .callout(let value):
+              try value.encode(to: encoder)
+             case .actionableCallout(let value):
+              try value.encode(to: encoder)
+             case .dismissibleCallout(let value):
+              try value.encode(to: encoder)
+             case .undefinedCallout(let value):
+              try value.encode(to: encoder)
+            }
+          }
+        }
+        """,
+      macros: testMacros,
+      indentationWidth: .spaces(2)
+    )
+    #else
+    throw XCTSkip("macros are only supported when running tests for the host platform")
+    #endif
+  }
+
+  func testPolymorphicEnumCodableMacroFallbackCaseMissingError() {
+    #if canImport(KarrotCodableKitMacros)
+    assertMacroExpansion(
+      """
+      @PolymorphicEnumCodable(fallbackCaseName: "undefinedCallout")
+      enum CalloutBadge {
+        case callout(DummyCallout)
+        case actionableCallout(DummyActionableCallout)
+        case dismissibleCallout(DummyDismissibleCallout)
+      }
+      """,
+      expandedSource: """
+        enum CalloutBadge {
+          case callout(DummyCallout)
+          case actionableCallout(DummyActionableCallout)
+          case dismissibleCallout(DummyDismissibleCallout)
+        }
+        """,
+      diagnostics: [
+        DiagnosticSpec(
+          message: "Missing fallback case: should be defined as `case undefinedCallout",
+          line: 1,
+          column: 1
+        )
+      ],
+      macros: testMacros,
+      indentationWidth: .spaces(2)
+    )
+    #else
+    throw XCTSkip("macros are only supported when running tests for the host platform")
+    #endif
+  }
+
+  func testPolymorphicEnumCodableMacroFallbackCaseNameValueError() {
+    #if canImport(KarrotCodableKitMacros)
+    assertMacroExpansion(
+      """
+      @PolymorphicEnumCodable(fallbackCaseName: "")
+      enum CalloutBadge {
+        case callout(DummyCallout)
+        case actionableCallout(DummyActionableCallout)
+        case dismissibleCallout(DummyDismissibleCallout)
+      }
+      """,
+      expandedSource: """
+        enum CalloutBadge {
+          case callout(DummyCallout)
+          case actionableCallout(DummyActionableCallout)
+          case dismissibleCallout(DummyDismissibleCallout)
+        }
+        """,
+      diagnostics: [
+        DiagnosticSpec(
+          message: "Invalid fallback case name: expected a non-empty string.",
           line: 1,
           column: 1
         )
