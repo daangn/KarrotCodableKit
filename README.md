@@ -1,5 +1,10 @@
 # KarrotCodableKit
 
+[![CI](https://github.com/daangn/KarrotCodableKit/actions/workflows/ci.yml/badge.svg)](https://github.com/daangn/KarrotCodableKit/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/daangn/KarrotCodableKit/actions/workflows/ci.yml)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fdaangn%2FKarrotCodableKit%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/daangn/KarrotCodableKit)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fdaangn%2FKarrotCodableKit%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/daangn/KarrotCodableKit)
+
 KarrotCodableKit is a library that extends Swift's Codable protocol to provide more powerful and flexible data encoding and decoding capabilities. It helps handle complex JSON structures and enables type-safe transformations for various data formats.
 
 This library includes the following key features:
@@ -11,14 +16,26 @@ This library includes the following key features:
 
 KarrotCodableKit simplifies the conversion of models from various data sources such as network responses, local storage, and enables developers to reduce development time and improve code quality.
 
+See the [documentation](https://swiftpackageindex.com/daangn/KarrotListKit/main/documentation/karrotlistkit) for more details.
+
 ## Installation
 
 You can install this framework using Swift Package Manager:
 
 1. Open Xcode and navigate to `Project` -> `Package dependencies` -> `Add Package Dependency (+)`.
-2. Enter the repository URL in the search field: `https://github.com/daangn/KarrotCodableKit`
+2. Enter the repository URL in the search field: `https://github.com/daangn/KarrotCodableKit.git`
 3. Specify the version you want to use - either the latest version or a specific version.
-4. Click `Next` and `Finish` to complete the installation. After the package is successfully added to your project, import the framework in the files where you want to use it:
+4. Click `Next` and `Finish` to complete the installation. After the package is successfully added to your project
+
+Or add it to your Package.swift file:
+
+```swift
+dependencies: [
+  .package(url: "https://github.com/daangn/KarrotCodableKit.git", from: "1.1.0")
+]
+```
+
+Then import the framework in the files where you want to use it:
 
 ```swift
 import KarrotCodableKit
