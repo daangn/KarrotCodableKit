@@ -34,21 +34,22 @@ enum CodingKeysSyntaxFactory {
   static func makeCodingKeysCases(from declaration: some DeclGroupSyntax) -> [String] {
     extractStoredPropertyDeclarations(from: declaration)
       .map { propertyDeclaration in
+        let propertyName = propertyDeclaration.propertyName.trimmingBackticks
         if
           let codableKeyAttribute = codableKeyAttribute(from: propertyDeclaration.variableDecl.attributes),
           let customKeyValue = customKeyValue(from: codableKeyAttribute.as(AttributeSyntax.self))
         {
-          return "case \(propertyDeclaration.propertyName) = \(customKeyValue)"
+          return "case `\(propertyName)` = \(customKeyValue)"
         }
 
         if needsToSnakeCaseCodingKeyValue(by: declaration) {
           let snakeCaseKey = propertyDeclaration.propertyName.toSnakeCase
           if propertyDeclaration.propertyName != snakeCaseKey {
-            return "case \(propertyDeclaration.propertyName) = \"\(snakeCaseKey)\""
+            return "case `\(propertyName)` = \"\(snakeCaseKey)\""
           }
         }
 
-        return "case \(propertyDeclaration.propertyName)"
+        return "case `\(propertyName)`"
       }
   }
 

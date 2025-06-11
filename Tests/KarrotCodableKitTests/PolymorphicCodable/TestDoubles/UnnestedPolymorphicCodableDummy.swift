@@ -52,10 +52,11 @@ struct DummyDecodingFeedResponse: Decodable {
 
 @UnnestedPolymorphicDecodable(
   identifier: "IMAGE_VIEW_ITEM",
-  forKey: "info",
+  forKey: "default",
   codingKeyStyle: .snakeCase
 )
 struct ImageViewItem: ViewItem {
   let id: String
   let imageURL: URL
+  let `class`: String
 }

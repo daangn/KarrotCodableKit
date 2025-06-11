@@ -40,8 +40,8 @@ final class CustomCodableMacroTests: XCTestCase {
           let userProfileURL: String
 
           private enum CodingKeys: String, CodingKey {
-            case name
-            case userProfileURL = "user_profile_url"
+            case `name`
+            case `userProfileURL` = "user_profile_url"
           }
         }
 
@@ -72,8 +72,8 @@ final class CustomCodableMacroTests: XCTestCase {
           let userProfileUrl: String
 
           private enum CodingKeys: String, CodingKey {
-            case name
-            case userProfileUrl
+            case `name`
+            case `userProfileUrl`
           }
         }
 
@@ -113,14 +113,14 @@ extension CustomCodableMacroTests {
             let propertyWithSameName: Bool
 
             private enum CodingKeys: String, CodingKey {
-              case propertyWithSameName = "property_with_same_name"
+              case `propertyWithSameName` = "property_with_same_name"
             }
           }
 
           let nestedStructProperty: NestedStruct
 
           private enum CodingKeys: String, CodingKey {
-            case nestedStructProperty = "nested_struct_property"
+            case `nestedStructProperty` = "nested_struct_property"
           }
         }
 
@@ -159,7 +159,7 @@ extension CustomCodableMacroTests {
           let nestedStructProperty: NestedStruct
 
           private enum CodingKeys: String, CodingKey {
-            case nestedStructProperty
+            case `nestedStructProperty`
           }
         }
 
@@ -168,7 +168,7 @@ extension CustomCodableMacroTests {
             let propertyWithSameName: Bool
 
             private enum CodingKeys: String, CodingKey {
-              case propertyWithSameName = "property_with_same_name"
+              case `propertyWithSameName` = "property_with_same_name"
             }
           }
         }
@@ -214,9 +214,9 @@ extension CustomCodableMacroTests {
           func randomFunction() {}
 
           private enum CodingKeys: String, CodingKey {
-            case name
-            case userAge = "user_age"
-            case userProfileURL = "userProfileUrl"
+            case `name`
+            case `userAge` = "user_age"
+            case `userProfileURL` = "userProfileUrl"
           }
         }
 
@@ -257,9 +257,9 @@ extension CustomCodableMacroTests {
           func randomFunction() {}
 
           private enum CodingKeys: String, CodingKey {
-            case name
-            case userAge = "user_age"
-            case userProfileURL = "userProfileUrl"
+            case `name`
+            case `userAge` = "user_age"
+            case `userProfileURL` = "userProfileUrl"
           }
         }
 

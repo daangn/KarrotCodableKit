@@ -40,12 +40,12 @@ final class UnnestedPolymorphicDecodableMacroTests: XCTestCase {
           let title: String?
 
           private enum CodingKeys: String, CodingKey {
-            case data
+            case `data`
           }
 
           private enum NestedDataCodingKeys: String, CodingKey {
-            case id
-            case title
+            case `id`
+            case `title`
           }
         }
 
@@ -94,12 +94,12 @@ final class UnnestedPolymorphicDecodableMacroTests: XCTestCase {
           let itemTitle: String?
 
           private enum CodingKeys: String, CodingKey {
-            case data
+            case `data`
           }
 
           private enum NestedDataCodingKeys: String, CodingKey {
-            case id
-            case itemTitle = "item_title"
+            case `id`
+            case `itemTitle` = "item_title"
           }
         }
 
@@ -145,7 +145,7 @@ final class UnnestedPolymorphicDecodableMacroTests: XCTestCase {
         struct TitleViewItem: ViewItem {
 
           private enum CodingKeys: String, CodingKey {
-            case some_data
+            case `some_data`
           }
 
           private enum NestedDataCodingKeys: CodingKey {

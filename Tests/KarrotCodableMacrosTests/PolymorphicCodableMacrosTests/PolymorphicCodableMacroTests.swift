@@ -48,10 +48,10 @@ final class PolymorphicCodableMacroTests: XCTestCase {
           let key: String
 
           private enum CodingKeys: String, CodingKey {
-            case type
-            case noticeTitle = "notice_title"
-            case description
-            case key
+            case `type`
+            case `noticeTitle` = "notice_title"
+            case `description`
+            case `key`
           }
         }
 
@@ -89,10 +89,10 @@ final class PolymorphicCodableMacroTests: XCTestCase {
           let key: String
 
           private enum CodingKeys: String, CodingKey {
-            case type
-            case noticeTitle
-            case description
-            case key
+            case `type`
+            case `noticeTitle`
+            case `description`
+            case `key`
           }
         }
         """,

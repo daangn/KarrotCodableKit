@@ -19,9 +19,10 @@ struct UnnestedPolymorphicDecodableTests {
       "items": [
         {
           "type": "IMAGE_VIEW_ITEM",
-          "info": {
+          "default": {
             "id": "1e243b34-b8a6-41c8-b08f-cba8d014021f",
-            "image_url": "https://karrotmarket.com"
+            "image_url": "https://karrotmarket.com",
+            "class": "1-A"
           }
         }
       ]
@@ -38,5 +39,6 @@ struct UnnestedPolymorphicDecodableTests {
     let imageViewItem = try #require(item as? ImageViewItem)
     #expect(imageViewItem.id == "1e243b34-b8a6-41c8-b08f-cba8d014021f")
     #expect(imageViewItem.imageURL.absoluteString == "https://karrotmarket.com")
+    #expect(imageViewItem.`class` == "1-A")
   }
 }
