@@ -16,7 +16,7 @@ This library includes the following key features:
 
 KarrotCodableKit simplifies the conversion of models from various data sources such as network responses, local storage, and enables developers to reduce development time and improve code quality.
 
-See the [documentation](https://swiftpackageindex.com/daangn/KarrotListKit/main/documentation/karrotlistkit) for more details.
+See the [documentation](https://swiftpackageindex.com/daangn/KarrotCodableKit/main/documentation/KarrotCodableKit) for more details.
 
 ## Installation
 
