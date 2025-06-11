@@ -1,6 +1,6 @@
 //
 //  PolymorphicDecodableMacro.swift
-//
+//  KarrotCodableKit
 //
 //  Created by Elon on 10/19/24.
 //  Copyright © 2025 Danggeun Market Inc. All rights reserved.
@@ -28,28 +28,16 @@ extension PolymorphicDecodableMacro: ExtensionMacro {
     conformingTo protocols: [TypeSyntax],
     in context: some MacroExpansionContext
   ) throws -> [ExtensionDeclSyntax] {
-    guard let arguments = node.arguments?.as(LabeledExprListSyntax.self),
-          let identifierExpr = SyntaxHelper.findArgument(named: "identifier", in: arguments),
-          let identifier = SyntaxHelper.extractString(from: identifierExpr)
-    else {
-      throw CodableKitError.message("Missing polymorphic identifier argument.")
-    }
-
-    guard !identifier.isEmpty else {
-      throw CodableKitError.message(
-        "Invalid polymorphic identifier: expected a non-empty string."
-      )
-    }
-
+    let arguments = try MacroArgumentExtractor.extractPolymorphicArguments(from: node)
     let accessLevel = AccessLevelModifier.stringValue(from: declaration)
+
     return [
-      try ExtensionDeclSyntax(
-        """
-        extension \(type.trimmed): PolymorphicDecodableType {
-          \(raw: accessLevel)static var polymorphicIdentifier: String { "\(raw: identifier)" }
-        }
-        """
-      )
+      try PolymorphicExtensionFactory.makeBasicPolymorphicExtension(
+        for: type,
+        identifier: arguments.identifier,
+        protocolType: .decodable,
+        accessLevel: accessLevel
+      ),
     ]
   }
 }

@@ -16,7 +16,7 @@ This library includes the following key features:
 
 KarrotCodableKit simplifies the conversion of models from various data sources such as network responses, local storage, and enables developers to reduce development time and improve code quality.
 
-See the [documentation](https://swiftpackageindex.com/daangn/KarrotListKit/main/documentation/karrotlistkit) for more details.
+See the [documentation](https://swiftpackageindex.com/daangn/KarrotCodableKit/main/documentation/KarrotCodableKit) for more details.
 
 ## Installation
 
@@ -76,7 +76,7 @@ struct Person {
   let age: Int
   let userProfileURL: String
   
-  enum CodingKeys: String, CodingKey {
+  private enum CodingKeys: String, CodingKey {
     case name
     case age
     case userProfileURL = "userProfileUrl"
@@ -106,7 +106,7 @@ struct User {
   let firstName: String
   let lastLogin: Date
   
-  enum CodingKeys: String, CodingKey {
+  private enum CodingKeys: String, CodingKey {
     case firstName = "first_name"
     case lastLogin = "last_login"
   }

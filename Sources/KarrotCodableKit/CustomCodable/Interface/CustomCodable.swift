@@ -39,7 +39,7 @@
    let userAge: Int
    let userProfileURL: String
 
-   enum CodingKeys: String, CodingKey {
+   private enum CodingKeys: String, CodingKey {
      case name
      case userAge = "user_age"
      case userProfileURL = "userProfileUrl"

@@ -154,7 +154,7 @@ final class DefaultCodableTests_EnumWithAssociatedValue: XCTestCase {
   }
 
   struct CustomType: Codable, Equatable {
-    enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
       case z = "fish"
       case i = "int"
     }

@@ -24,5 +24,7 @@ struct KarrotCodableKitPlugin: CompilerPlugin {
     PolymorphicEnumCodableMacro.self,
     PolymorphicEnumEncodableMacro.self,
     PolymorphicEnumDecodableMacro.self,
+    UnnestedPolymorphicCodableMacro.self,
+    UnnestedPolymorphicDecodableMacro.self,
   ]
 }

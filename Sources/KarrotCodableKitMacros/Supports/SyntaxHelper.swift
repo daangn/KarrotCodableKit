@@ -1,6 +1,6 @@
 //
 //  SyntaxHelper.swift
-//
+//  KarrotCodableKit
 //
 //  Created by Elon on 10/18/24.
 //  Copyright © 2025 Danggeun Market Inc. All rights reserved.

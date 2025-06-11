@@ -47,7 +47,7 @@ final class PolymorphicDecodableMacroTests: XCTestCase {
           let description: String
           let key: String
 
-          enum CodingKeys: String, CodingKey {
+          private enum CodingKeys: String, CodingKey {
             case type
             case noticeTitle = "notice_title"
             case description
@@ -91,7 +91,7 @@ final class PolymorphicDecodableMacroTests: XCTestCase {
           let description: String
           let key: String
 
-          enum CodingKeys: String, CodingKey {
+          private enum CodingKeys: String, CodingKey {
             case type
             case noticeTitle
             case description
