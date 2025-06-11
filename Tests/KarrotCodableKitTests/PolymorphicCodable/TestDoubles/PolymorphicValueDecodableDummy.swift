@@ -1,14 +1,16 @@
 //
 //  PolymorphicValueDecodableDummy.swift
+//  KarrotCodableKit
 //
-//
-//  Created by Elon on 10/14/24.
+//  Created by Elon on 6/10/25.
 //  Copyright © 2025 Danggeun Market Inc. All rights reserved.
 //
 
 import Foundation
 
 import KarrotCodableKit
+
+// MARK: - PolymorphicEnumDecodable
 
 @PolymorphicEnumDecodable(fallbackCaseName: "undefinedCallout")
 enum DecodableCalloutBadge {
@@ -66,6 +68,8 @@ struct OptionalLossyAarrayDummyDecodableResponse {
   @DefaultEmptyPolymorphicLossyArrayValue<DummyDecodableNoticeCodableStrategy>
   var notices3: [DummyDecodableNotice]
 }
+
+// MARK: - PolymorphicDecodable
 
 @PolymorphicCodableStrategyProviding(
   identifierCodingKey: "type",

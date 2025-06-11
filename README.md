@@ -76,7 +76,7 @@ struct Person {
   let age: Int
   let userProfileURL: String
   
-  enum CodingKeys: String, CodingKey {
+  private enum CodingKeys: String, CodingKey {
     case name
     case age
     case userProfileURL = "userProfileUrl"
@@ -106,7 +106,7 @@ struct User {
   let firstName: String
   let lastLogin: Date
   
-  enum CodingKeys: String, CodingKey {
+  private enum CodingKeys: String, CodingKey {
     case firstName = "first_name"
     case lastLogin = "last_login"
   }

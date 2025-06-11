@@ -13,7 +13,7 @@ enum UnnestedPolymorphicSyntaxFactory {
 
   static func makeTopLevelCodingKeysSyntax(nestedKey: String) -> DeclSyntax {
     """
-    enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
       case \(raw: nestedKey)
     }
     """
@@ -28,7 +28,7 @@ enum UnnestedPolymorphicSyntaxFactory {
 
     let cases = CodingKeysSyntaxFactory.makeCodingKeysCases(from: declaration)
     return """
-      enum NestedDataCodingKeys: String, CodingKey {
+      private enum NestedDataCodingKeys: String, CodingKey {
         \(raw: cases.joined(separator: "\n"))
       }
       """

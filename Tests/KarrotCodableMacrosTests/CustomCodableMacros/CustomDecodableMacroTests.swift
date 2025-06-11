@@ -39,7 +39,7 @@ final class CustomDecodableMacroTests: XCTestCase {
           let name: String
           let userProfileURL: String
 
-          enum CodingKeys: String, CodingKey {
+          private enum CodingKeys: String, CodingKey {
             case name
             case userProfileURL = "user_profile_url"
           }
@@ -71,7 +71,7 @@ final class CustomDecodableMacroTests: XCTestCase {
           let name: String
           let userProfileUrl: String
 
-          enum CodingKeys: String, CodingKey {
+          private enum CodingKeys: String, CodingKey {
             case name
             case userProfileUrl
           }
@@ -112,14 +112,14 @@ extension CustomDecodableMacroTests {
           struct NestedStruct {
             let propertyWithSameName: Bool
 
-            enum CodingKeys: String, CodingKey {
+            private enum CodingKeys: String, CodingKey {
               case propertyWithSameName = "property_with_same_name"
             }
           }
 
           let nestedStructProperty: NestedStruct
 
-          enum CodingKeys: String, CodingKey {
+          private enum CodingKeys: String, CodingKey {
             case nestedStructProperty = "nested_struct_property"
           }
         }
@@ -158,7 +158,7 @@ extension CustomDecodableMacroTests {
         struct Person {
           let nestedStructProperty: NestedStruct
 
-          enum CodingKeys: String, CodingKey {
+          private enum CodingKeys: String, CodingKey {
             case nestedStructProperty
           }
         }
@@ -167,7 +167,7 @@ extension CustomDecodableMacroTests {
           struct NestedStruct {
             let propertyWithSameName: Bool
 
-            enum CodingKeys: String, CodingKey {
+            private enum CodingKeys: String, CodingKey {
               case propertyWithSameName = "property_with_same_name"
             }
           }
@@ -213,7 +213,7 @@ extension CustomDecodableMacroTests {
 
           func randomFunction() {}
 
-          enum CodingKeys: String, CodingKey {
+          private enum CodingKeys: String, CodingKey {
             case name
             case userAge = "user_age"
             case userProfileURL = "userProfileUrl"
@@ -256,7 +256,7 @@ extension CustomDecodableMacroTests {
 
           func randomFunction() {}
 
-          enum CodingKeys: String, CodingKey {
+          private enum CodingKeys: String, CodingKey {
             case name
             case userAge = "user_age"
             case userProfileURL = "userProfileUrl"

@@ -21,7 +21,7 @@ enum CodingKeysSyntaxFactory {
 
     let cases = makeCodingKeysCases(from: declaration)
     return """
-      enum CodingKeys: String, CodingKey {
+      private enum CodingKeys: String, CodingKey {
         \(raw: cases.joined(separator: "\n"))
       }
       """
