@@ -22,6 +22,13 @@ struct UnnestedPolymorphicCodableTests {
             "id": "1e243b34-b8a6-41c8-b08f-cba8d014021f",
             "item_title": "Hello, world!"
           }
+        },
+        {
+          "type": "EMPTY_VIEW_ITEM",
+          "data": {}
+        },
+        {
+          "type": "EMPTY_VIEW_ITEM"
         }
       ]
     }
@@ -31,12 +38,14 @@ struct UnnestedPolymorphicCodableTests {
     let result = try JSONDecoder().decode(DummyFeedResponse.self, from: Data(jsonData.utf8))
 
     // then
-    #expect(result.items.count == 1)
+    #expect(result.items.count == 3)
 
-    let item = try #require(result.items.first)
-    let titleViewItem = try #require(item as? TitleViewItem)
+    let titleViewItem = try #require(result.items[0] as? TitleViewItem)
     #expect(titleViewItem.id == "1e243b34-b8a6-41c8-b08f-cba8d014021f")
     #expect(titleViewItem.itemTitle == "Hello, world!")
+
+    _ = try #require(result.items[1] as? EmptyViewItem)
+    _ = try #require(result.items[2] as? EmptyViewItem)
   }
 
   @Test func encodingUnnestedPolymorphicCodable() async throws  {
@@ -46,7 +55,8 @@ struct UnnestedPolymorphicCodableTests {
         TitleViewItem(
           id: "1e243b34-b8a6-41c8-b08f-cba8d014021f",
           itemTitle: "Hello, world!"
-        )
+        ),
+        EmptyViewItem(),
       ]
     )
 
@@ -65,6 +75,12 @@ struct UnnestedPolymorphicCodableTests {
             "item_title" : "Hello, world!"
           },
           "type" : "TITLE_VIEW_ITEM"
+        },
+        {
+          "data" : {
+
+          },
+          "type" : "EMPTY_VIEW_ITEM"
         }
       ]
     }
@@ -73,3 +89,4 @@ struct UnnestedPolymorphicCodableTests {
     #expect(jsonString == expectResult)
   }
 }
+

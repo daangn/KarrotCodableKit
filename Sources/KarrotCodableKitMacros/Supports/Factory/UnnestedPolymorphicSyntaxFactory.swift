@@ -10,7 +10,6 @@ import SwiftSyntax
 import SwiftSyntaxBuilder
 
 enum UnnestedPolymorphicSyntaxFactory {
-
   static func makeTopLevelCodingKeysSyntax(nestedKey: String) -> DeclSyntax {
     """
     private enum CodingKeys: String, CodingKey {
@@ -18,7 +17,7 @@ enum UnnestedPolymorphicSyntaxFactory {
     }
     """
   }
-  
+
   static func makeNestedDataCodingKeysSyntax(
     from declaration: some DeclGroupSyntax
   ) throws -> DeclSyntax {
@@ -27,6 +26,10 @@ enum UnnestedPolymorphicSyntaxFactory {
     }
 
     let cases = CodingKeysSyntaxFactory.makeCodingKeysCases(from: declaration)
+    guard !cases.isEmpty else {
+      return "private enum NestedDataCodingKeys: CodingKey {}"
+    }
+
     return """
       private enum NestedDataCodingKeys: String, CodingKey {
         \(raw: cases.joined(separator: "\n"))
@@ -40,20 +43,26 @@ enum UnnestedPolymorphicSyntaxFactory {
     accessLevel: String
   ) -> String {
     let properties = PropertyAnalyzer.extractStoredProperties(from: declaration)
-
     let dataInitializations = properties.map { property in
       "self.\(property.name) = try dataContainer.decode(\(property.type).self, forKey: NestedDataCodingKeys.\(property.name))"
-    }.joined(separator: "\n  ")
+    }
+
+    var functionBody: String {
+      guard !dataInitializations.isEmpty else { return "" }
+      return """
+          let container = try decoder.container(keyedBy: CodingKeys.self)
+          let dataContainer = try container.nestedContainer(
+            keyedBy: NestedDataCodingKeys.self,
+            forKey: CodingKeys.\(nestedKey)
+          )
+        
+          \(dataInitializations.joined(separator: "\n  "))
+        """
+    }
 
     return """
       \(accessLevel)init(from decoder: any Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        let dataContainer = try container.nestedContainer(
-          keyedBy: NestedDataCodingKeys.self,
-          forKey: CodingKeys.\(nestedKey)
-        )
-
-        \(dataInitializations)
+      \(functionBody)
       }
       """
   }
@@ -64,20 +73,33 @@ enum UnnestedPolymorphicSyntaxFactory {
     accessLevel: String
   ) -> String {
     let properties = PropertyAnalyzer.extractStoredProperties(from: declaration)
-
     let dataEncodings = properties.map { property in
       "try dataContainer.encode(\(property.name), forKey: NestedDataCodingKeys.\(property.name))"
-    }.joined(separator: "\n  ")
+    }
 
-    return """
-      \(accessLevel)func encode(to encoder: any Encoder) throws {
+    let functionBody = if dataEncodings.isEmpty {
+      """
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        _ = container.nestedContainer(
+          keyedBy: NestedDataCodingKeys.self,
+          forKey: CodingKeys.\(nestedKey)
+        )
+      """
+    } else {
+      """
         var container = encoder.container(keyedBy: CodingKeys.self)
         var dataContainer = container.nestedContainer(
           keyedBy: NestedDataCodingKeys.self,
           forKey: CodingKeys.\(nestedKey)
         )
+        
+        \(dataEncodings.joined(separator: "\n  "))
+      """
+    }
 
-        \(dataEncodings)
+    return """
+      \(accessLevel)func encode(to encoder: any Encoder) throws {
+      \(functionBody)
       }
       """
   }

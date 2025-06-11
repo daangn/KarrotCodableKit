@@ -20,6 +20,10 @@ enum CodingKeysSyntaxFactory {
     guard !declaration.is(EnumDeclSyntax.self) else { throw CodableKitError.cannotApplyToEnum }
 
     let cases = makeCodingKeysCases(from: declaration)
+    guard !cases.isEmpty else {
+      return "private enum CodingKeys: CodingKey {}"
+    }
+
     return """
       private enum CodingKeys: String, CodingKey {
         \(raw: cases.joined(separator: "\n"))

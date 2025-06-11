@@ -150,4 +150,55 @@ final class UnnestedPolymorphicCodableMacroTests: XCTestCase {
     throw XCTSkip("macros are only supported when running tests for the host platform")
     #endif
   }
+
+  func testUnnestedPolymorphicCodableMacroWithoutProperties() throws {
+    #if canImport(KarrotCodableKitMacros)
+    assertMacroExpansion(
+      """
+      @UnnestedPolymorphicCodable(
+        identifier: "TITLE_VIEW_ITEM",
+        forKey: "some_data",
+        codingKeyStyle: .snakeCase
+      )
+      struct TitleViewItem: ViewItem {
+
+      }
+      """,
+      expandedSource: """
+        struct TitleViewItem: ViewItem {
+
+          private enum CodingKeys: String, CodingKey {
+            case some_data
+          }
+
+          private enum NestedDataCodingKeys: CodingKey {
+          }
+
+        }
+
+        extension TitleViewItem: PolymorphicCodableType {
+          static var polymorphicIdentifier: String {
+            "TITLE_VIEW_ITEM"
+          }
+
+          init(from decoder: any Decoder) throws {
+
+          }
+
+          func encode(to encoder: any Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            _ = container.nestedContainer(
+              keyedBy: NestedDataCodingKeys.self,
+              forKey: CodingKeys.some_data
+            )
+          }
+        }
+        """,
+      macros: testMacros,
+      indentationWidth: .spaces(2)
+    )
+    #else
+    throw XCTSkip("macros are only supported when running tests for the host platform")
+    #endif
+  }
 }
