@@ -43,7 +43,7 @@ final class PolymorphicEnumDecodableMacroTests: XCTestCase {
 
         extension CalloutBadge: Decodable {
           enum PolymorphicMetaCodingKey: CodingKey {
-            case type
+            case `type`
           }
 
           public init(from decoder: any Decoder) throws {
@@ -92,7 +92,7 @@ final class PolymorphicEnumDecodableMacroTests: XCTestCase {
 
         extension CalloutBadge: Decodable {
           enum PolymorphicMetaCodingKey: CodingKey {
-            case type
+            case `type`
           }
 
           public init(from decoder: any Decoder) throws {
@@ -280,7 +280,7 @@ extension PolymorphicEnumDecodableMacroTests {
 
         extension CalloutBadge: Decodable {
           enum PolymorphicMetaCodingKey: CodingKey {
-            case type
+            case `type`
           }
 
           public init(from decoder: any Decoder) throws {

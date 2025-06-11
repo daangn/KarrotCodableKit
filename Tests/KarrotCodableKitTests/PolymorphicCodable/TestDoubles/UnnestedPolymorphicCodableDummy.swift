@@ -14,11 +14,10 @@ import KarrotCodableKit
   matchingTypes: [
     TitleViewItem.self,
     ImageViewItem.self,
+    EmptyViewItem.self,
   ]
 )
-protocol ViewItem {
-  var id: String { get }
-}
+protocol ViewItem {}
 
 // MARK: - Codable
 
@@ -37,6 +36,13 @@ struct TitleViewItem: ViewItem {
   let itemTitle: String?
 }
 
+@UnnestedPolymorphicCodable(
+  identifier: "EMPTY_VIEW_ITEM",
+  forKey: "data",
+  codingKeyStyle: .snakeCase
+)
+struct EmptyViewItem: ViewItem {}
+
 // MARK: - Decodable
 
 struct DummyDecodingFeedResponse: Decodable {
@@ -46,10 +52,11 @@ struct DummyDecodingFeedResponse: Decodable {
 
 @UnnestedPolymorphicDecodable(
   identifier: "IMAGE_VIEW_ITEM",
-  forKey: "info",
+  forKey: "default",
   codingKeyStyle: .snakeCase
 )
 struct ImageViewItem: ViewItem {
   let id: String
   let imageURL: URL
+  let `class`: String
 }

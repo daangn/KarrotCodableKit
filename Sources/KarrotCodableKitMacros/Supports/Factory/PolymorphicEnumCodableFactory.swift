@@ -20,7 +20,7 @@ enum PolymorphicEnumCodableFactory {
   static func makePolymorphicMetaCodingKey(with identifierCodingKey: String) -> String {
     """
     enum PolymorphicMetaCodingKey: CodingKey {
-      case \(identifierCodingKey)
+      case `\(identifierCodingKey.trimmingBackticks)`
     }
     """
   }

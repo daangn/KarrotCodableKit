@@ -20,6 +20,10 @@ enum CodingKeysSyntaxFactory {
     guard !declaration.is(EnumDeclSyntax.self) else { throw CodableKitError.cannotApplyToEnum }
 
     let cases = makeCodingKeysCases(from: declaration)
+    guard !cases.isEmpty else {
+      return "private enum CodingKeys: CodingKey {}"
+    }
+
     return """
       private enum CodingKeys: String, CodingKey {
         \(raw: cases.joined(separator: "\n"))
@@ -30,21 +34,22 @@ enum CodingKeysSyntaxFactory {
   static func makeCodingKeysCases(from declaration: some DeclGroupSyntax) -> [String] {
     extractStoredPropertyDeclarations(from: declaration)
       .map { propertyDeclaration in
+        let propertyName = propertyDeclaration.propertyName.trimmingBackticks
         if
           let codableKeyAttribute = codableKeyAttribute(from: propertyDeclaration.variableDecl.attributes),
           let customKeyValue = customKeyValue(from: codableKeyAttribute.as(AttributeSyntax.self))
         {
-          return "case \(propertyDeclaration.propertyName) = \(customKeyValue)"
+          return "case `\(propertyName)` = \(customKeyValue)"
         }
 
         if needsToSnakeCaseCodingKeyValue(by: declaration) {
           let snakeCaseKey = propertyDeclaration.propertyName.toSnakeCase
           if propertyDeclaration.propertyName != snakeCaseKey {
-            return "case \(propertyDeclaration.propertyName) = \"\(snakeCaseKey)\""
+            return "case `\(propertyName)` = \"\(snakeCaseKey)\""
           }
         }
 
-        return "case \(propertyDeclaration.propertyName)"
+        return "case `\(propertyName)`"
       }
   }
 
