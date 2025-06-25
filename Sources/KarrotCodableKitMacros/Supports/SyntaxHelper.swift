@@ -9,9 +9,9 @@
 import SwiftSyntax
 import SwiftSyntaxBuilder
 
-struct SyntaxHelper {
+enum SyntaxHelper {
 
-  // Helper function to find argument by name in LabeledExprListSyntax
+  /// Helper function to find argument by name in LabeledExprListSyntax
   static func findArgument(
     named name: String,
     in arguments: LabeledExprListSyntax
@@ -19,12 +19,20 @@ struct SyntaxHelper {
     arguments.first { $0.label?.text == name }?.expression
   }
 
-  // Helper function to extract string from ExprSyntax (assuming it is a string literal)
+  /// Helper function to extract string from ExprSyntax (assuming it is a string literal)
   static func extractString(from exprSyntax: ExprSyntax) -> String? {
     guard let stringLiteral = exprSyntax.as(StringLiteralExprSyntax.self) else { return nil }
     return stringLiteral.segments
       .compactMap { $0.as(StringSegmentSyntax.self) }
       .map(\.content.text)
       .joined()
+  }
+
+  /// Helper function to extract member access (e.g., .snakeCase)
+  static func extractMemberAccess(from exprSyntax: ExprSyntax) -> String? {
+    if let memberAccess = exprSyntax.as(MemberAccessExprSyntax.self) {
+      return memberAccess.declName.baseName.text
+    }
+    return nil
   }
 }

@@ -6,23 +6,27 @@
 //  Copyright © 2025 Danggeun Market Inc. All rights reserved.
 //
 
+import SwiftDiagnostics
 import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 
-public enum UnnestedPolymorphicCodableMacro: MemberMacro {
+public enum UnnestedPolymorphicCodableMacro: MemberMacro, UnnestedPolymorphicMacroType {
+  public static let protocolType = PolymorphicExtensionFactory.PolymorphicProtocolType.codable
+  public static let macroType = UnnestedPolymorphicCodeGenerator.MacroType.codable
+  public static let macroName = "UnnestedPolymorphicCodable"
 
   public static func expansion(
     of node: AttributeSyntax,
     providingMembersOf declaration: some DeclGroupSyntax,
     in context: some MacroExpansionContext
   ) throws -> [DeclSyntax] {
-    let nestedKey = try MacroArgumentExtractor.extractNestedKey(from: node)
-
-    return [
-      UnnestedPolymorphicSyntaxFactory.makeTopLevelCodingKeysSyntax(nestedKey: nestedKey),
-      try UnnestedPolymorphicSyntaxFactory.makeNestedDataCodingKeysSyntax(from: declaration),
-    ]
+    try generateMemberDeclarations(
+      of: node,
+      providingMembersOf: declaration,
+      in: context,
+      for: Self.self
+    )
   }
 }
 
@@ -34,30 +38,13 @@ extension UnnestedPolymorphicCodableMacro: ExtensionMacro {
     conformingTo protocols: [TypeSyntax],
     in context: some MacroExpansionContext
   ) throws -> [ExtensionDeclSyntax] {
-    let arguments = try MacroArgumentExtractor.extractUnnestedPolymorphicArguments(from: node)
-    let accessLevel = AccessLevelModifier.stringValue(from: declaration)
-
-    let initFromDecoder = UnnestedPolymorphicSyntaxFactory.makeUnnestedInitFromDecoder(
-      from: declaration,
-      nestedKey: arguments.nestedKey,
-      accessLevel: accessLevel
+    try generateExtensionDeclarations(
+      of: node,
+      attachedTo: declaration,
+      providingExtensionsOf: type,
+      conformingTo: protocols,
+      in: context,
+      for: Self.self
     )
-
-    let encodeToEncoder = UnnestedPolymorphicSyntaxFactory.makeUnnestedEncodeToEncoder(
-      from: declaration,
-      nestedKey: arguments.nestedKey,
-      accessLevel: accessLevel
-    )
-
-    return [
-      try PolymorphicExtensionFactory.makeUnnestedPolymorphicExtension(
-        for: type,
-        identifier: arguments.identifier,
-        protocolType: .codable,
-        accessLevel: accessLevel,
-        initFromDecoder: initFromDecoder,
-        encodeToEncoder: encodeToEncoder
-      ),
-    ]
   }
 }

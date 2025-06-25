@@ -8,6 +8,9 @@
 //
 
 import Foundation
+import SwiftDiagnostics
+import SwiftSyntax
+import SwiftSyntaxMacros
 
 enum CodableKitError: Error, CustomStringConvertible {
   case cannotApplyToEnum
@@ -16,9 +19,22 @@ enum CodableKitError: Error, CustomStringConvertible {
   var description: String {
     switch self {
     case .cannotApplyToEnum:
-      return "`@CustomCodable`, `@CustomEncodable`, `@CustomDecodable` cannot be applied to enum"
+      "`@CustomCodable`, `@CustomEncodable`, `@CustomDecodable` cannot be applied to enum"
     case .message(let message):
-      return message
+      message
     }
   }
+}
+
+// MARK: - Diagnostic Messages
+
+struct ConstantWithInitializerWarning: DiagnosticMessage {
+  let message = "Immutable property will not be decoded because it is declared with an initial value which cannot be overwritten"
+  let diagnosticID = MessageID(domain: "KarrotCodableKitMacros", id: "constantWithInitializer")
+  let severity = DiagnosticSeverity.warning
+}
+
+struct MakePropertyMutableFixIt: FixItMessage {
+  let message = "Make the property mutable instead"
+  let fixItID = MessageID(domain: "KarrotCodableKitMacros", id: "makePropertyMutable")
 }
