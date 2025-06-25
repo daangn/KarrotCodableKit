@@ -6,23 +6,27 @@
 //  Copyright © 2025 Danggeun Market Inc. All rights reserved.
 //
 
+import SwiftDiagnostics
 import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 
-public enum UnnestedPolymorphicDecodableMacro: MemberMacro {
+public enum UnnestedPolymorphicDecodableMacro: MemberMacro, UnnestedPolymorphicMacroType {
+  public static let protocolType = PolymorphicExtensionFactory.PolymorphicProtocolType.decodable
+  public static let macroType = UnnestedPolymorphicCodeGenerator.MacroType.decodable
+  public static let macroName = "UnnestedPolymorphicDecodable"
 
   public static func expansion(
     of node: AttributeSyntax,
     providingMembersOf declaration: some DeclGroupSyntax,
     in context: some MacroExpansionContext
   ) throws -> [DeclSyntax] {
-    let nestedKey = try MacroArgumentExtractor.extractNestedKey(from: node)
-
-    return [
-      UnnestedPolymorphicSyntaxFactory.makeTopLevelCodingKeysSyntax(nestedKey: nestedKey),
-      try UnnestedPolymorphicSyntaxFactory.makeNestedDataCodingKeysSyntax(from: declaration),
-    ]
+    try generateMemberDeclarations(
+      of: node,
+      providingMembersOf: declaration,
+      in: context,
+      for: Self.self
+    )
   }
 }
 
@@ -34,23 +38,13 @@ extension UnnestedPolymorphicDecodableMacro: ExtensionMacro {
     conformingTo protocols: [TypeSyntax],
     in context: some MacroExpansionContext
   ) throws -> [ExtensionDeclSyntax] {
-    let arguments = try MacroArgumentExtractor.extractUnnestedPolymorphicArguments(from: node)
-    let accessLevel = AccessLevelModifier.stringValue(from: declaration)
-
-    let initFromDecoder = UnnestedPolymorphicSyntaxFactory.makeUnnestedInitFromDecoder(
-      from: declaration,
-      nestedKey: arguments.nestedKey,
-      accessLevel: accessLevel
+    try generateExtensionDeclarations(
+      of: node,
+      attachedTo: declaration,
+      providingExtensionsOf: type,
+      conformingTo: protocols,
+      in: context,
+      for: Self.self
     )
-
-    return [
-      try PolymorphicExtensionFactory.makeUnnestedPolymorphicExtension(
-        for: type,
-        identifier: arguments.identifier,
-        protocolType: .decodable,
-        accessLevel: accessLevel,
-        initFromDecoder: initFromDecoder
-      ),
-    ]
   }
 }
