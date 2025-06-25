@@ -1,5 +1,5 @@
 //
-//  MacroArgumentExtractor.swift
+//  PolymorphicMacroArgumentValidator.swift
 //  KarrotCodableKit
 //
 //  Created by Elon on 6/11/25.
@@ -9,18 +9,29 @@
 import SwiftSyntax
 import SwiftSyntaxMacros
 
-enum MacroArgumentExtractor {
+public enum PolymorphicMacroArgumentValidator {
 
-  struct PolymorphicMacroArguments {
-    let identifier: String
+  public struct PolymorphicMacroArguments {
+    public let identifier: String
+
+    public init(identifier: String) {
+      self.identifier = identifier
+    }
   }
 
-  struct UnnestedPolymorphicMacroArguments {
-    let identifier: String
-    let nestedKey: String
+  public struct UnnestedPolymorphicMacroArguments {
+    public let identifier: String
+    public let nestedKey: String
+    public let codingKeyStyle: String?
+
+    public init(identifier: String, nestedKey: String, codingKeyStyle: String?) {
+      self.identifier = identifier
+      self.nestedKey = nestedKey
+      self.codingKeyStyle = codingKeyStyle
+    }
   }
 
-  static func extractPolymorphicArguments(
+  public static func extractPolymorphicArguments(
     from node: AttributeSyntax
   ) throws -> PolymorphicMacroArguments {
     guard
@@ -40,7 +51,7 @@ enum MacroArgumentExtractor {
     return PolymorphicMacroArguments(identifier: identifier)
   }
 
-  static func extractUnnestedPolymorphicArguments(
+  public static func extractUnnestedPolymorphicArguments(
     from node: AttributeSyntax
   ) throws -> UnnestedPolymorphicMacroArguments {
     guard let arguments = node.arguments?.as(LabeledExprListSyntax.self) else {
@@ -67,10 +78,23 @@ enum MacroArgumentExtractor {
       throw CodableKitError.message("Missing required forKey argument.")
     }
 
-    return UnnestedPolymorphicMacroArguments(identifier: identifier, nestedKey: nestedKey)
+    guard !nestedKey.isEmpty else {
+      throw CodableKitError.message(
+        "Invalid nested key: expected a non-empty string."
+      )
+    }
+
+    let codingKeyStyle: String? = SyntaxHelper.findArgument(named: "codingKeyStyle", in: arguments)
+      .flatMap { SyntaxHelper.extractMemberAccess(from: $0) }
+
+    return UnnestedPolymorphicMacroArguments(
+      identifier: identifier,
+      nestedKey: nestedKey,
+      codingKeyStyle: codingKeyStyle
+    )
   }
 
-  static func extractNestedKey(from node: AttributeSyntax) throws -> String {
+  public static func extractNestedKey(from node: AttributeSyntax) throws -> String {
     guard let arguments = node.arguments?.as(LabeledExprListSyntax.self) else {
       throw CodableKitError.message("Missing macro arguments.")
     }
