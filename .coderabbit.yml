@@ -18,6 +18,7 @@ reviews:
     - "!**/*/Packages"
     - "!**/*.lock"
     - "!**/*/.swiftpm"
+    - "!**/.swiftpm/**"
     - "!**/*.resolved"
     - "!**/*.xcframework"
     - "!**/*.xcframework.zip"
@@ -208,7 +209,7 @@ reviews:
         - Assess target dependencies and product configurations
         - Validate macro target setup with SwiftSyntax dependencies
 
-        ## 2. Versioning and Compatibility [HIGH]  
+        ## 2. Versioning and Compatibility [HIGH]
         - Review Swift version requirements for macro functionality
         - Check that SwiftSyntax version range supports target Swift versions
         - Assess backward compatibility implications of changes
