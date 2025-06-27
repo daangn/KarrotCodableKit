@@ -61,11 +61,21 @@ enum CodingKeysSyntaxFactory {
     declaration.memberBlock.members
       .compactMap { member in
         let variableDecl = member.decl.as(VariableDeclSyntax.self)
-        let storedPropertyVariableDecl = variableDecl?.bindings.filter { $0.accessorBlock == nil }
 
+        // Skip static properties
         guard
           let variableDecl,
-          let propertyName = storedPropertyVariableDecl?.first?
+          !variableDecl.modifiers.contains(where: { $0.name.tokenKind == .keyword(.static) })
+        else {
+          return nil
+        }
+
+        let storedPropertyVariableDecl = variableDecl.bindings.filter {
+          $0.accessorBlock == nil
+        }
+
+        guard
+          let propertyName = storedPropertyVariableDecl.first?
             .pattern.as(IdentifierPatternSyntax.self)?
             .identifier.text
         else {

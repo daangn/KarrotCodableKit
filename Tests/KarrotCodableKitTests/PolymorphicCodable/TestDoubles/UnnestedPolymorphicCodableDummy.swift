@@ -9,21 +9,10 @@ import Foundation
 
 import KarrotCodableKit
 
-@PolymorphicCodableStrategyProviding(
-  identifierCodingKey: "type",
-  matchingTypes: [
-    TitleViewItem.self,
-    ImageViewItem.self,
-    EmptyViewItem.self,
-  ]
-)
-protocol ViewItem {}
-
 // MARK: - Codable
 
 struct DummyFeedResponse: Codable {
-  @PolymorphicArrayValue<ViewItemCodableStrategy>
-  var items: [ViewItem]
+  @PolymorphicArrayValue<ViewItemCodableStrategy> var items: [ViewItem]
 }
 
 @UnnestedPolymorphicCodable(
@@ -43,20 +32,99 @@ struct TitleViewItem: ViewItem {
 )
 struct EmptyViewItem: ViewItem {}
 
-// MARK: - Decodable
+@UnnestedPolymorphicCodable(
+  identifier: "SUBTITLE_VIEW_ITEM",
+  forKey: "data"
+)
+struct SubtitleViewItem: ViewItem {
+  let id: String
+  let title: String
 
-struct DummyDecodingFeedResponse: Decodable {
-  @PolymorphicArrayValue<ViewItemCodableStrategy>
-  var items: [ViewItem]
+  @DefaultEmptyString
+  private(set) var subtitle: String
 }
 
-@UnnestedPolymorphicDecodable(
-  identifier: "IMAGE_VIEW_ITEM",
-  forKey: "default",
-  codingKeyStyle: .snakeCase
+@UnnestedPolymorphicCodable(
+  identifier: "OPTIONAL_VIEW_ITEM",
+  forKey: "data"
 )
-struct ImageViewItem: ViewItem {
+struct OptionalViewItem: ViewItem {
   let id: String
-  let imageURL: URL
-  let `class`: String
+  let title: String?
+  let count: Int?
+  let url: URL?
+}
+
+
+// MARK: - Edge Case Test Structs
+
+@UnnestedPolymorphicCodable(
+  identifier: "CONSTANT_PROPERTY_VIEW_ITEM",
+  forKey: "data"
+)
+struct ConstantPropertyViewItem: ViewItem {
+  let id: String
+  let constantString = "defaultValue"
+  let constantInt = 42
+  let title: String?
+}
+
+@UnnestedPolymorphicCodable(
+  identifier: "COMPUTED_PROPERTY_VIEW_ITEM",
+  forKey: "data"
+)
+struct ComputedPropertyViewItem: ViewItem {
+  let id: String
+  let title: String?
+
+  var computedProperty: String {
+    "computed"
+  }
+
+  var getOnlyProperty: Int { 42 }
+}
+
+@UnnestedPolymorphicCodable(
+  identifier: "STATIC_PROPERTY_VIEW_ITEM",
+  forKey: "data"
+)
+struct StaticPropertyViewItem: ViewItem {
+  let id: String
+  let title: String?
+  static let staticConstant = "static"
+  static var staticVariable = 100
+}
+
+@UnnestedPolymorphicCodable(
+  identifier: "FUNCTION_VIEW_ITEM",
+  forKey: "data"
+)
+struct FunctionViewItem: ViewItem {
+  let id: String
+  let title: String?
+
+  func someFunction() -> String {
+    "function"
+  }
+
+  mutating func mutatingFunction() {
+    // do something
+  }
+}
+
+@UnnestedPolymorphicCodable(
+  identifier: "COMPLEX_TYPE_VIEW_ITEM",
+  forKey: "data"
+)
+struct ComplexTypeViewItem: ViewItem {
+  let id: String
+  let tags: [String]
+  let metadata: [String: String]?
+  let nestedStruct: NestedStruct
+  let optionalNestedStruct: NestedStruct?
+}
+
+struct NestedStruct: Codable {
+  let name: String
+  let value: Int
 }

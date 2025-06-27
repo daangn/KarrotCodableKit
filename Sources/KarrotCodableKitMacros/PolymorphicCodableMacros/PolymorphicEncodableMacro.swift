@@ -28,7 +28,7 @@ extension PolymorphicEncodableMacro: ExtensionMacro {
     conformingTo protocols: [TypeSyntax],
     in context: some MacroExpansionContext
   ) throws -> [ExtensionDeclSyntax] {
-    let arguments = try MacroArgumentExtractor.extractPolymorphicArguments(from: node)
+    let arguments = try PolymorphicMacroArgumentValidator.extractPolymorphicArguments(from: node)
     let accessLevel = AccessLevelModifier.stringValue(from: declaration)
 
     return [

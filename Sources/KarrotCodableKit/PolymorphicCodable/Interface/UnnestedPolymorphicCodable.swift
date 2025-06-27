@@ -71,7 +71,7 @@ import Foundation
   named(init),
   named(encode)
 )
-@attached(member, names: named(CodingKeys), named(NestedDataCodingKeys))
+@attached(member, names: named(CodingKeys), named(__NestedDataStruct))
 public macro UnnestedPolymorphicCodable(
   identifier: String,
   forKey nestedKey: String,

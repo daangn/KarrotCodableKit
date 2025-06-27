@@ -9,14 +9,14 @@
 import SwiftSyntax
 import SwiftSyntaxBuilder
 
-enum PolymorphicExtensionFactory {
+public enum PolymorphicExtensionFactory {
 
-  enum PolymorphicProtocolType {
+  public enum PolymorphicProtocolType {
     case codable
     case decodable
     case encodable
 
-    var protocolName: String {
+    public var protocolName: String {
       switch self {
       case .codable: "PolymorphicCodableType"
       case .decodable: "PolymorphicDecodableType"
@@ -25,7 +25,7 @@ enum PolymorphicExtensionFactory {
     }
   }
 
-  static func makeBasicPolymorphicExtension(
+  public static func makeBasicPolymorphicExtension(
     for type: some TypeSyntaxProtocol,
     identifier: String,
     protocolType: PolymorphicProtocolType,
@@ -40,7 +40,7 @@ enum PolymorphicExtensionFactory {
     )
   }
 
-  static func makeUnnestedPolymorphicExtension(
+  public static func makeUnnestedPolymorphicExtension(
     for type: some TypeSyntaxProtocol,
     identifier: String,
     protocolType: PolymorphicProtocolType,

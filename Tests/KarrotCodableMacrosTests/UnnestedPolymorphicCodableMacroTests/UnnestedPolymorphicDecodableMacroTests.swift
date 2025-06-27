@@ -32,20 +32,44 @@ final class UnnestedPolymorphicDecodableMacroTests: XCTestCase {
       struct TitleViewItem: ViewItem {
         let id: String
         let title: String?
+        @CodableKey(name: "uri")
+        let url: URL?
+        var someProperty: String? = "someValue"
+        var intValue: Int
+        var doubleValue = 1.1
+        var computedProperty: String {
+          "computedValue"
+        }
+        static let staticValue = true
       }
       """,
       expandedSource: """
         struct TitleViewItem: ViewItem {
           let id: String
           let title: String?
+          @CodableKey(name: "uri")
+          let url: URL?
+          var someProperty: String? = "someValue"
+          var intValue: Int
+          var doubleValue = 1.1
+          var computedProperty: String {
+            "computedValue"
+          }
+          static let staticValue = true
 
           private enum CodingKeys: String, CodingKey {
             case `data`
           }
 
-          private enum NestedDataCodingKeys: String, CodingKey {
-            case `id`
-            case `title`
+          @CustomDecodable
+          fileprivate struct __NestedDataStruct {
+            let id: String
+            let title: String?
+            @CodableKey(name: "uri")
+            let url: URL?
+            var someProperty: String? = "someValue"
+            var intValue: Int
+            var doubleValue = 1.1
           }
         }
 
@@ -56,13 +80,14 @@ final class UnnestedPolymorphicDecodableMacroTests: XCTestCase {
 
           init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            let dataContainer = try container.nestedContainer(
-              keyedBy: NestedDataCodingKeys.self,
-              forKey: CodingKeys.data
-            )
+            let dataContainer = try container.decode(__NestedDataStruct.self, forKey: CodingKeys.data)
 
-            self.id = try dataContainer.decode(String.self, forKey: NestedDataCodingKeys.id)
-            self.title = try dataContainer.decode(String?.self, forKey: NestedDataCodingKeys.title)
+            self.id = dataContainer.id
+            self.title = dataContainer.title
+            self.url = dataContainer.url
+            self.someProperty = dataContainer.someProperty
+            self.intValue = dataContainer.intValue
+            self.doubleValue = dataContainer.doubleValue
           }
         }
         """,
@@ -80,7 +105,7 @@ final class UnnestedPolymorphicDecodableMacroTests: XCTestCase {
       """
       @UnnestedPolymorphicDecodable(
         identifier: "TITLE_VIEW_ITEM",
-        forKey: "data",
+        forKey: "item",
         codingKeyStyle: .snakeCase
       )
       struct TitleViewItem: ViewItem {
@@ -94,12 +119,13 @@ final class UnnestedPolymorphicDecodableMacroTests: XCTestCase {
           let itemTitle: String?
 
           private enum CodingKeys: String, CodingKey {
-            case `data`
+            case `item`
           }
 
-          private enum NestedDataCodingKeys: String, CodingKey {
-            case `id`
-            case `itemTitle` = "item_title"
+          @CustomDecodable(codingKeyStyle: .snakeCase)
+          fileprivate struct __NestedDataStruct {
+            let id: String
+            let itemTitle: String?
           }
         }
 
@@ -110,13 +136,10 @@ final class UnnestedPolymorphicDecodableMacroTests: XCTestCase {
 
           init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            let dataContainer = try container.nestedContainer(
-              keyedBy: NestedDataCodingKeys.self,
-              forKey: CodingKeys.data
-            )
+            let dataContainer = try container.decode(__NestedDataStruct.self, forKey: CodingKeys.item)
 
-            self.id = try dataContainer.decode(String.self, forKey: NestedDataCodingKeys.id)
-            self.itemTitle = try dataContainer.decode(String?.self, forKey: NestedDataCodingKeys.itemTitle)
+            self.id = dataContainer.id
+            self.itemTitle = dataContainer.itemTitle
           }
         }
         """,
@@ -148,7 +171,8 @@ final class UnnestedPolymorphicDecodableMacroTests: XCTestCase {
             case `some_data`
           }
 
-          private enum NestedDataCodingKeys: CodingKey {
+          @CustomDecodable(codingKeyStyle: .snakeCase)
+          fileprivate struct __NestedDataStruct {
           }
 
         }
@@ -159,10 +183,244 @@ final class UnnestedPolymorphicDecodableMacroTests: XCTestCase {
           }
 
           init(from decoder: any Decoder) throws {
-
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            _ = try container.decode(__NestedDataStruct.self, forKey: CodingKeys.some_data)
           }
         }
         """,
+      macros: testMacros,
+      indentationWidth: .spaces(2)
+    )
+    #else
+    throw XCTSkip("macros are only supported when running tests for the host platform")
+    #endif
+  }
+
+  func testUnnestedPolymorphicDecodableMacroWithBacktickedProperties() throws {
+    #if canImport(KarrotCodableKitMacros)
+    assertMacroExpansion(
+      """
+      @UnnestedPolymorphicDecodable(
+        identifier: "SPECIAL_VIEW_ITEM",
+        forKey: "data"
+      )
+      struct SpecialViewItem: ViewItem {
+        let id: String
+        let `class`: String
+        let `private`: String?
+      }
+      """,
+      expandedSource: """
+        struct SpecialViewItem: ViewItem {
+          let id: String
+          let `class`: String
+          let `private`: String?
+
+          private enum CodingKeys: String, CodingKey {
+            case `data`
+          }
+
+          @CustomDecodable
+          fileprivate struct __NestedDataStruct {
+            let id: String
+            let `class`: String
+            let `private`: String?
+          }
+        }
+
+        extension SpecialViewItem: PolymorphicDecodableType {
+          static var polymorphicIdentifier: String {
+            "SPECIAL_VIEW_ITEM"
+          }
+
+          init(from decoder: any Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            let dataContainer = try container.decode(__NestedDataStruct.self, forKey: CodingKeys.data)
+
+            self.id = dataContainer.id
+            self.`class` = dataContainer.`class`
+            self.`private` = dataContainer.`private`
+          }
+        }
+        """,
+      macros: testMacros,
+      indentationWidth: .spaces(2)
+    )
+    #else
+    throw XCTSkip("macros are only supported when running tests for the host platform")
+    #endif
+  }
+
+  func testUnnestedPolymorphicDecodableMacroAppliedToEnum() throws {
+    #if canImport(KarrotCodableKitMacros)
+    assertMacroExpansion(
+      """
+      @UnnestedPolymorphicDecodable(
+        identifier: "ENUM_ITEM",
+        forKey: "data"
+      )
+      enum SomeEnum {
+        case first
+        case second(String)
+      }
+      """,
+      expandedSource: """
+        enum SomeEnum {
+          case first
+          case second(String)
+        }
+        """,
+      diagnostics: [
+        DiagnosticSpec(
+          message: "`@UnnestedPolymorphicDecodable` cannot be applied to enum types. Use `@PolymorphicEnumDecodable` instead.",
+          line: 1,
+          column: 1
+        ),
+        DiagnosticSpec(
+          message: "`@UnnestedPolymorphicDecodable` cannot be applied to enum types. Use `@PolymorphicEnumDecodable` instead.",
+          line: 1,
+          column: 1
+        ),
+      ],
+      macros: testMacros,
+      indentationWidth: .spaces(2)
+    )
+    #else
+    throw XCTSkip("macros are only supported when running tests for the host platform")
+    #endif
+  }
+
+  func testUnnestedPolymorphicDecodableMacroWithEmptyIdentifier() throws {
+    #if canImport(KarrotCodableKitMacros)
+    assertMacroExpansion(
+      """
+      @UnnestedPolymorphicDecodable(
+        identifier: "",
+        forKey: "data"
+      )
+      struct TestItem: ViewItem {
+        let id: String
+      }
+      """,
+      expandedSource: """
+        struct TestItem: ViewItem {
+          let id: String
+        }
+        """,
+      diagnostics: [
+        DiagnosticSpec(
+          message: "Invalid polymorphic identifier: expected a non-empty string.",
+          line: 1,
+          column: 1
+        ),
+        DiagnosticSpec(
+          message: "Invalid polymorphic identifier: expected a non-empty string.",
+          line: 1,
+          column: 1
+        ),
+      ],
+      macros: testMacros,
+      indentationWidth: .spaces(2)
+    )
+    #else
+    throw XCTSkip("macros are only supported when running tests for the host platform")
+    #endif
+  }
+
+  func testUnnestedPolymorphicDecodableMacroWithConstantInitializedProperties() throws {
+    #if canImport(KarrotCodableKitMacros)
+    assertMacroExpansion(
+      """
+      @UnnestedPolymorphicDecodable(
+        identifier: "CONST_ITEM",
+        forKey: "data"
+      )
+      struct ConstantItem: ViewItem {
+        let id: String
+        let constantWithValue: String = "defaultValue"
+        var mutableProperty: String = "initialValue"
+      }
+      """,
+      expandedSource: """
+        struct ConstantItem: ViewItem {
+          let id: String
+          let constantWithValue: String = "defaultValue"
+          var mutableProperty: String = "initialValue"
+
+          private enum CodingKeys: String, CodingKey {
+            case `data`
+          }
+
+          @CustomDecodable
+          fileprivate struct __NestedDataStruct {
+            let id: String
+            let constantWithValue: String = "defaultValue"
+            var mutableProperty: String = "initialValue"
+          }
+        }
+
+        extension ConstantItem: PolymorphicDecodableType {
+          static var polymorphicIdentifier: String {
+            "CONST_ITEM"
+          }
+
+          init(from decoder: any Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            let dataContainer = try container.decode(__NestedDataStruct.self, forKey: CodingKeys.data)
+
+            self.id = dataContainer.id
+            self.mutableProperty = dataContainer.mutableProperty
+          }
+        }
+        """,
+      diagnostics: [
+        DiagnosticSpec(
+          message: "Immutable property will not be decoded because it is declared with an initial value which cannot be overwritten",
+          line: 7,
+          column: 3,
+          severity: .warning,
+          fixIts: [
+            FixItSpec(message: "Make the property mutable instead"),
+          ]
+        ),
+      ],
+      macros: testMacros,
+      indentationWidth: .spaces(2)
+    )
+    #else
+    throw XCTSkip("macros are only supported when running tests for the host platform")
+    #endif
+  }
+
+  func testUnnestedPolymorphicDecodableMacroWithEmptyKey() throws {
+    #if canImport(KarrotCodableKitMacros)
+    assertMacroExpansion(
+      """
+      @UnnestedPolymorphicDecodable(
+        identifier: "VIEW_ITEM",
+        forKey: ""
+      )
+      struct TestItem: ViewItem {
+        let id: String
+      }
+      """,
+      expandedSource: """
+        struct TestItem: ViewItem {
+          let id: String
+        }
+        """,
+      diagnostics: [
+        DiagnosticSpec(
+          message: "Invalid nested key: expected a non-empty string.",
+          line: 1,
+          column: 1
+        ),
+        DiagnosticSpec(
+          message: "Invalid nested key: expected a non-empty string.",
+          line: 1,
+          column: 1
+        ),
+      ],
       macros: testMacros,
       indentationWidth: .spaces(2)
     )

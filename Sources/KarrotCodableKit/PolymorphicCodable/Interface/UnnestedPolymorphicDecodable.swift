@@ -70,7 +70,7 @@ import Foundation
   names: named(polymorphicIdentifier),
   named(init)
 )
-@attached(member, names: named(CodingKeys), named(NestedDataCodingKeys))
+@attached(member, names: named(CodingKeys), named(__NestedDataStruct))
 public macro UnnestedPolymorphicDecodable(
   identifier: String,
   forKey nestedKey: String,
