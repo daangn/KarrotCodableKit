@@ -23,53 +23,53 @@ enum CalloutBadge {
 @CustomCodable(codingKeyStyle: .snakeCase)
 struct DummyResponse {
 
-  @PolymorphicValue<DummyNoticeCodableStrategy>
+  @DummyNotice.Polymorphic
   var notice: DummyNotice
 
-  @PolymorphicArrayValue<DummyNoticeCodableStrategy>
+  @DummyNotice.PolymorphicArray
   var notices: [DummyNotice]
 }
 
 @CustomCodable(codingKeyStyle: .snakeCase)
 struct LossyOptionalDummyResponse {
 
-  @LossyOptionalPolymorphicValue<DummyNoticeCodableStrategy>
+  @DummyNotice.LossyOptionalPolymorphic
   var notice1: DummyNotice?
 
-  @LossyOptionalPolymorphicValue<DummyNoticeCodableStrategy>
+  @DummyNotice.LossyOptionalPolymorphic
   var notice2: DummyNotice?
 }
 
 @CustomCodable(codingKeyStyle: .snakeCase)
 struct OptionalDummyResponse {
 
-  @OptionalPolymorphicValue<DummyNoticeCodableStrategy>
+  @DummyNotice.OptionalPolymorphic
   var notice1: DummyNotice?
 
-  @OptionalPolymorphicValue<DummyNoticeCodableStrategy>
+  @DummyNotice.OptionalPolymorphic
   var notice2: DummyNotice?
 
-  @OptionalPolymorphicValue<DummyNoticeCodableStrategy>
+  @DummyNotice.OptionalPolymorphic
   var notice3: DummyNotice?
 }
 
 @CustomCodable(codingKeyStyle: .snakeCase)
 struct OptionalArrayDummyResponse {
 
-  @DefaultEmptyPolymorphicArrayValue<DummyNoticeCodableStrategy>
+  @DummyNotice.DefaultEmptyPolymorphicArray
   var notices1: [DummyNotice]
 
-  @DefaultEmptyPolymorphicArrayValue<DummyNoticeCodableStrategy>
+  @DummyNotice.DefaultEmptyPolymorphicArray
   var notices2: [DummyNotice]
 }
 
 @CustomCodable(codingKeyStyle: .snakeCase)
 struct OptionalLossyArrayDummyResponse {
 
-  @DefaultEmptyPolymorphicLossyArrayValue<DummyNoticeCodableStrategy>
+  @DummyNotice.PolymorphicLossyArray
   var notices1: [DummyNotice]
 
-  @DefaultEmptyPolymorphicLossyArrayValue<DummyNoticeCodableStrategy>
+  @DummyNotice.PolymorphicLossyArray
   var notices2: [DummyNotice]
 }
 

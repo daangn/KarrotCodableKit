@@ -79,3 +79,37 @@ public struct PolymorphicCodableStrategyProvidingMacro: PeerMacro {
     return protocolDecl.accessLevel.rawValue + " "
   }
 }
+
+extension PolymorphicCodableStrategyProvidingMacro: ExtensionMacro {
+  public static func expansion(
+    of node: AttributeSyntax,
+    attachedTo declaration: some DeclGroupSyntax,
+    providingExtensionsOf type: some TypeSyntaxProtocol,
+    conformingTo protocols: [TypeSyntax],
+    in context: some MacroExpansionContext
+  ) throws -> [ExtensionDeclSyntax] {
+    guard let protocolDecl = declaration.as(ProtocolDeclSyntax.self) else {
+      throw CodableKitError.message("Macro must be attached to a protocol.")
+    }
+
+    let accessModifier = accessModifier(from: protocolDecl)
+    let identifier = protocolDecl.name.text
+    let strategyStructName = "\(identifier)CodableStrategy"
+
+    return [
+      try ExtensionDeclSyntax(
+        """
+        extension \(raw: identifier) {
+          \(raw: accessModifier)typealias Polymorphic = PolymorphicValue<\(raw: strategyStructName)>
+          \(raw: accessModifier)typealias OptionalPolymorphic = OptionalPolymorphicValue<\(raw: strategyStructName)>
+          \(raw: accessModifier)typealias LossyOptionalPolymorphic = LossyOptionalPolymorphicValue<\(raw: strategyStructName)>
+          \(raw: accessModifier)typealias PolymorphicArray = PolymorphicArrayValue<\(raw: strategyStructName)>
+          \(raw: accessModifier)typealias PolymorphicLossyArray = PolymorphicLossyArrayValue<\(raw: strategyStructName)>
+          \(raw: accessModifier)typealias DefaultEmptyPolymorphicArray = DefaultEmptyPolymorphicArrayValue<\(raw: strategyStructName)>
+        }
+        """
+      ),
+    ]
+  }
+}
+
