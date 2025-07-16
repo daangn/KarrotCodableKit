@@ -20,7 +20,7 @@ extension KeyedDecodingContainer {
     _ type: PolymorphicLossyArrayValue<T>.Type,
     forKey key: Self.Key
   ) throws -> PolymorphicLossyArrayValue<T> where T.ExpectedType: Decodable {
-    let optionalAarryValue = try decodeIfPresent([T.ExpectedType].self, forKey: key)
-    return PolymorphicLossyArrayValue(wrappedValue: optionalAarryValue ?? [])
+    let optionalArrayValue = try decodeIfPresent([T.ExpectedType].self, forKey: key)
+    return PolymorphicLossyArrayValue(wrappedValue: optionalArrayValue ?? [])
   }
 }
