@@ -33,13 +33,13 @@ struct DummyDecodableResponse {
 @CustomDecodable(codingKeyStyle: .snakeCase)
 struct OptionalDummyDecodableResponse {
 
-  @DefaultNilPolymorphicValue<DummyDecodableNoticeCodableStrategy>
+  @LossyOptionalPolymorphicValue<DummyDecodableNoticeCodableStrategy>
   var notice1: DummyDecodableNotice?
 
-  @DefaultNilPolymorphicValue<DummyDecodableNoticeCodableStrategy>
+  @LossyOptionalPolymorphicValue<DummyDecodableNoticeCodableStrategy>
   var notice2: DummyDecodableNotice?
 
-  @DefaultNilPolymorphicValue<DummyDecodableNoticeCodableStrategy>
+  @LossyOptionalPolymorphicValue<DummyDecodableNoticeCodableStrategy>
   var notice3: DummyDecodableNotice?
 }
 

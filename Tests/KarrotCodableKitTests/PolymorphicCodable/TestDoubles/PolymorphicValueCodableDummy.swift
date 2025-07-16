@@ -33,10 +33,10 @@ struct DummyResponse {
 @CustomCodable(codingKeyStyle: .snakeCase)
 struct OptionalDummyResponse {
 
-  @DefaultNilPolymorphicValue<DummyNoticeCodableStrategy>
+  @LossyOptionalPolymorphicValue<DummyNoticeCodableStrategy>
   var notice1: DummyNotice?
 
-  @DefaultNilPolymorphicValue<DummyNoticeCodableStrategy>
+  @LossyOptionalPolymorphicValue<DummyNoticeCodableStrategy>
   var notice2: DummyNotice?
 }
 

@@ -16,7 +16,6 @@ import XCTest
 import KarrotCodableKitMacros
 #endif
 
-
 final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
 
   #if canImport(KarrotCodableKitMacros)
@@ -161,7 +160,7 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
           message: "Macro must be attached to a protocol.",
           line: 1,
           column: 1
-        )
+        ),
       ],
       macros: testMacros,
       indentationWidth: .spaces(2)
@@ -199,7 +198,7 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
           message: "Invalid identifierCodingKey: expected a non-empty string.",
           line: 1,
           column: 1
-        )
+        ),
       ],
       macros: testMacros,
       indentationWidth: .spaces(2)

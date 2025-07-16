@@ -1,5 +1,5 @@
 //
-//  DefaultNilPolymorphicValueTests.swift
+//  LossyOptionalPolymorphicValueTests.swift
 //
 //
 //  Created by Elon on 10/17/24.
@@ -10,9 +10,9 @@ import XCTest
 
 import KarrotCodableKit
 
-class DefaultNilPolymorphicValueTests: XCTestCase {
+final class LossyOptionalPolymorphicValueTests: XCTestCase {
 
-  func testEncodingDefaultNilPolymorphicValue() throws {
+  func testEncodingLossyOptionalPolymorphicValue() throws {
     // given
     let response = OptionalDummyResponse(
       notice1: DummyCallout(
@@ -44,7 +44,7 @@ class DefaultNilPolymorphicValueTests: XCTestCase {
     XCTAssertEqual(jsonString, expectResult)
   }
 
-  func testDecodingDefaultNilPolymorphicValue() throws {
+  func testDecodingLossyOptionalPolymorphicValue() throws {
     // given
     let jsonData = #"""
     {
@@ -64,7 +64,7 @@ class DefaultNilPolymorphicValueTests: XCTestCase {
     XCTAssertEqual(result.notice2?.type, .callout)
   }
 
-  func testDecodingEncodingDefaultNilPolymorphicValue() throws {
+  func testDecodingEncodingLossyOptionalPolymorphicValue() throws {
     // given
     let json = #"""
     {
@@ -97,7 +97,7 @@ class DefaultNilPolymorphicValueTests: XCTestCase {
   }
 }
 
-extension DefaultNilPolymorphicValueTests {
+extension LossyOptionalPolymorphicValueTests {
   func testDecodingOnlyValue() throws {
     // given
     let jsonData = #"""
@@ -123,4 +123,3 @@ extension DefaultNilPolymorphicValueTests {
     XCTAssertNil(result.notice3)
   }
 }
-
