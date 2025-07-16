@@ -23,7 +23,7 @@ import Foundation
 ///
 @propertyWrapper
 public struct OptionalPolymorphicValue<PolymorphicType: PolymorphicCodableStrategy> {
-  /// The decoded optional value of the expected polymorphic type. Defaults to `nil` on decoding failure.
+  /// The decoded optional value of the expected polymorphic type.
   public var wrappedValue: PolymorphicType.ExpectedType?
 
   public init(wrappedValue: PolymorphicType.ExpectedType?) {

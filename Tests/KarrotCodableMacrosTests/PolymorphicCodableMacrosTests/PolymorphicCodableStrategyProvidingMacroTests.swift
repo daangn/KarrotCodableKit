@@ -177,11 +177,6 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
           line: 1,
           column: 1
         ),
-        DiagnosticSpec(
-          message: "Macro must be attached to a protocol.",
-          line: 1,
-          column: 1
-        ),
       ],
       macros: testMacros,
       indentationWidth: .spaces(2)
