@@ -21,10 +21,10 @@ import Foundation
 /// - Encodes the `wrappedValue` array. Each element is wrapped using `PolymorphicValue<PolymorphicType>` before being added to the encoded array.
 ///
 /// Use this wrapper when you expect an array that should either be present and entirely valid (according to the strategy) or completely absent/null, in which case an empty array is acceptable.
-/// If you need to gracefully handle individual invalid elements within the array, use `@DefaultEmptyPolymorphicLossyArrayValue` instead.
+/// If you need to gracefully handle individual invalid elements within the array, use `@PolymorphicLossyArrayValue` instead.
 ///
 /// **Note:** If you need to decode JSON arrays that may contain some invalid elements and want to ignore just those elements
-/// while keeping the valid ones, use `@DefaultEmptyPolymorphicLossyArrayValue` instead of this wrapper.
+/// while keeping the valid ones, use `@PolymorphicLossyArrayValue` instead of this wrapper.
 ///
 @propertyWrapper
 public struct DefaultEmptyPolymorphicArrayValue<PolymorphicType: PolymorphicCodableStrategy> {

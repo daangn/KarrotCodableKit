@@ -1,5 +1,5 @@
 //
-//  DefaultEmptyPolymorphicLossyArrayValueTests.swift
+//  PolymorphicLossyArrayValueTests.swift
 //
 //
 //  Created by Elon on 10/18/24.
@@ -10,7 +10,7 @@ import XCTest
 
 import KarrotCodableKit
 
-class DefaultEmptyPolymorphicLossyArrayValueTests: XCTestCase {
+class PolymorphicLossyArrayValueTests: XCTestCase {
 
   func testEncodingDefaultEmptyPolymorphicArrayValue() throws {
     // given
@@ -111,7 +111,7 @@ class DefaultEmptyPolymorphicLossyArrayValueTests: XCTestCase {
   }
 }
 
-extension DefaultEmptyPolymorphicLossyArrayValueTests {
+extension PolymorphicLossyArrayValueTests {
   func testDecodingFailElementInDefaultEmptyPolymorphicArrayValue() throws {
     // given: An array where one element (notice) is missing the required 'description' parameter.
     let jsonData = #"""
@@ -139,7 +139,7 @@ extension DefaultEmptyPolymorphicLossyArrayValueTests {
   }
 }
 
-extension DefaultEmptyPolymorphicLossyArrayValueTests {
+extension PolymorphicLossyArrayValueTests {
   func testDecodingOnlyValue() throws {
     // given
     let jsonData = #"""

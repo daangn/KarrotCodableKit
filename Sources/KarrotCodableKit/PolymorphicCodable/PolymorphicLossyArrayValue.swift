@@ -1,5 +1,5 @@
 //
-//  DefaultEmptyPolymorphicLossyArrayValue.swift
+//  PolymorphicLossyArrayValue.swift
 //  KarrotCodableKit
 //
 //  Created by Elon on 10/18/24.
@@ -7,6 +7,10 @@
 //
 
 import Foundation
+
+@available(*, deprecated, renamed: "PolymorphicLossyArrayValue")
+public typealias DefaultEmptyPolymorphicLossyArrayValue<PolymorphicType: PolymorphicCodableStrategy> =
+PolymorphicLossyArrayValue<PolymorphicType>
 
 /// A property wrapper that decodes an array of polymorphic objects with lossy behavior for individual elements,
 /// and defaults to an empty array `[]` if the array key is missing, the value is `null`, or not a valid JSON array.
@@ -32,7 +36,7 @@ import Foundation
 /// even when they contain elements that don't conform to your expected structure or type.
 ///
 @propertyWrapper
-public struct DefaultEmptyPolymorphicLossyArrayValue<PolymorphicType: PolymorphicCodableStrategy> {
+public struct PolymorphicLossyArrayValue<PolymorphicType: PolymorphicCodableStrategy> {
   /// The decoded array containing only the successfully decoded polymorphic elements. Defaults to an empty array `[]` if the array key is missing or the value is not an array.
   public var wrappedValue: [PolymorphicType.ExpectedType]
 
@@ -41,7 +45,7 @@ public struct DefaultEmptyPolymorphicLossyArrayValue<PolymorphicType: Polymorphi
   }
 }
 
-extension DefaultEmptyPolymorphicLossyArrayValue: Decodable {
+extension PolymorphicLossyArrayValue: Decodable {
   private struct AnyDecodableValue: Decodable {}
 
   public init(from decoder: Decoder) throws {
@@ -53,7 +57,7 @@ extension DefaultEmptyPolymorphicLossyArrayValue: Decodable {
         let value = try container.decode(PolymorphicValue<PolymorphicType>.self).wrappedValue
         elements.append(value)
       } catch {
-        print("`DefaultEmptyPolymorphicLossyArrayValue` decode catch error: \(error)")
+        print("`PolymorphicLossyArrayValue` decode catch error: \(error)")
 
         // Decoding processing to prevent infinite loops if decoding fails.
         _ = try? container.decode(AnyDecodableValue.self)
@@ -64,7 +68,7 @@ extension DefaultEmptyPolymorphicLossyArrayValue: Decodable {
   }
 }
 
-extension DefaultEmptyPolymorphicLossyArrayValue: Encodable {
+extension PolymorphicLossyArrayValue: Encodable {
   public func encode(to encoder: Encoder) throws {
     let polymorphicValues = wrappedValue.map {
       PolymorphicValue<PolymorphicType>(wrappedValue: $0)
@@ -73,6 +77,6 @@ extension DefaultEmptyPolymorphicLossyArrayValue: Encodable {
   }
 }
 
-extension DefaultEmptyPolymorphicLossyArrayValue: Equatable where PolymorphicType.ExpectedType: Equatable {}
-extension DefaultEmptyPolymorphicLossyArrayValue: Hashable where PolymorphicType.ExpectedType: Hashable {}
-extension DefaultEmptyPolymorphicLossyArrayValue: Sendable where PolymorphicType.ExpectedType: Sendable {}
+extension PolymorphicLossyArrayValue: Equatable where PolymorphicType.ExpectedType: Equatable {}
+extension PolymorphicLossyArrayValue: Hashable where PolymorphicType.ExpectedType: Hashable {}
+extension PolymorphicLossyArrayValue: Sendable where PolymorphicType.ExpectedType: Sendable {}
