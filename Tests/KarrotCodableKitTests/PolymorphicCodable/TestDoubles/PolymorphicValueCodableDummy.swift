@@ -31,13 +31,26 @@ struct DummyResponse {
 }
 
 @CustomCodable(codingKeyStyle: .snakeCase)
-struct OptionalDummyResponse {
+struct LossyOptionalDummyResponse {
 
   @LossyOptionalPolymorphicValue<DummyNoticeCodableStrategy>
   var notice1: DummyNotice?
 
   @LossyOptionalPolymorphicValue<DummyNoticeCodableStrategy>
   var notice2: DummyNotice?
+}
+
+@CustomCodable(codingKeyStyle: .snakeCase)
+struct OptionalDummyResponse {
+
+  @OptionalPolymorphicValue<DummyNoticeCodableStrategy>
+  var notice1: DummyNotice?
+
+  @OptionalPolymorphicValue<DummyNoticeCodableStrategy>
+  var notice2: DummyNotice?
+
+  @OptionalPolymorphicValue<DummyNoticeCodableStrategy>
+  var notice3: DummyNotice?
 }
 
 @CustomCodable(codingKeyStyle: .snakeCase)

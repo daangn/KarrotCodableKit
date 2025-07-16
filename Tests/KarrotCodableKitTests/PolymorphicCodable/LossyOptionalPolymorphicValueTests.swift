@@ -14,7 +14,7 @@ final class LossyOptionalPolymorphicValueTests: XCTestCase {
 
   func testEncodingLossyOptionalPolymorphicValue() throws {
     // given
-    let response = OptionalDummyResponse(
+    let response = LossyOptionalDummyResponse(
       notice1: DummyCallout(
         type: .callout,
         title: nil,
@@ -57,7 +57,7 @@ final class LossyOptionalPolymorphicValueTests: XCTestCase {
     """#
 
     // when
-    let result = try JSONDecoder().decode(OptionalDummyResponse.self, from: Data(jsonData.utf8))
+    let result = try JSONDecoder().decode(LossyOptionalDummyResponse.self, from: Data(jsonData.utf8))
 
     // then
     XCTAssertNil(result.notice1)
@@ -74,7 +74,7 @@ final class LossyOptionalPolymorphicValueTests: XCTestCase {
     """#
 
     // when
-    let result = try JSONDecoder().decode(OptionalDummyResponse.self, from: Data(json.utf8))
+    let result = try JSONDecoder().decode(LossyOptionalDummyResponse.self, from: Data(json.utf8))
 
     // then
     XCTAssertNil(result.notice1)
