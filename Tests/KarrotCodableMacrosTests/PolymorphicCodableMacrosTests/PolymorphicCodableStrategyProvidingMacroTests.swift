@@ -16,7 +16,6 @@ import XCTest
 import KarrotCodableKitMacros
 #endif
 
-
 final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
 
   #if canImport(KarrotCodableKitMacros)
@@ -71,6 +70,15 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
             )
           }
         }
+
+        extension Notice {
+          public typealias Polymorphic = PolymorphicValue<NoticeCodableStrategy>
+          public typealias OptionalPolymorphic = OptionalPolymorphicValue<NoticeCodableStrategy>
+          public typealias LossyOptionalPolymorphic = LossyOptionalPolymorphicValue<NoticeCodableStrategy>
+          public typealias PolymorphicArray = PolymorphicArrayValue<NoticeCodableStrategy>
+          public typealias PolymorphicLossyArray = PolymorphicLossyArrayValue<NoticeCodableStrategy>
+          public typealias DefaultEmptyPolymorphicArray = DefaultEmptyPolymorphicArrayValue<NoticeCodableStrategy>
+        }
         """,
       macros: testMacros,
       indentationWidth: .spaces(2)
@@ -97,7 +105,6 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
       }
       """,
       expandedSource: """
-
         public protocol Notice: Codable {
           var type: String { get }
           var title: String? { get }
@@ -124,6 +131,15 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
             )
           }
         }
+        
+        extension Notice {
+          public typealias Polymorphic = PolymorphicValue<NoticeCodableStrategy>
+          public typealias OptionalPolymorphic = OptionalPolymorphicValue<NoticeCodableStrategy>
+          public typealias LossyOptionalPolymorphic = LossyOptionalPolymorphicValue<NoticeCodableStrategy>
+          public typealias PolymorphicArray = PolymorphicArrayValue<NoticeCodableStrategy>
+          public typealias PolymorphicLossyArray = PolymorphicLossyArrayValue<NoticeCodableStrategy>
+          public typealias DefaultEmptyPolymorphicArray = DefaultEmptyPolymorphicArrayValue<NoticeCodableStrategy>
+        }
         """,
       macros: testMacros,
       indentationWidth: .spaces(2)
@@ -149,7 +165,6 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
       }
       """,
       expandedSource: """
-
         struct Notice: Codable {
           var type: String
           var title: String?
@@ -161,7 +176,7 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
           message: "Macro must be attached to a protocol.",
           line: 1,
           column: 1
-        )
+        ),
       ],
       macros: testMacros,
       indentationWidth: .spaces(2)
@@ -187,11 +202,19 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
       }
       """,
       expandedSource: """
-
         protocol Notice: Codable {
           var type: String
           var title: String?
           var description: String
+        }
+
+        extension Notice {
+          typealias Polymorphic = PolymorphicValue<NoticeCodableStrategy>
+          typealias OptionalPolymorphic = OptionalPolymorphicValue<NoticeCodableStrategy>
+          typealias LossyOptionalPolymorphic = LossyOptionalPolymorphicValue<NoticeCodableStrategy>
+          typealias PolymorphicArray = PolymorphicArrayValue<NoticeCodableStrategy>
+          typealias PolymorphicLossyArray = PolymorphicLossyArrayValue<NoticeCodableStrategy>
+          typealias DefaultEmptyPolymorphicArray = DefaultEmptyPolymorphicArrayValue<NoticeCodableStrategy>
         }
         """,
       diagnostics: [
@@ -199,7 +222,7 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
           message: "Invalid identifierCodingKey: expected a non-empty string.",
           line: 1,
           column: 1
-        )
+        ),
       ],
       macros: testMacros,
       indentationWidth: .spaces(2)

@@ -1,5 +1,5 @@
 //
-//  DefaultNilPolymorphicValueTests.swift
+//  LossyOptionalPolymorphicValueTests.swift
 //
 //
 //  Created by Elon on 10/17/24.
@@ -10,11 +10,11 @@ import XCTest
 
 import KarrotCodableKit
 
-class DefaultNilPolymorphicValueTests: XCTestCase {
+final class LossyOptionalPolymorphicValueTests: XCTestCase {
 
-  func testEncodingDefaultNilPolymorphicValue() throws {
+  func testEncodingLossyOptionalPolymorphicValue() throws {
     // given
-    let response = OptionalDummyResponse(
+    let response = LossyOptionalDummyResponse(
       notice1: DummyCallout(
         type: .callout,
         title: nil,
@@ -44,7 +44,7 @@ class DefaultNilPolymorphicValueTests: XCTestCase {
     XCTAssertEqual(jsonString, expectResult)
   }
 
-  func testDecodingDefaultNilPolymorphicValue() throws {
+  func testDecodingLossyOptionalPolymorphicValue() throws {
     // given
     let jsonData = #"""
     {
@@ -57,14 +57,14 @@ class DefaultNilPolymorphicValueTests: XCTestCase {
     """#
 
     // when
-    let result = try JSONDecoder().decode(OptionalDummyResponse.self, from: Data(jsonData.utf8))
+    let result = try JSONDecoder().decode(LossyOptionalDummyResponse.self, from: Data(jsonData.utf8))
 
     // then
     XCTAssertNil(result.notice1)
     XCTAssertEqual(result.notice2?.type, .callout)
   }
 
-  func testDecodingEncodingDefaultNilPolymorphicValue() throws {
+  func testDecodingEncodingLossyOptionalPolymorphicValue() throws {
     // given
     let json = #"""
     {
@@ -74,7 +74,7 @@ class DefaultNilPolymorphicValueTests: XCTestCase {
     """#
 
     // when
-    let result = try JSONDecoder().decode(OptionalDummyResponse.self, from: Data(json.utf8))
+    let result = try JSONDecoder().decode(LossyOptionalDummyResponse.self, from: Data(json.utf8))
 
     // then
     XCTAssertNil(result.notice1)
@@ -97,7 +97,7 @@ class DefaultNilPolymorphicValueTests: XCTestCase {
   }
 }
 
-extension DefaultNilPolymorphicValueTests {
+extension LossyOptionalPolymorphicValueTests {
   func testDecodingOnlyValue() throws {
     // given
     let jsonData = #"""
@@ -123,4 +123,3 @@ extension DefaultNilPolymorphicValueTests {
     XCTAssertNil(result.notice3)
   }
 }
-

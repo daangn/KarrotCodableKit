@@ -12,7 +12,7 @@ import KarrotCodableKit
 // MARK: - Decodable
 
 struct DummyDecodingFeedResponse: Decodable {
-  @PolymorphicArrayValue<ViewItemCodableStrategy> var items: [ViewItem]
+  @ViewItem.PolymorphicArray var items: [ViewItem]
 }
 
 @UnnestedPolymorphicDecodable(

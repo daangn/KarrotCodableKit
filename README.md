@@ -5,6 +5,8 @@
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fdaangn%2FKarrotCodableKit%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/daangn/KarrotCodableKit)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fdaangn%2FKarrotCodableKit%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/daangn/KarrotCodableKit)
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/daangn/KarrotCodableKit)
+
 KarrotCodableKit is a library that extends Swift's Codable protocol to provide more powerful and flexible data encoding and decoding capabilities. It helps handle complex JSON structures and enables type-safe transformations for various data formats.
 
 This library includes the following key features:
@@ -16,7 +18,7 @@ This library includes the following key features:
 
 KarrotCodableKit simplifies the conversion of models from various data sources such as network responses, local storage, and enables developers to reduce development time and improve code quality.
 
-See the [documentation](https://swiftpackageindex.com/daangn/KarrotCodableKit/main/documentation/KarrotCodableKit) for more details.
+See the [documentation](https://swiftpackageindex.com/daangn/KarrotCodableKit/main/documentation/KarrotCodableKit) for more details or [Ask DeepWiki](https://deepwiki.com/daangn/KarrotCodableKit).
 
 ## Installation
 
@@ -140,7 +142,7 @@ The following example demonstrates how to decode dynamic JSON content where the 
     "description": "Welcome to Karrot"
   },
   {
-    "type": "IMAGE_VIEW_ITEM_V2",
+    "type": "IMAGE_VIEW_ITEM",
     "id": "acf5644d-dd46-46f4-a497-e0ea3eef23d1",
     "title": "Karrot",
     "banner_image_url": "https://example.com/images/banner2.jpg"
@@ -151,6 +153,23 @@ The following example demonstrates how to decode dynamic JSON content where the 
 `PolymorphicCodable` enables you to decode dynamic JSON structures where the concrete type is determined by a type identifier field. The library handles this dynamic type resolution automatically during decoding:
 
 ```swift
+@CustomCodable
+struct APIResponse {
+  @ViewItem.Polymorphic
+  var viewItem: ViewItem
+
+  @ViewItem.OptionalPolymorphic
+  var optionalViewItem: ViewItem?
+
+  @ViewItem.PolymorphicArray
+  var viewItems: [ViewItem]
+
+  @ViewItem.PolymorphicLossyArray
+  var lossyViewItems: [ViewItem]
+}
+
+// MARK: - protocol
+
 @PolymorphicCodableStrategyProviding(
   identifierCodingKey: "type",
   matchingTypes: [
@@ -162,6 +181,8 @@ The following example demonstrates how to decode dynamic JSON content where the 
 protocol ViewItem: Codable {
   var id: String { get }
 }
+
+// MARK: - items
 
 @PolymorphicCodable(
   identifier: "IMAGE_VIEW_ITEM",

@@ -14,7 +14,7 @@ import Foundation
 /// typically by inspecting a type identifier field in the payload and dispatching to the appropriate concrete type.
 ///
 /// This protocol is used by property wrappers such as `@PolymorphicValue`, `@PolymorphicArrayValue`,
-/// `@DefaultNilPolymorphicValue`, and others to delegate the actual decoding and encoding logic.
+/// `@LossyOptionalPolymorphicValue`, and others to delegate the actual decoding and encoding logic.
 ///
 /// - `ExpectedType`: The type of value that will be produced by this strategy (e.g., a protocol or base class).
 /// - `polymorphicMetaCodingKey`: The coding key used to locate the type identifier in the encoded data.
@@ -72,4 +72,3 @@ public protocol PolymorphicCodableStrategy {
   static var polymorphicMetaCodingKey: CodingKey { get }
   static func decode(from decoder: Decoder) throws -> ExpectedType
 }
-

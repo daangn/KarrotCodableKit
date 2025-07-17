@@ -23,49 +23,49 @@ enum DecodableCalloutBadge {
 @CustomDecodable(codingKeyStyle: .snakeCase)
 struct DummyDecodableResponse {
 
-  @PolymorphicValue<DummyDecodableNoticeCodableStrategy>
+  @DummyDecodableNotice.Polymorphic
   var notice: DummyDecodableNotice
 
-  @PolymorphicArrayValue<DummyDecodableNoticeCodableStrategy>
+  @DummyDecodableNotice.PolymorphicArray
   var notices: [DummyDecodableNotice]
 }
 
 @CustomDecodable(codingKeyStyle: .snakeCase)
 struct OptionalDummyDecodableResponse {
 
-  @DefaultNilPolymorphicValue<DummyDecodableNoticeCodableStrategy>
+  @DummyDecodableNotice.LossyOptionalPolymorphic
   var notice1: DummyDecodableNotice?
 
-  @DefaultNilPolymorphicValue<DummyDecodableNoticeCodableStrategy>
+  @DummyDecodableNotice.LossyOptionalPolymorphic
   var notice2: DummyDecodableNotice?
 
-  @DefaultNilPolymorphicValue<DummyDecodableNoticeCodableStrategy>
+  @DummyDecodableNotice.LossyOptionalPolymorphic
   var notice3: DummyDecodableNotice?
 }
 
 @CustomDecodable(codingKeyStyle: .snakeCase)
 struct OptionalAarrayDummyDecodableResponse {
 
-  @DefaultEmptyPolymorphicArrayValue<DummyDecodableNoticeCodableStrategy>
+  @DummyDecodableNotice.DefaultEmptyPolymorphicArray
   var notices1: [DummyDecodableNotice]
 
-  @DefaultEmptyPolymorphicArrayValue<DummyDecodableNoticeCodableStrategy>
+  @DummyDecodableNotice.DefaultEmptyPolymorphicArray
   var notices2: [DummyDecodableNotice]
 
-  @DefaultEmptyPolymorphicArrayValue<DummyDecodableNoticeCodableStrategy>
+  @DummyDecodableNotice.DefaultEmptyPolymorphicArray
   var notices3: [DummyDecodableNotice]
 }
 
 @CustomDecodable(codingKeyStyle: .snakeCase)
 struct OptionalLossyAarrayDummyDecodableResponse {
 
-  @DefaultEmptyPolymorphicLossyArrayValue<DummyDecodableNoticeCodableStrategy>
+  @DummyDecodableNotice.PolymorphicLossyArray
   var notices1: [DummyDecodableNotice]
 
-  @DefaultEmptyPolymorphicLossyArrayValue<DummyDecodableNoticeCodableStrategy>
+  @DummyDecodableNotice.PolymorphicLossyArray
   var notices2: [DummyDecodableNotice]
 
-  @DefaultEmptyPolymorphicLossyArrayValue<DummyDecodableNoticeCodableStrategy>
+  @DummyDecodableNotice.PolymorphicLossyArray
   var notices3: [DummyDecodableNotice]
 }
 

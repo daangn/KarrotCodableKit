@@ -20,8 +20,9 @@ public struct PolymorphicCodableStrategyProvidingMacro: PeerMacro {
       throw CodableKitError.message("Macro must be attached to a protocol.")
     }
 
-    guard let arguments = node.arguments?.as(LabeledExprListSyntax.self),
-          let matchingTypes = SyntaxHelper.findArgument(named: "matchingTypes", in: arguments)
+    guard
+      let arguments = node.arguments?.as(LabeledExprListSyntax.self),
+      let matchingTypes = SyntaxHelper.findArgument(named: "matchingTypes", in: arguments)
     else {
       throw CodableKitError.message("Missing required arguments")
     }
@@ -77,5 +78,40 @@ public struct PolymorphicCodableStrategyProvidingMacro: PeerMacro {
   private static func accessModifier(from protocolDecl: ProtocolDeclSyntax) -> String {
     guard protocolDecl.accessLevel != .internal else { return "" }
     return protocolDecl.accessLevel.rawValue + " "
+  }
+}
+
+extension PolymorphicCodableStrategyProvidingMacro: ExtensionMacro {
+  public static func expansion(
+    of node: AttributeSyntax,
+    attachedTo declaration: some DeclGroupSyntax,
+    providingExtensionsOf type: some TypeSyntaxProtocol,
+    conformingTo protocols: [TypeSyntax],
+    in context: some MacroExpansionContext
+  ) throws -> [ExtensionDeclSyntax] {
+    guard let protocolDecl = declaration.as(ProtocolDeclSyntax.self) else { return [] }
+
+    let accessModifier = accessModifier(from: protocolDecl)
+    let identifier = protocolDecl.name.text
+    let strategyStructName = "\(identifier)CodableStrategy"
+
+    return [
+      try ExtensionDeclSyntax(
+        """
+        extension \(raw: identifier) {
+          \(raw: accessModifier)typealias Polymorphic = PolymorphicValue<\(raw: strategyStructName)>
+          \(raw: accessModifier)typealias OptionalPolymorphic = OptionalPolymorphicValue<\(raw: strategyStructName)>
+          \(raw: accessModifier)typealias LossyOptionalPolymorphic = LossyOptionalPolymorphicValue<\(
+            raw: strategyStructName
+          )>
+          \(raw: accessModifier)typealias PolymorphicArray = PolymorphicArrayValue<\(raw: strategyStructName)>
+          \(raw: accessModifier)typealias PolymorphicLossyArray = PolymorphicLossyArrayValue<\(raw: strategyStructName)>
+          \(raw: accessModifier)typealias DefaultEmptyPolymorphicArray = DefaultEmptyPolymorphicArrayValue<\(
+            raw: strategyStructName
+          )>
+        }
+        """
+      ),
+    ]
   }
 }

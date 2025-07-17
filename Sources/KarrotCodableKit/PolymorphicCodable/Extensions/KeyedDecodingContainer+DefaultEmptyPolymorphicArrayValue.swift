@@ -20,7 +20,7 @@ extension KeyedDecodingContainer {
     _ type: DefaultEmptyPolymorphicArrayValue<T>.Type,
     forKey key: Self.Key
   ) throws -> DefaultEmptyPolymorphicArrayValue<T> where T.ExpectedType: Decodable {
-    let optionalAarryValue = try decodeIfPresent([T.ExpectedType].self, forKey: key)
-    return DefaultEmptyPolymorphicArrayValue(wrappedValue: optionalAarryValue ?? [])
+    let optionalArrayValue = try decodeIfPresent([T.ExpectedType].self, forKey: key)
+    return DefaultEmptyPolymorphicArrayValue(wrappedValue: optionalArrayValue ?? [])
   }
 }
