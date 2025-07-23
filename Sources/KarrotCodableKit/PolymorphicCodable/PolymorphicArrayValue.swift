@@ -19,11 +19,48 @@ import Foundation
 public struct PolymorphicArrayValue<PolymorphicType: PolymorphicCodableStrategy> {
   /// The decoded array of values, each conforming to the expected polymorphic type.
   public var wrappedValue: [PolymorphicType.ExpectedType]
+  
+  /// Tracks the outcome of the decoding process for resilient decoding
+  let outcome: ResilientDecodingOutcome
 
   /// Initializes the property wrapper with a pre-decoded array of values.
   public init(wrappedValue: [PolymorphicType.ExpectedType]) {
     self.wrappedValue = wrappedValue
+    self.outcome = .decodedSuccessfully
   }
+  
+  init(wrappedValue: [PolymorphicType.ExpectedType], outcome: ResilientDecodingOutcome) {
+    self.wrappedValue = wrappedValue
+    self.outcome = outcome
+  }
+  
+  #if DEBUG
+  /// A projection of the property wrapper that provides access to decoding outcome in DEBUG builds
+  public struct ProjectedValue {
+    /// The outcome of the decoding process
+    public let outcome: ResilientDecodingOutcome
+    
+    /// Returns the error if decoding failed, nil otherwise
+    public var error: Error? {
+      switch outcome {
+      case .decodedSuccessfully, .keyNotFound, .valueWasNil:
+        return nil
+      case .recoveredFrom(let error, _):
+        return error
+      }
+    }
+  }
+  
+  /// The projected value providing access to decoding outcome
+  public var projectedValue: ProjectedValue {
+    return ProjectedValue(outcome: outcome)
+  }
+  #else
+  /// In non-DEBUG builds, accessing projectedValue is a programmer error
+  public var projectedValue: Never {
+    fatalError("@\(Self.self) projectedValue should not be used in non-DEBUG builds")
+  }
+  #endif
 }
 
 extension PolymorphicArrayValue: Decodable {
@@ -37,6 +74,7 @@ extension PolymorphicArrayValue: Decodable {
     }
 
     self.wrappedValue = elements
+    self.outcome = .decodedSuccessfully
   }
 }
 
@@ -49,6 +87,16 @@ extension PolymorphicArrayValue: Encodable {
   }
 }
 
-extension PolymorphicArrayValue: Equatable where PolymorphicType.ExpectedType: Equatable {}
-extension PolymorphicArrayValue: Hashable where PolymorphicType.ExpectedType: Hashable {}
+extension PolymorphicArrayValue: Equatable where PolymorphicType.ExpectedType: Equatable {
+  public static func == (lhs: PolymorphicArrayValue<PolymorphicType>, rhs: PolymorphicArrayValue<PolymorphicType>) -> Bool {
+    return lhs.wrappedValue == rhs.wrappedValue
+  }
+}
+
+extension PolymorphicArrayValue: Hashable where PolymorphicType.ExpectedType: Hashable {
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(wrappedValue)
+  }
+}
+
 extension PolymorphicArrayValue: Sendable where PolymorphicType.ExpectedType: Sendable {}
