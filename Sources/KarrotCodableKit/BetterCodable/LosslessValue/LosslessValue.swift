@@ -30,23 +30,54 @@ public struct LosslessValueCodable<Strategy: LosslessDecodingStrategy>: Codable 
   private let type: LosslessStringCodable.Type
 
   public var wrappedValue: Strategy.Value
+  
+  let outcome: ResilientDecodingOutcome
 
   public init(wrappedValue: Strategy.Value) {
     self.wrappedValue = wrappedValue
     self.type = Strategy.Value.self
+    self.outcome = .decodedSuccessfully
   }
+  
+  init(wrappedValue: Strategy.Value, outcome: ResilientDecodingOutcome, type: LosslessStringCodable.Type) {
+    self.wrappedValue = wrappedValue
+    self.outcome = outcome
+    self.type = type
+  }
+  
+  #if DEBUG
+  public struct ProjectedValue {
+    public let outcome: ResilientDecodingOutcome
+    
+    public var error: Error? {
+      switch outcome {
+      case .decodedSuccessfully, .keyNotFound, .valueWasNil:
+        return nil
+      case .recoveredFrom(let error, _):
+        return error
+      }
+    }
+  }
+  
+  public var projectedValue: ProjectedValue { ProjectedValue(outcome: outcome) }
+  #endif
 
   public init(from decoder: Decoder) throws {
     do {
       self.wrappedValue = try Strategy.Value(from: decoder)
       self.type = Strategy.Value.self
+      self.outcome = .decodedSuccessfully
     } catch let error {
       guard let rawValue = Strategy.losslessDecodableTypes.lazy.compactMap({ $0(decoder) }).first,
             let value = Strategy.Value("\(rawValue)")
-      else { throw error }
+      else { 
+        decoder.reportError(error)
+        throw error 
+      }
 
       self.wrappedValue = value
       self.type = Swift.type(of: rawValue)
+      self.outcome = .decodedSuccessfully
     }
   }
 
@@ -63,7 +94,7 @@ public struct LosslessValueCodable<Strategy: LosslessDecodingStrategy>: Codable 
 }
 
 extension LosslessValueCodable: Equatable where Strategy.Value: Equatable {
-  public static func == (lhs: LosslessValueCodable<Strategy>, rhs: LosslessValueCodable<Strategy>) -> Bool {
+  public static func == (lhs: Self, rhs: Self) -> Bool {
     lhs.wrappedValue == rhs.wrappedValue
   }
 }

@@ -24,16 +24,52 @@ public protocol DateValueCodableStrategy {
 @propertyWrapper
 public struct DateValue<Formatter: DateValueCodableStrategy> {
   public var wrappedValue: Date
+  
+  let outcome: ResilientDecodingOutcome
 
   public init(wrappedValue: Date) {
     self.wrappedValue = wrappedValue
+    self.outcome = .decodedSuccessfully
   }
+  
+  init(wrappedValue: Date, outcome: ResilientDecodingOutcome) {
+    self.wrappedValue = wrappedValue
+    self.outcome = outcome
+  }
+  
+  #if DEBUG
+  public struct ProjectedValue {
+    public let outcome: ResilientDecodingOutcome
+    
+    public var error: Error? {
+      switch outcome {
+      case .decodedSuccessfully, .keyNotFound, .valueWasNil:
+        return nil
+      case .recoveredFrom(let error, _):
+        return error
+      }
+    }
+  }
+  
+  public var projectedValue: ProjectedValue { ProjectedValue(outcome: outcome) }
+  #endif
 }
 
 extension DateValue: Decodable where Formatter.RawValue: Decodable {
   public init(from decoder: Decoder) throws {
-    let value = try Formatter.RawValue(from: decoder)
-    self.wrappedValue = try Formatter.decode(value)
+    do {
+      let value = try Formatter.RawValue(from: decoder)
+      do {
+        self.wrappedValue = try Formatter.decode(value)
+        self.outcome = .decodedSuccessfully
+      } catch {
+        decoder.reportError(error)
+        throw error
+      }
+    } catch {
+      decoder.reportError(error)
+      throw error
+    }
   }
 }
 
@@ -45,7 +81,7 @@ extension DateValue: Encodable where Formatter.RawValue: Encodable {
 }
 
 extension DateValue: Equatable {
-  public static func == (lhs: DateValue<Formatter>, rhs: DateValue<Formatter>) -> Bool {
+  public static func == (lhs: Self, rhs: Self) -> Bool {
     lhs.wrappedValue == rhs.wrappedValue
   }
 }

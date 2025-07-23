@@ -25,10 +25,47 @@ import Foundation
 public struct OptionalPolymorphicValue<PolymorphicType: PolymorphicCodableStrategy> {
   /// The decoded optional value of the expected polymorphic type.
   public var wrappedValue: PolymorphicType.ExpectedType?
+  
+  /// Tracks the outcome of the decoding process for resilient decoding
+  let outcome: ResilientDecodingOutcome
 
   public init(wrappedValue: PolymorphicType.ExpectedType?) {
     self.wrappedValue = wrappedValue
+    self.outcome = .decodedSuccessfully
   }
+  
+  init(wrappedValue: PolymorphicType.ExpectedType?, outcome: ResilientDecodingOutcome) {
+    self.wrappedValue = wrappedValue
+    self.outcome = outcome
+  }
+  
+  #if DEBUG
+  /// A projection of the property wrapper that provides access to decoding outcome in DEBUG builds
+  public struct ProjectedValue {
+    /// The outcome of the decoding process
+    public let outcome: ResilientDecodingOutcome
+    
+    /// Returns the error if decoding failed, nil otherwise
+    public var error: Error? {
+      switch outcome {
+      case .decodedSuccessfully, .keyNotFound, .valueWasNil:
+        return nil
+      case .recoveredFrom(let error, _):
+        return error
+      }
+    }
+  }
+  
+  /// The projected value providing access to decoding outcome
+  public var projectedValue: ProjectedValue {
+    return ProjectedValue(outcome: outcome)
+  }
+  #else
+  /// In non-DEBUG builds, accessing projectedValue is a programmer error
+  public var projectedValue: Never {
+    fatalError("@\(Self.self) projectedValue should not be used in non-DEBUG builds")
+  }
+  #endif
 }
 
 extension OptionalPolymorphicValue: Encodable {
@@ -42,10 +79,26 @@ extension OptionalPolymorphicValue: Encodable {
 
 extension OptionalPolymorphicValue: Decodable {
   public init(from decoder: Decoder) throws {
-    self.wrappedValue = try PolymorphicType.decode(from: decoder)
+    do {
+      self.wrappedValue = try PolymorphicType.decode(from: decoder)
+      self.outcome = .decodedSuccessfully
+    } catch {
+      // OptionalPolymorphicValue throws errors instead of recovering
+      throw error
+    }
   }
 }
 
-extension OptionalPolymorphicValue: Equatable where PolymorphicType.ExpectedType: Equatable {}
-extension OptionalPolymorphicValue: Hashable where PolymorphicType.ExpectedType: Hashable {}
+extension OptionalPolymorphicValue: Equatable where PolymorphicType.ExpectedType: Equatable {
+  public static func == (lhs: OptionalPolymorphicValue<PolymorphicType>, rhs: OptionalPolymorphicValue<PolymorphicType>) -> Bool {
+    return lhs.wrappedValue == rhs.wrappedValue
+  }
+}
+
+extension OptionalPolymorphicValue: Hashable where PolymorphicType.ExpectedType: Hashable {
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(wrappedValue)
+  }
+}
+
 extension OptionalPolymorphicValue: Sendable where PolymorphicType.ExpectedType: Sendable {}

@@ -14,6 +14,21 @@ public enum ResilientDecodingOutcome: Sendable {
   case valueWasNil
   case recoveredFrom(any Error, wasReported: Bool)
 }
+
+extension ResilientDecodingOutcome: Equatable {
+  public static func == (lhs: ResilientDecodingOutcome, rhs: ResilientDecodingOutcome) -> Bool {
+    switch (lhs, rhs) {
+    case (.decodedSuccessfully, .decodedSuccessfully),
+         (.keyNotFound, .keyNotFound),
+         (.valueWasNil, .valueWasNil):
+      return true
+    case (.recoveredFrom(_, let lhsReported), .recoveredFrom(_, let rhsReported)):
+      return lhsReported == rhsReported
+    default:
+      return false
+    }
+  }
+}
 #else
 struct ResilientDecodingOutcome: Sendable {
   static let decodedSuccessfully = Self()
