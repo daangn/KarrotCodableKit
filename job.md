@@ -123,15 +123,15 @@ https://github.com/airbnb/ResilientDecoding
 
 3. **PolymorphicCodable property wrapper들**
    - PolymorphicValue
-   - 커밋: `feat: PolymorphicValue에 Resilient Decoding 기능 추가`
+   - OptionalPolymorphicValue
+   - LossyOptionalPolymorphicValue
+   - PolymorphicArrayValue
+   - 커밋: `feat: PolymorphicValue에 Resilient Decoding 기능 추가`, `feat: OptionalPolymorphicValue에 Resilient Decoding 기능 추가` 등
 
 ### 남은 작업
 
-1. **OptionalPolymorphicValue** ✅ (다음 작업)
-2. **LossyOptionalPolymorphicValue**
-3. **PolymorphicArrayValue**
-4. **PolymorphicLossyArrayValue**
-5. **DefaultEmptyPolymorphicArrayValue**
+1. **PolymorphicLossyArrayValue**
+2. **DefaultEmptyPolymorphicArrayValue**
 
 ## 테스트 구조
 
