@@ -161,7 +161,7 @@ extension PolymorphicLossyArrayValueTests {
       from: Data(jsonData.utf8)
     )
 
-    // thens
+    // then
     XCTAssertTrue(result.notices1.isEmpty)
     XCTAssertEqual(result.notices2.first?.type, .callout)
     XCTAssertTrue(result.notices3.isEmpty)
