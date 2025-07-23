@@ -219,7 +219,7 @@ struct DefaultCodableResilientTests {
   
   // MARK: - RawRepresentable Support Tests
   
-  enum TestEnum: String, DefaultCodableStrategy {
+  enum TestEnum: String, Decodable, DefaultCodableStrategy {
     case first
     case second
     case unknown
@@ -227,7 +227,7 @@ struct DefaultCodableResilientTests {
     static var defaultValue: TestEnum { .unknown }
   }
   
-  enum FrozenTestEnum: String, DefaultCodableStrategy {
+  enum FrozenTestEnum: String, Decodable, DefaultCodableStrategy {
     case alpha
     case beta
     case fallback
