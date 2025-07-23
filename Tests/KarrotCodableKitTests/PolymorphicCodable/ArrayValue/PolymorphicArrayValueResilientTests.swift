@@ -8,7 +8,7 @@ struct PolymorphicArrayValueResilientTests {
     @DummyNotice.PolymorphicArray var notices: [DummyNotice]
   }
   
-  @Test("빈 배열 디코딩 시 outcome이 decodedSuccessfully여야 함")
+  @Test("Empty array decoding should have decodedSuccessfully outcome")
   func testEmptyArray() throws {
     // Given
     let json = """
@@ -29,7 +29,7 @@ struct PolymorphicArrayValueResilientTests {
     #endif
   }
   
-  @Test("정상적인 배열 디코딩 시 outcome이 decodedSuccessfully여야 함")
+  @Test("Successful array decoding should have decodedSuccessfully outcome")
   func testSuccessfulArrayDecoding() throws {
     // Given
     let json = """
@@ -73,7 +73,7 @@ struct PolymorphicArrayValueResilientTests {
     #endif
   }
   
-  @Test("배열 요소 중 하나라도 디코딩 실패 시 전체가 실패해야 함")
+  @Test("Array should fail to decode if any element fails")
   func testArrayWithInvalidElement() throws {
     // Given
     let json = """
@@ -99,7 +99,7 @@ struct PolymorphicArrayValueResilientTests {
     }
   }
   
-  @Test("키가 없을 때 에러를 throw해야 함")
+  @Test("Should throw error when key is missing")
   func testMissingKey() throws {
     // Given
     let json = """
@@ -113,7 +113,7 @@ struct PolymorphicArrayValueResilientTests {
     }
   }
   
-  @Test("잘못된 타입일 때 에러를 throw해야 함")
+  @Test("Should throw error for invalid type")
   func testInvalidType() throws {
     // Given
     let json = """
@@ -129,7 +129,7 @@ struct PolymorphicArrayValueResilientTests {
     }
   }
   
-  @Test("배열 요소의 에러가 리포트되어야 함")
+  @Test("Array element errors should be reported")
   func testArrayElementErrorReported() throws {
     // Given
     let json = """
@@ -152,7 +152,7 @@ struct PolymorphicArrayValueResilientTests {
       _ = try decoder.decode(Fixture.self, from: data)
     }
     
-    // PolymorphicValue가 에러를 리포트하므로 에러 다이제스트가 있어야 함
+    // PolymorphicValue reports errors, so error digest should exist
     let errorDigest = errorReporter.flushReportedErrors()
     #expect(errorDigest != nil)
     if let digest = errorDigest {

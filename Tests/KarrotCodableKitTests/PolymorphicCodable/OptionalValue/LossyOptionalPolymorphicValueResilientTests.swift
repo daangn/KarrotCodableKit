@@ -8,7 +8,7 @@ struct LossyOptionalPolymorphicValueResilientTests {
     @DummyNotice.LossyOptionalPolymorphic var notice: DummyNotice?
   }
   
-  @Test("nil 값 디코딩 시 outcome이 valueWasNil이어야 함")
+  @Test("Outcome should be valueWasNil when decoding nil value")
   func testNilValue() throws {
     // Given
     let json = """
@@ -29,7 +29,7 @@ struct LossyOptionalPolymorphicValueResilientTests {
     #endif
   }
   
-  @Test("키가 없을 때 outcome이 keyNotFound여야 함")
+  @Test("Outcome should be keyNotFound when key is missing")
   func testMissingKey() throws {
     // Given
     let json = """
@@ -48,7 +48,7 @@ struct LossyOptionalPolymorphicValueResilientTests {
     #endif
   }
   
-  @Test("정상적인 값 디코딩 시 outcome이 decodedSuccessfully여야 함")
+  @Test("Outcome should be decodedSuccessfully for successful decoding")
   func testSuccessfulDecoding() throws {
     // Given
     let json = """
@@ -81,7 +81,7 @@ struct LossyOptionalPolymorphicValueResilientTests {
     #endif
   }
   
-  @Test("알 수 없는 타입일 때 nil을 반환하고 에러를 기록해야 함")
+  @Test("Should return nil and record error for unknown type")
   func testUnknownTypeReturnsNil() throws {
     // Given
     let json = """
@@ -109,7 +109,7 @@ struct LossyOptionalPolymorphicValueResilientTests {
     #endif
   }
   
-  @Test("잘못된 JSON 형식일 때 nil을 반환하고 에러를 기록해야 함")
+  @Test("Should return nil and record error for invalid JSON format")
   func testInvalidJSONReturnsNil() throws {
     // Given
     let json = """
@@ -135,7 +135,7 @@ struct LossyOptionalPolymorphicValueResilientTests {
     #endif
   }
   
-  @Test("에러 리포터가 호출되어야 함")
+  @Test("Error reporter should be called")
   func testErrorReporterCalled() throws {
     // Given
     let json = """

@@ -8,7 +8,7 @@ struct DefaultEmptyPolymorphicArrayValueResilientTests {
     @DummyNotice.DefaultEmptyPolymorphicArray var notices: [DummyNotice]
   }
   
-  @Test("빈 배열 디코딩 시 outcome이 decodedSuccessfully여야 함")
+  @Test("Empty array decoding should have decodedSuccessfully outcome")
   func testEmptyArray() throws {
     // Given
     let json = """
@@ -29,7 +29,7 @@ struct DefaultEmptyPolymorphicArrayValueResilientTests {
     #endif
   }
   
-  @Test("정상적인 배열 디코딩 시 outcome이 decodedSuccessfully여야 함")
+  @Test("Successful array decoding should have decodedSuccessfully outcome")
   func testSuccessfulArrayDecoding() throws {
     // Given
     let json = """
@@ -66,7 +66,7 @@ struct DefaultEmptyPolymorphicArrayValueResilientTests {
     #endif
   }
   
-  @Test("배열에 잘못된 요소가 하나라도 있으면 빈 배열을 반환해야 함")
+  @Test("Should return empty array when array contains any invalid element")
   func testArrayWithAnyInvalidElement() throws {
     // Given
     let json = """
@@ -102,7 +102,7 @@ struct DefaultEmptyPolymorphicArrayValueResilientTests {
     #endif
   }
   
-  @Test("키가 없을 때 빈 배열을 반환해야 함")
+  @Test("Should return empty array when key is missing")
   func testMissingKey() throws {
     // Given
     let json = """
@@ -121,7 +121,7 @@ struct DefaultEmptyPolymorphicArrayValueResilientTests {
     #endif
   }
   
-  @Test("null 값일 때 빈 배열을 반환해야 함")
+  @Test("Should return empty array for null value")
   func testNullValue() throws {
     // Given
     let json = """
@@ -142,7 +142,7 @@ struct DefaultEmptyPolymorphicArrayValueResilientTests {
     #endif
   }
   
-  @Test("잘못된 타입일 때 빈 배열을 반환해야 함")
+  @Test("Should return empty array for invalid type")
   func testInvalidType() throws {
     // Given
     let json = """
@@ -167,7 +167,7 @@ struct DefaultEmptyPolymorphicArrayValueResilientTests {
     #endif
   }
   
-  @Test("에러 리포터가 호출되어야 함")
+  @Test("Error reporter should be called")
   func testErrorReporting() throws {
     // Given
     let json = """

@@ -8,7 +8,7 @@ struct PolymorphicLossyArrayValueResilientTests {
     @DummyNotice.PolymorphicLossyArray var notices: [DummyNotice]
   }
   
-  @Test("빈 배열 디코딩 시 outcome이 decodedSuccessfully여야 함")
+  @Test("Empty array decoding should have decodedSuccessfully outcome")
   func testEmptyArray() throws {
     // Given
     let json = """
@@ -30,7 +30,7 @@ struct PolymorphicLossyArrayValueResilientTests {
     #endif
   }
   
-  @Test("정상적인 배열 디코딩 시 모든 요소가 성공해야 함")
+  @Test("Successful array decoding should have all elements succeed")
   func testSuccessfulArrayDecoding() throws {
     // Given
     let json = """
@@ -72,7 +72,7 @@ struct PolymorphicLossyArrayValueResilientTests {
     #endif
   }
   
-  @Test("배열에 잘못된 요소가 있을 때 유효한 요소만 디코딩해야 함")
+  @Test("Should decode only valid elements when array has invalid elements")
   func testArrayWithInvalidElements() throws {
     // Given
     let json = """
@@ -113,7 +113,7 @@ struct PolymorphicLossyArrayValueResilientTests {
     #expect(result.$notices.outcome == .decodedSuccessfully)
     #expect(result.$notices.results.count == 6)
     
-    // 첫 번째와 세 번째 요소만 성공
+    // Only first and third elements succeed
     if case .success = result.$notices.results[0] {} else {
       Issue.record("Expected success at index 0")
     }
@@ -135,7 +135,7 @@ struct PolymorphicLossyArrayValueResilientTests {
     #endif
   }
   
-  @Test("키가 없을 때 빈 배열을 반환해야 함")
+  @Test("Should return empty array when key is missing")
   func testMissingKey() throws {
     // Given
     let json = """
@@ -155,7 +155,7 @@ struct PolymorphicLossyArrayValueResilientTests {
     #endif
   }
   
-  @Test("잘못된 타입일 때 빈 배열을 반환해야 함")
+  @Test("Should return empty array for invalid type")
   func testInvalidType() throws {
     // Given
     let json = """
@@ -181,7 +181,7 @@ struct PolymorphicLossyArrayValueResilientTests {
     #endif
   }
   
-  @Test("에러 리포터가 부분적으로 호출되어야 함")
+  @Test("Error reporter should be called partially")
   func testPartialErrorReporting() throws {
     // Given
     let json = """

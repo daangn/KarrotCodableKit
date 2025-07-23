@@ -31,12 +31,12 @@ struct PolymorphicValueResilientTests {
     let data = json.data(using: .utf8)!
     let fixture = try decoder.decode(Fixture.self, from: data)
     
-    // 기본 동작 검증
+    // Verify basic behavior
     #expect(fixture.notice.description == "test description")
     #expect((fixture.notice as? DummyCallout)?.icon == "test_icon")
     
     #if DEBUG
-    // projected value로 성공 정보 접근
+    // Access success info via projected value
     #expect(fixture.$notice.outcome == .decodedSuccessfully)
     #endif
   }
@@ -55,15 +55,15 @@ struct PolymorphicValueResilientTests {
     let decoder = JSONDecoder()
     let data = json.data(using: .utf8)!
     
-    // DummyNotice에는 fallback type이 설정되어 있어서 성공해야 함
+    // DummyNotice has fallback type configured so should succeed
     let fixture = try decoder.decode(Fixture.self, from: data)
     
-    // fallback type으로 디코딩되었는지 검증
+    // Verify decoded as fallback type
     #expect(fixture.notice is DummyUndefinedCallout)
     #expect(fixture.notice.description == "test description")
     
     #if DEBUG
-    // projected value로 성공 정보 접근
+    // Access success info via projected value
     #expect(fixture.$notice.outcome == .decodedSuccessfully)
     #endif
   }
@@ -83,7 +83,7 @@ struct PolymorphicValueResilientTests {
       _ = try decoder.decode(Fixture.self, from: data)
       #expect(Bool(false), "Should have thrown")
     } catch {
-      // null 값은 처리할 수 없음
+      // Cannot handle null values
     }
   }
   
@@ -109,13 +109,13 @@ struct PolymorphicValueResilientTests {
       _ = try decoder.decode(Fixture.self, from: data)
       #expect(Bool(false), "Should have thrown")
     } catch {
-      // 타입 불일치로 디코딩 실패 (key는 String이어야 함)
+      // Decoding failed due to type mismatch (key should be String)
     }
     
     let errorDigest = errorReporter.flushReportedErrors()
     
     #if DEBUG
-    // 에러가 리포트되었는지 확인
+    // Check if error was reported
     #expect(errorDigest != nil)
     if let digest = errorDigest {
       #expect(digest.errors.count >= 1)
