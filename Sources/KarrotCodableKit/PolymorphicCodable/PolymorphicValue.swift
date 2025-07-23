@@ -23,7 +23,7 @@ import Foundation
 public struct PolymorphicValue<PolymorphicType: PolymorphicCodableStrategy> {
   /// The decoded value of the expected polymorphic type.
   public var wrappedValue: PolymorphicType.ExpectedType
-  
+
   let outcome: ResilientDecodingOutcome
 
   /// Initializes the property wrapper with a pre-decoded value.
@@ -31,26 +31,26 @@ public struct PolymorphicValue<PolymorphicType: PolymorphicCodableStrategy> {
     self.wrappedValue = wrappedValue
     self.outcome = .decodedSuccessfully
   }
-  
+
   init(wrappedValue: PolymorphicType.ExpectedType, outcome: ResilientDecodingOutcome) {
     self.wrappedValue = wrappedValue
     self.outcome = outcome
   }
-  
+
   #if DEBUG
   public struct ProjectedValue {
     public let outcome: ResilientDecodingOutcome
-    
+
     public var error: Error? {
       switch outcome {
       case .decodedSuccessfully, .keyNotFound, .valueWasNil:
-        return nil
+        nil
       case .recoveredFrom(let error, _):
-        return error
+        error
       }
     }
   }
-  
+
   public var projectedValue: ProjectedValue { ProjectedValue(outcome: outcome) }
   #endif
 }
@@ -74,7 +74,7 @@ extension PolymorphicValue: Decodable {
 }
 
 extension PolymorphicValue: Equatable where PolymorphicType.ExpectedType: Equatable {
-  public static func ==(lhs: Self, rhs: Self) -> Bool {
+  public static func == (lhs: Self, rhs: Self) -> Bool {
     lhs.wrappedValue == rhs.wrappedValue
   }
 }

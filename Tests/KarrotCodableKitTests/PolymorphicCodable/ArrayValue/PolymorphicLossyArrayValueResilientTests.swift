@@ -7,21 +7,21 @@ struct PolymorphicLossyArrayValueResilientTests {
   struct Fixture: Decodable {
     @DummyNotice.PolymorphicLossyArray var notices: [DummyNotice]
   }
-  
+
   @Test("Empty array decoding should have decodedSuccessfully outcome")
-  func testEmptyArray() throws {
-    // Given
+  func emptyArray() throws {
+    // given
     let json = """
-    {
-      "notices": []
-    }
-    """
-    
-    // When
+      {
+        "notices": []
+      }
+      """
+
+    // when
     let data = json.data(using: .utf8)!
     let result = try JSONDecoder().decode(Fixture.self, from: data)
-    
-    // Then
+
+    // then
     #expect(result.notices.isEmpty)
     #if DEBUG
     #expect(result.$notices.outcome == .decodedSuccessfully)
@@ -29,38 +29,38 @@ struct PolymorphicLossyArrayValueResilientTests {
     #expect(result.$notices.results.isEmpty)
     #endif
   }
-  
+
   @Test("Successful array decoding should have all elements succeed")
-  func testSuccessfulArrayDecoding() throws {
-    // Given
+  func successfulArrayDecoding() throws {
+    // given
     let json = """
-    {
-      "notices": [
-        {
-          "type": "callout",
-          "title": "First",
-          "description": "First callout",
-          "icon": "icon1.png"
-        },
-        {
-          "type": "actionable-callout",
-          "title": "Second",
-          "description": "Second callout",
-          "action": "https://example.com"
-        }
-      ]
-    }
-    """
-    
-    // When
+      {
+        "notices": [
+          {
+            "type": "callout",
+            "title": "First",
+            "description": "First callout",
+            "icon": "icon1.png"
+          },
+          {
+            "type": "actionable-callout",
+            "title": "Second",
+            "description": "Second callout",
+            "action": "https://example.com"
+          }
+        ]
+      }
+      """
+
+    // when
     let data = json.data(using: .utf8)!
     let result = try JSONDecoder().decode(Fixture.self, from: data)
-    
-    // Then
+
+    // then
     #expect(result.notices.count == 2)
     #expect(result.notices[0] is DummyCallout)
     #expect(result.notices[1] is DummyActionableCallout)
-    
+
     #if DEBUG
     #expect(result.$notices.outcome == .decodedSuccessfully)
     #expect(result.$notices.error == nil)
@@ -71,48 +71,48 @@ struct PolymorphicLossyArrayValueResilientTests {
     })
     #endif
   }
-  
+
   @Test("Should decode only valid elements when array has invalid elements")
-  func testArrayWithInvalidElements() throws {
-    // Given
+  func arrayWithInvalidElements() throws {
+    // given
     let json = """
-    {
-      "notices": [
-        {
-          "type": "callout",
-          "title": "Valid",
-          "description": "Valid callout",
-          "icon": "icon.png"
-        },
-        {
-          "type": "invalid-type"
-        },
-        {
-          "type": "dismissible-callout",
-          "title": "Also Valid",
-          "description": "Another valid callout",
-          "key": "dismiss-key"
-        },
-        "not-an-object",
-        null,
-        123
-      ]
-    }
-    """
-    
-    // When
+      {
+        "notices": [
+          {
+            "type": "callout",
+            "title": "Valid",
+            "description": "Valid callout",
+            "icon": "icon.png"
+          },
+          {
+            "type": "invalid-type"
+          },
+          {
+            "type": "dismissible-callout",
+            "title": "Also Valid",
+            "description": "Another valid callout",
+            "key": "dismiss-key"
+          },
+          "not-an-object",
+          null,
+          123
+        ]
+      }
+      """
+
+    // when
     let data = json.data(using: .utf8)!
     let result = try JSONDecoder().decode(Fixture.self, from: data)
-    
-    // Then
+
+    // then
     #expect(result.notices.count == 2)
     #expect(result.notices[0] is DummyCallout)
     #expect(result.notices[1] is DummyDismissibleCallout)
-    
+
     #if DEBUG
     #expect(result.$notices.outcome == .decodedSuccessfully)
     #expect(result.$notices.results.count == 6)
-    
+
     // Only first and third elements succeed
     if case .success = result.$notices.results[0] {} else {
       Issue.record("Expected success at index 0")
@@ -134,19 +134,19 @@ struct PolymorphicLossyArrayValueResilientTests {
     }
     #endif
   }
-  
+
   @Test("Should return empty array when key is missing")
-  func testMissingKey() throws {
-    // Given
+  func missingKey() throws {
+    // given
     let json = """
-    {}
-    """
-    
-    // When
+      {}
+      """
+
+    // when
     let data = json.data(using: .utf8)!
     let result = try JSONDecoder().decode(Fixture.self, from: data)
-    
-    // Then
+
+    // then
     #expect(result.notices.isEmpty)
     #if DEBUG
     #expect(result.$notices.outcome == .keyNotFound)
@@ -154,24 +154,24 @@ struct PolymorphicLossyArrayValueResilientTests {
     #expect(result.$notices.results.isEmpty)
     #endif
   }
-  
+
   @Test("Should return empty array for invalid type")
-  func testInvalidType() throws {
-    // Given
+  func invalidType() throws {
+    // given
     let json = """
-    {
-      "notices": "not an array"
-    }
-    """
-    
-    // When
+      {
+        "notices": "not an array"
+      }
+      """
+
+    // when
     let data = json.data(using: .utf8)!
     let result = try JSONDecoder().decode(Fixture.self, from: data)
-    
-    // Then
+
+    // then
     #expect(result.notices.isEmpty)
     #if DEBUG
-    if case .recoveredFrom(_, _) = result.$notices.outcome {
+    if case .recoveredFrom = result.$notices.outcome {
       // Expected
     } else {
       Issue.record("Expected recoveredFrom outcome")
@@ -180,36 +180,36 @@ struct PolymorphicLossyArrayValueResilientTests {
     #expect(result.$notices.results.isEmpty)
     #endif
   }
-  
+
   @Test("Error reporter should be called partially")
-  func testPartialErrorReporting() throws {
-    // Given
+  func partialErrorReporting() throws {
+    // given
     let json = """
-    {
-      "notices": [
-        {
-          "type": "callout",
-          "title": "Valid",
-          "description": "Valid callout",
-          "icon": "icon.png"
-        },
-        {
-          "type": "invalid-type"
-        }
-      ]
-    }
-    """
-    
-    // When
+      {
+        "notices": [
+          {
+            "type": "callout",
+            "title": "Valid",
+            "description": "Valid callout",
+            "icon": "icon.png"
+          },
+          {
+            "type": "invalid-type"
+          }
+        ]
+      }
+      """
+
+    // when
     let data = json.data(using: .utf8)!
     let decoder = JSONDecoder()
     let errorReporter = decoder.enableResilientDecodingErrorReporting()
-    
+
     let result = try decoder.decode(Fixture.self, from: data)
-    
-    // Then
+
+    // then
     #expect(result.notices.count == 1)
-    
+
     let errorDigest = errorReporter.flushReportedErrors()
     #expect(errorDigest != nil)
     if let digest = errorDigest {

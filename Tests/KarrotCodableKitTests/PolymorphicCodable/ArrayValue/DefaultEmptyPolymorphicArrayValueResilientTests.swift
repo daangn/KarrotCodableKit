@@ -7,93 +7,93 @@ struct DefaultEmptyPolymorphicArrayValueResilientTests {
   struct Fixture: Decodable {
     @DummyNotice.DefaultEmptyPolymorphicArray var notices: [DummyNotice]
   }
-  
+
   @Test("Empty array decoding should have decodedSuccessfully outcome")
-  func testEmptyArray() throws {
-    // Given
+  func emptyArray() throws {
+    // given
     let json = """
-    {
-      "notices": []
-    }
-    """
-    
-    // When
+      {
+        "notices": []
+      }
+      """
+
+    // when
     let data = json.data(using: .utf8)!
     let result = try JSONDecoder().decode(Fixture.self, from: data)
-    
-    // Then
+
+    // then
     #expect(result.notices.isEmpty)
     #if DEBUG
     #expect(result.$notices.outcome == .decodedSuccessfully)
     #expect(result.$notices.error == nil)
     #endif
   }
-  
+
   @Test("Successful array decoding should have decodedSuccessfully outcome")
-  func testSuccessfulArrayDecoding() throws {
-    // Given
+  func successfulArrayDecoding() throws {
+    // given
     let json = """
-    {
-      "notices": [
-        {
-          "type": "callout",
-          "title": "First",
-          "description": "First callout",
-          "icon": "icon1.png"
-        },
-        {
-          "type": "actionable-callout",
-          "title": "Second",
-          "description": "Second callout",
-          "action": "https://example.com"
-        }
-      ]
-    }
-    """
-    
-    // When
+      {
+        "notices": [
+          {
+            "type": "callout",
+            "title": "First",
+            "description": "First callout",
+            "icon": "icon1.png"
+          },
+          {
+            "type": "actionable-callout",
+            "title": "Second",
+            "description": "Second callout",
+            "action": "https://example.com"
+          }
+        ]
+      }
+      """
+
+    // when
     let data = json.data(using: .utf8)!
     let result = try JSONDecoder().decode(Fixture.self, from: data)
-    
-    // Then
+
+    // then
     #expect(result.notices.count == 2)
     #expect(result.notices[0] is DummyCallout)
     #expect(result.notices[1] is DummyActionableCallout)
-    
+
     #if DEBUG
     #expect(result.$notices.outcome == .decodedSuccessfully)
     #expect(result.$notices.error == nil)
     #endif
   }
-  
+
   @Test("Should return empty array when array contains any invalid element")
-  func testArrayWithAnyInvalidElement() throws {
-    // Given
+  func arrayWithAnyInvalidElement() throws {
+    // given
     let json = """
-    {
-      "notices": [
-        {
-          "type": "callout",
-          "title": "Valid",
-          "description": "Valid callout",
-          "icon": "icon.png"
-        },
-        {
-          "type": "invalid-type"
-        }
-      ]
-    }
-    """
-    
-    // When
+      {
+        "notices": [
+          {
+            "type": "callout",
+            "title": "Valid",
+            "description": "Valid callout",
+            "icon": "icon.png"
+          },
+          {
+            "type": "invalid-type"
+          }
+        ]
+      }
+      """
+
+    // when
     let data = json.data(using: .utf8)!
     let result = try JSONDecoder().decode(Fixture.self, from: data)
-    
-    // Then
+
+    // then
     #expect(result.notices.isEmpty)
-    
+
     #if DEBUG
-    if case .recoveredFrom(_, _) = result.$notices.outcome {
+    if case .recoveredFrom = result.$notices.outcome {
       // Expected
     } else {
       Issue.record("Expected recoveredFrom outcome")
@@ -101,64 +101,64 @@ struct DefaultEmptyPolymorphicArrayValueResilientTests {
     #expect(result.$notices.error != nil)
     #endif
   }
-  
+
   @Test("Should return empty array when key is missing")
-  func testMissingKey() throws {
-    // Given
+  func missingKey() throws {
+    // given
     let json = """
-    {}
-    """
-    
-    // When
+      {}
+      """
+
+    // when
     let data = json.data(using: .utf8)!
     let result = try JSONDecoder().decode(Fixture.self, from: data)
-    
-    // Then
+
+    // then
     #expect(result.notices.isEmpty)
     #if DEBUG
     #expect(result.$notices.outcome == .keyNotFound)
     #expect(result.$notices.error == nil)
     #endif
   }
-  
+
   @Test("Should return empty array for null value")
-  func testNullValue() throws {
-    // Given
+  func nullValue() throws {
+    // given
     let json = """
-    {
-      "notices": null
-    }
-    """
-    
-    // When
+      {
+        "notices": null
+      }
+      """
+
+    // when
     let data = json.data(using: .utf8)!
     let result = try JSONDecoder().decode(Fixture.self, from: data)
-    
-    // Then
+
+    // then
     #expect(result.notices.isEmpty)
     #if DEBUG
     #expect(result.$notices.outcome == .valueWasNil)
     #expect(result.$notices.error == nil)
     #endif
   }
-  
+
   @Test("Should return empty array for invalid type")
-  func testInvalidType() throws {
-    // Given
+  func invalidType() throws {
+    // given
     let json = """
-    {
-      "notices": "not an array"
-    }
-    """
-    
-    // When
+      {
+        "notices": "not an array"
+      }
+      """
+
+    // when
     let data = json.data(using: .utf8)!
     let result = try JSONDecoder().decode(Fixture.self, from: data)
-    
-    // Then
+
+    // then
     #expect(result.notices.isEmpty)
     #if DEBUG
-    if case .recoveredFrom(_, _) = result.$notices.outcome {
+    if case .recoveredFrom = result.$notices.outcome {
       // Expected
     } else {
       Issue.record("Expected recoveredFrom outcome")
@@ -166,36 +166,36 @@ struct DefaultEmptyPolymorphicArrayValueResilientTests {
     #expect(result.$notices.error != nil)
     #endif
   }
-  
+
   @Test("Error reporter should be called")
-  func testErrorReporting() throws {
-    // Given
+  func errorReporting() throws {
+    // given
     let json = """
-    {
-      "notices": [
-        {
-          "type": "callout",
-          "title": "Valid",
-          "description": "Valid callout",
-          "icon": "icon.png"
-        },
-        {
-          "type": "invalid-type"
-        }
-      ]
-    }
-    """
-    
-    // When
+      {
+        "notices": [
+          {
+            "type": "callout",
+            "title": "Valid",
+            "description": "Valid callout",
+            "icon": "icon.png"
+          },
+          {
+            "type": "invalid-type"
+          }
+        ]
+      }
+      """
+
+    // when
     let data = json.data(using: .utf8)!
     let decoder = JSONDecoder()
     let errorReporter = decoder.enableResilientDecodingErrorReporting()
-    
+
     let result = try decoder.decode(Fixture.self, from: data)
-    
-    // Then
+
+    // then
     #expect(result.notices.isEmpty)
-    
+
     let errorDigest = errorReporter.flushReportedErrors()
     #expect(errorDigest != nil)
     if let digest = errorDigest {
