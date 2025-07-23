@@ -16,6 +16,16 @@ public protocol DefaultCodableStrategy {
 
   /// The fallback value used when decoding fails
   static var defaultValue: DefaultValue { get }
+  
+  /// When true, unknown raw values for RawRepresentable types will be reported as errors.
+  /// When false, unknown raw values will use the defaultValue without reporting an error.
+  /// Defaults to false.
+  static var isFrozen: Bool { get }
+}
+
+// Default implementation
+extension DefaultCodableStrategy {
+  public static var isFrozen: Bool { false }
 }
 
 /// Decodes values with a reasonable default value
