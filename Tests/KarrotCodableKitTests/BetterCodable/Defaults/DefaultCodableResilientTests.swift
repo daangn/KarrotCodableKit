@@ -51,14 +51,13 @@ struct DefaultCodableResilientTests {
     #expect(fixture.$dictValue.error != nil)
     
     // 에러 타입 확인
-    if let error = fixture.$intValue.error as? DecodingError {
-      switch error {
-      case .typeMismatch:
-        // Expected
-        break
-      default:
-        Issue.record("Expected typeMismatch error")
-      }
+    let error = try #require(fixture.$intValue.error as? DecodingError)
+    switch error {
+    case .typeMismatch:
+      // Expected
+      break
+    default:
+      Issue.record("Expected typeMismatch error")
     }
     #endif
   }
@@ -173,12 +172,10 @@ struct DefaultCodableResilientTests {
     let errorDigest = errorReporter.flushReportedErrors()
     
     #if DEBUG
-    #expect(errorDigest != nil)
-    if let digest = errorDigest {
-      // 최소 3개의 에러가 리포트되어야 함
-      #expect(digest.errors.count >= 3)
-      print("Error digest: \(digest.debugDescription)")
-    }
+    let digest = try #require(errorDigest)
+    // 최소 3개의 에러가 리포트되어야 함
+    #expect(digest.errors.count >= 3)
+    print("Error digest: \(digest.debugDescription)")
     #else
     #expect(errorDigest == nil)
     #endif
