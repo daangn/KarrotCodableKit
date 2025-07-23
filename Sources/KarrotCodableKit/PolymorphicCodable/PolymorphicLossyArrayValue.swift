@@ -70,28 +70,9 @@ public struct PolymorphicLossyArrayValue<PolymorphicType: PolymorphicCodableStra
   #endif
   
   #if DEBUG
-  /// A projection of the property wrapper that provides access to decoding outcome in DEBUG builds
-  public struct ProjectedValue {
-    /// The outcome of the decoding process
-    public let outcome: ResilientDecodingOutcome
-    
-    /// Results of decoding each element in the array
-    public let results: [Result<PolymorphicType.ExpectedType, Error>]
-    
-    /// Returns the error if decoding failed, nil otherwise
-    public var error: Error? {
-      switch outcome {
-      case .decodedSuccessfully, .keyNotFound, .valueWasNil:
-        return nil
-      case .recoveredFrom(let error, _):
-        return error
-      }
-    }
-  }
-  
   /// The projected value providing access to decoding outcome
-  public var projectedValue: ProjectedValue {
-    return ProjectedValue(outcome: outcome, results: results)
+  public var projectedValue: PolymorphicLossyArrayProjectedValue<PolymorphicType.ExpectedType> {
+    return PolymorphicLossyArrayProjectedValue(outcome: outcome, results: results)
   }
   #else
   /// In non-DEBUG builds, accessing projectedValue is a programmer error

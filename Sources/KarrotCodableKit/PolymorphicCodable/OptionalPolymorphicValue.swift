@@ -40,25 +40,9 @@ public struct OptionalPolymorphicValue<PolymorphicType: PolymorphicCodableStrate
   }
   
   #if DEBUG
-  /// A projection of the property wrapper that provides access to decoding outcome in DEBUG builds
-  public struct ProjectedValue {
-    /// The outcome of the decoding process
-    public let outcome: ResilientDecodingOutcome
-    
-    /// Returns the error if decoding failed, nil otherwise
-    public var error: Error? {
-      switch outcome {
-      case .decodedSuccessfully, .keyNotFound, .valueWasNil:
-        return nil
-      case .recoveredFrom(let error, _):
-        return error
-      }
-    }
-  }
-  
   /// The projected value providing access to decoding outcome
-  public var projectedValue: ProjectedValue {
-    return ProjectedValue(outcome: outcome)
+  public var projectedValue: PolymorphicProjectedValue {
+    return PolymorphicProjectedValue(outcome: outcome)
   }
   #else
   /// In non-DEBUG builds, accessing projectedValue is a programmer error

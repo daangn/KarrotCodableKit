@@ -8,13 +8,14 @@
 import Foundation
 
 #if DEBUG
-/// A base implementation for property wrapper projected values that track decoding outcomes.
-///
-/// This struct provides common functionality for all BetterCodable property wrappers' projected values,
-/// including error tracking and resilient decoding outcome information.
-public struct ResilientProjectedValue {
-  public let outcome: ResilientDecodingOutcome
-  
+/// Common protocol for all resilient projected values.
+protocol ResilientProjectedValueProtocol {
+  var outcome: ResilientDecodingOutcome { get }
+  var error: Error? { get }
+}
+
+/// Default implementation for error extraction.
+extension ResilientProjectedValueProtocol {
   public var error: Error? {
     switch outcome {
     case .decodedSuccessfully, .keyNotFound, .valueWasNil:
@@ -23,6 +24,14 @@ public struct ResilientProjectedValue {
       return error
     }
   }
+}
+
+/// A base implementation for property wrapper projected values that track decoding outcomes.
+///
+/// This struct provides common functionality for all BetterCodable property wrappers' projected values,
+/// including error tracking and resilient decoding outcome information.
+public struct ResilientProjectedValue: ResilientProjectedValueProtocol {
+  public let outcome: ResilientDecodingOutcome
   
   public init(outcome: ResilientDecodingOutcome) {
     self.outcome = outcome
@@ -34,17 +43,8 @@ public struct ResilientProjectedValue {
 /// This struct extends the base projected value with dynamic member lookup capabilities
 /// for accessing detailed array decoding errors.
 @dynamicMemberLookup
-public struct ResilientArrayProjectedValue<Element> {
+public struct ResilientArrayProjectedValue<Element>: ResilientProjectedValueProtocol {
   public let outcome: ResilientDecodingOutcome
-  
-  public var error: Error? {
-    switch outcome {
-    case .decodedSuccessfully, .keyNotFound, .valueWasNil:
-      return nil
-    case .recoveredFrom(let error, _):
-      return error
-    }
-  }
   
   public init(outcome: ResilientDecodingOutcome) {
     self.outcome = outcome
@@ -62,17 +62,8 @@ public struct ResilientArrayProjectedValue<Element> {
 /// This struct extends the base projected value with dynamic member lookup capabilities
 /// for accessing detailed dictionary decoding errors.
 @dynamicMemberLookup
-public struct ResilientDictionaryProjectedValue<Key: Hashable, Value> {
+public struct ResilientDictionaryProjectedValue<Key: Hashable, Value>: ResilientProjectedValueProtocol {
   public let outcome: ResilientDecodingOutcome
-  
-  public var error: Error? {
-    switch outcome {
-    case .decodedSuccessfully, .keyNotFound, .valueWasNil:
-      return nil
-    case .recoveredFrom(let error, _):
-      return error
-    }
-  }
   
   public init(outcome: ResilientDecodingOutcome) {
     self.outcome = outcome

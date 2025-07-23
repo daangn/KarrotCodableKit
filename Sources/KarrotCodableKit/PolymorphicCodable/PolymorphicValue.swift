@@ -38,20 +38,7 @@ public struct PolymorphicValue<PolymorphicType: PolymorphicCodableStrategy> {
   }
 
   #if DEBUG
-  public struct ProjectedValue {
-    public let outcome: ResilientDecodingOutcome
-
-    public var error: Error? {
-      switch outcome {
-      case .decodedSuccessfully, .keyNotFound, .valueWasNil:
-        nil
-      case .recoveredFrom(let error, _):
-        error
-      }
-    }
-  }
-
-  public var projectedValue: ProjectedValue { ProjectedValue(outcome: outcome) }
+  public var projectedValue: PolymorphicProjectedValue { PolymorphicProjectedValue(outcome: outcome) }
   #endif
 }
 
