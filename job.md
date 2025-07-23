@@ -152,7 +152,3 @@ https://github.com/airbnb/ResilientDecoding
 3. **Equatable/Hashable**: ResilientDecodingOutcome 때문에 명시적 구현 필요
 4. **조건부 컴파일**: #if DEBUG로 릴리즈 빌드 오버헤드 제거
 5. **nil vs keyNotFound**: Optional 타입에서 구분 처리
-
-## 다음 단계
-
-OptionalPolymorphicValue에 Resilient 기능을 추가하는 작업을 진행합니다. 이 wrapper는 디코딩 실패 시 에러를 다시 throw하는 특성이 있어 주의가 필요합니다.
