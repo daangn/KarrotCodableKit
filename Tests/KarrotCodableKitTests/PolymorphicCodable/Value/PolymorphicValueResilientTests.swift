@@ -17,6 +17,7 @@ struct PolymorphicValueResilientTests {
   
   @Test("projected value provides error information")
   func testProjectedValueProvidesErrorInfo() throws {
+    // given
     let json = """
     {
       "notice": {
@@ -27,10 +28,12 @@ struct PolymorphicValueResilientTests {
     }
     """
     
+    // when
     let decoder = JSONDecoder()
     let data = json.data(using: .utf8)!
     let fixture = try decoder.decode(Fixture.self, from: data)
     
+    // then
     // Verify basic behavior
     #expect(fixture.notice.description == "test description")
     #expect((fixture.notice as? DummyCallout)?.icon == "test_icon")
@@ -43,6 +46,7 @@ struct PolymorphicValueResilientTests {
   
   @Test("unknown type handling with fallback")
   func testUnknownType() throws {
+    // given
     let json = """
     {
       "notice": {
@@ -52,12 +56,14 @@ struct PolymorphicValueResilientTests {
     }
     """
     
+    // when
     let decoder = JSONDecoder()
     let data = json.data(using: .utf8)!
     
     // DummyNotice has fallback type configured so should succeed
     let fixture = try decoder.decode(Fixture.self, from: data)
     
+    // then
     // Verify decoded as fallback type
     #expect(fixture.notice is DummyUndefinedCallout)
     #expect(fixture.notice.description == "test description")
@@ -70,12 +76,14 @@ struct PolymorphicValueResilientTests {
   
   @Test("null values handling")
   func testNullValues() throws {
+    // given
     let json = """
     {
       "notice": null
     }
     """
     
+    // when / then
     let decoder = JSONDecoder()
     let data = json.data(using: .utf8)!
     
@@ -89,6 +97,7 @@ struct PolymorphicValueResilientTests {
   
   @Test("error reporting with JSONDecoder")
   func testErrorReporting() throws {
+    // given
     let json = """
     {
       "notice": {
@@ -100,11 +109,13 @@ struct PolymorphicValueResilientTests {
     }
     """
     
+    // when
     let decoder = JSONDecoder()
     let errorReporter = decoder.enableResilientDecodingErrorReporting()
     
     let data = json.data(using: .utf8)!
     
+    // then
     do {
       _ = try decoder.decode(Fixture.self, from: data)
       #expect(Bool(false), "Should have thrown")
@@ -112,6 +123,7 @@ struct PolymorphicValueResilientTests {
       // Decoding failed due to type mismatch (key should be String)
     }
     
+    // then
     let errorDigest = errorReporter.flushReportedErrors()
     
     #if DEBUG
