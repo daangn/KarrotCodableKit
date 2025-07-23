@@ -152,7 +152,7 @@ struct LossyOptionalPolymorphicValueResilientTests {
     let errorReporter = decoder.enableResilientDecodingErrorReporting()
     
     let result = try decoder.decode(Fixture.self, from: data)
-    
+ 
     // Then
     #expect(result.notice == nil)
     

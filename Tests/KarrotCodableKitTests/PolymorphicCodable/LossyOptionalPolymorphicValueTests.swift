@@ -117,7 +117,7 @@ extension LossyOptionalPolymorphicValueTests {
       from: Data(jsonData.utf8)
     )
 
-    // thens
+    // then
     XCTAssertNil(result.notice1)
     XCTAssertEqual(result.notice2?.type, .callout)
     XCTAssertNil(result.notice3)

@@ -113,7 +113,7 @@ class DefaultEmptyPolymorphicArrayValueTests: XCTestCase {
 
 extension DefaultEmptyPolymorphicArrayValueTests {
   func testDecodingFailElementInDefaultEmptyPolymorphicArrayValue() throws {
-    // given: An array where one element (notice) is missing the required 'description' parameter.
+    // given
     let jsonData = #"""
     {
       "notices1" : [
@@ -130,10 +130,10 @@ extension DefaultEmptyPolymorphicArrayValueTests {
     }
     """#
 
-    // when: During decoding.
+    // when
     let result = try JSONDecoder().decode(OptionalArrayDummyResponse.self, from: Data(jsonData.utf8))
 
-    // then: Returns an empty array.
+    // then
     XCTAssertTrue(result.notices1.isEmpty)
   }
 }
@@ -160,7 +160,7 @@ extension DefaultEmptyPolymorphicArrayValueTests {
       from: Data(jsonData.utf8)
     )
 
-    // thens
+    // then
     XCTAssertTrue(result.notices1.isEmpty)
     XCTAssertEqual(result.notices2.first?.type, .callout)
     XCTAssertTrue(result.notices3.isEmpty)
