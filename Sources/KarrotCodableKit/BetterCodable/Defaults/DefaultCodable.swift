@@ -219,4 +219,74 @@ extension KeyedDecodingContainer {
       }
     }
   }
+  
+  /// Decodes a DefaultCodable where the strategy's DefaultValue is RawRepresentable
+  ///
+  /// This method provides special handling for RawRepresentable types:
+  /// - If `isFrozen` is false (default), unknown raw values result in UnknownNovelValueError and use the default value
+  /// - If `isFrozen` is true, unknown raw values result in DecodingError and use the default value
+  public func decode<P>(_: DefaultCodable<P>.Type, forKey key: Key) throws -> DefaultCodable<P>
+    where P.DefaultValue: RawRepresentable, P.DefaultValue.RawValue: Decodable
+  {
+    // Check if key exists
+    if !contains(key) {
+      #if DEBUG
+      return DefaultCodable(wrappedValue: P.defaultValue, outcome: .keyNotFound)
+      #else
+      return DefaultCodable(wrappedValue: P.defaultValue)
+      #endif
+    }
+    
+    // Check for nil
+    if (try? decodeNil(forKey: key)) == true {
+      #if DEBUG
+      return DefaultCodable(wrappedValue: P.defaultValue, outcome: .valueWasNil)
+      #else
+      return DefaultCodable(wrappedValue: P.defaultValue)
+      #endif
+    }
+    
+    // Try to decode the raw value
+    do {
+      let rawValue = try decode(P.DefaultValue.RawValue.self, forKey: key)
+      
+      // Try to create the enum from raw value
+      if let value = P.DefaultValue(rawValue: rawValue) {
+        return DefaultCodable(wrappedValue: value)
+      } else {
+        // Unknown raw value
+        let error: Error
+        if P.isFrozen {
+          // For frozen types, throw a DecodingError
+          let context = DecodingError.Context(
+            codingPath: codingPath + [key],
+            debugDescription: "Cannot initialize \(P.DefaultValue.self) from invalid raw value \(rawValue)"
+          )
+          error = DecodingError.dataCorrupted(context)
+        } else {
+          // For non-frozen types, throw UnknownNovelValueError
+          error = UnknownNovelValueError(novelValue: rawValue)
+        }
+        
+        let decoder = try superDecoder(forKey: key)
+        decoder.reportError(error)
+        
+        #if DEBUG
+        return DefaultCodable(wrappedValue: P.defaultValue, outcome: .recoveredFrom(error, wasReported: true))
+        #else
+        return DefaultCodable(wrappedValue: P.defaultValue)
+        #endif
+      }
+    } catch {
+      // Decoding the raw value failed (e.g., type mismatch)
+      let decoder = try superDecoder(forKey: key)
+      decoder.reportError(error)
+      
+      #if DEBUG
+      return DefaultCodable(wrappedValue: P.defaultValue, outcome: .recoveredFrom(error, wasReported: true))
+      #else
+      return DefaultCodable(wrappedValue: P.defaultValue)
+      #endif
+    }
+  }
 }
