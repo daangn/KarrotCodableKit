@@ -8,18 +8,18 @@
 import Foundation
 
 #if DEBUG
-public enum ResilientDecodingOutcome {
+public enum ResilientDecodingOutcome: Sendable {
   case decodedSuccessfully
   case keyNotFound
   case valueWasNil
-  case recoveredFrom(Error, wasReported: Bool)
+  case recoveredFrom(any Error, wasReported: Bool)
 }
 #else
-struct ResilientDecodingOutcome {
+struct ResilientDecodingOutcome: Sendable {
   static let decodedSuccessfully = Self()
   static let keyNotFound = Self()
   static let valueWasNil = Self()
   static let recoveredFromDebugOnlyError = Self()
-  static func recoveredFrom(_: Error, wasReported: Bool) -> Self { Self() }
+  static func recoveredFrom(_: any Error, wasReported: Bool) -> Self { Self() }
 }
 #endif
