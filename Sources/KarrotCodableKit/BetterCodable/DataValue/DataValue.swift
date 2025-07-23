@@ -38,20 +38,7 @@ public struct DataValue<Coder: DataValueCodableStrategy> {
   }
   
   #if DEBUG
-  public struct ProjectedValue {
-    public let outcome: ResilientDecodingOutcome
-    
-    public var error: Error? {
-      switch outcome {
-      case .decodedSuccessfully, .keyNotFound, .valueWasNil:
-        return nil
-      case .recoveredFrom(let error, _):
-        return error
-      }
-    }
-  }
-  
-  public var projectedValue: ProjectedValue { ProjectedValue(outcome: outcome) }
+  public var projectedValue: ResilientProjectedValue { ResilientProjectedValue(outcome: outcome) }
   #endif
 }
 

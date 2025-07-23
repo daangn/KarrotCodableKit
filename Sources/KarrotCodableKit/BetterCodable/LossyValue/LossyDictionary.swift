@@ -29,27 +29,7 @@ public struct LossyDictionary<Key: Hashable, Value> {
   }
   
   #if DEBUG
-  @dynamicMemberLookup
-  public struct ProjectedValue {
-    public let outcome: ResilientDecodingOutcome
-    
-    public var error: Error? {
-      switch outcome {
-      case .decodedSuccessfully, .keyNotFound, .valueWasNil:
-        return nil
-      case .recoveredFrom(let error, _):
-        return error
-      }
-    }
-    
-    public subscript<U>(
-      dynamicMember keyPath: KeyPath<ResilientDecodingOutcome.DictionaryDecodingError<Key, Value>, U>
-    ) -> U {
-      outcome.dictionaryDecodingError()[keyPath: keyPath]
-    }
-  }
-  
-  public var projectedValue: ProjectedValue { ProjectedValue(outcome: outcome) }
+  public var projectedValue: ResilientDictionaryProjectedValue<Key, Value> { ResilientDictionaryProjectedValue(outcome: outcome) }
   #endif
 }
 

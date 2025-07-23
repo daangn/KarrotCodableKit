@@ -32,27 +32,7 @@ public struct LosslessArray<T: LosslessStringCodable> {
   }
   
   #if DEBUG
-  @dynamicMemberLookup
-  public struct ProjectedValue {
-    public let outcome: ResilientDecodingOutcome
-    
-    public var error: Error? {
-      switch outcome {
-      case .decodedSuccessfully, .keyNotFound, .valueWasNil:
-        return nil
-      case .recoveredFrom(let error, _):
-        return error
-      }
-    }
-    
-    public subscript<U>(
-      dynamicMember keyPath: KeyPath<ResilientDecodingOutcome.ArrayDecodingError<T>, U>
-    ) -> U {
-      outcome.arrayDecodingError()[keyPath: keyPath]
-    }
-  }
-  
-  public var projectedValue: ProjectedValue { ProjectedValue(outcome: outcome) }
+  public var projectedValue: ResilientArrayProjectedValue<T> { ResilientArrayProjectedValue(outcome: outcome) }
   #endif
 }
 

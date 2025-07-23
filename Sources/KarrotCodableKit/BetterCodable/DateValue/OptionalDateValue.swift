@@ -25,20 +25,40 @@ public protocol OptionalDateValueCodableStrategy {
 @propertyWrapper
 public struct OptionalDateValue<Formatter: OptionalDateValueCodableStrategy> {
   public var wrappedValue: Date?
+  
+  let outcome: ResilientDecodingOutcome
 
   public init(wrappedValue: Date?) {
     self.wrappedValue = wrappedValue
+    self.outcome = .decodedSuccessfully
   }
+  
+  init(wrappedValue: Date?, outcome: ResilientDecodingOutcome) {
+    self.wrappedValue = wrappedValue
+    self.outcome = outcome
+  }
+  
+  #if DEBUG
+  public var projectedValue: ResilientProjectedValue { ResilientProjectedValue(outcome: outcome) }
+  #endif
 }
 
 extension OptionalDateValue: Decodable where Formatter.RawValue: Decodable {
   public init(from decoder: Decoder) throws {
     do {
       let value = try Formatter.RawValue(from: decoder)
-      self.wrappedValue = try Formatter.decode(value)
+      do {
+        self.wrappedValue = try Formatter.decode(value)
+        self.outcome = .decodedSuccessfully
+      } catch {
+        decoder.reportError(error)
+        throw error
+      }
     } catch DecodingError.valueNotFound(let rawType, _) where rawType == Formatter.RawValue.self {
       self.wrappedValue = nil
+      self.outcome = .valueWasNil
     } catch {
+      decoder.reportError(error)
       throw error
     }
   }

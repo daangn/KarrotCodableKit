@@ -46,20 +46,7 @@ public struct LosslessValueCodable<Strategy: LosslessDecodingStrategy>: Codable 
   }
   
   #if DEBUG
-  public struct ProjectedValue {
-    public let outcome: ResilientDecodingOutcome
-    
-    public var error: Error? {
-      switch outcome {
-      case .decodedSuccessfully, .keyNotFound, .valueWasNil:
-        return nil
-      case .recoveredFrom(let error, _):
-        return error
-      }
-    }
-  }
-  
-  public var projectedValue: ProjectedValue { ProjectedValue(outcome: outcome) }
+  public var projectedValue: ResilientProjectedValue { ResilientProjectedValue(outcome: outcome) }
   #endif
 
   public init(from decoder: Decoder) throws {
