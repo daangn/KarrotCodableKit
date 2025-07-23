@@ -216,4 +216,211 @@ struct DefaultCodableResilientTests {
     #expect(fixture.$number.error != nil)
     #endif
   }
+  
+  // MARK: - RawRepresentable Support Tests
+  
+  enum TestEnum: String, DefaultCodableStrategy {
+    case first
+    case second
+    case unknown
+    
+    static var defaultValue: TestEnum { .unknown }
+  }
+  
+  enum FrozenTestEnum: String, DefaultCodableStrategy {
+    case alpha
+    case beta
+    case fallback
+    
+    static var defaultValue: FrozenTestEnum { .fallback }
+    static var isFrozen: Bool { true }
+  }
+  
+  struct RawRepresentableFixture: Decodable {
+    @DefaultCodable<TestEnum> var normalEnum: TestEnum
+    @DefaultCodable<FrozenTestEnum> var frozenEnum: FrozenTestEnum
+  }
+  
+  @Test("RawRepresentable with valid raw values")
+  func testRawRepresentableValidValues() throws {
+    // given
+    let json = """
+    {
+      "normalEnum": "first",
+      "frozenEnum": "alpha"
+    }
+    """
+    
+    // when
+    let decoder = JSONDecoder()
+    let data = json.data(using: .utf8)!
+    let fixture = try decoder.decode(RawRepresentableFixture.self, from: data)
+    
+    // then
+    #expect(fixture.normalEnum == .first)
+    #expect(fixture.frozenEnum == .alpha)
+    
+    #if DEBUG
+    #expect(fixture.$normalEnum.outcome == .decodedSuccessfully)
+    #expect(fixture.$frozenEnum.outcome == .decodedSuccessfully)
+    #expect(fixture.$normalEnum.error == nil)
+    #expect(fixture.$frozenEnum.error == nil)
+    #endif
+  }
+  
+  @Test("RawRepresentable with unknown raw values (non-frozen)")
+  func testRawRepresentableUnknownValueNonFrozen() throws {
+    // given
+    let json = """
+    {
+      "normalEnum": "third",
+      "frozenEnum": "beta"
+    }
+    """
+    
+    // when
+    let decoder = JSONDecoder()
+    let data = json.data(using: .utf8)!
+    let fixture = try decoder.decode(RawRepresentableFixture.self, from: data)
+    
+    // then
+    #expect(fixture.normalEnum == .unknown) // Should use default value
+    #expect(fixture.frozenEnum == .beta)
+    
+    #if DEBUG
+    // Non-frozen enum should recover with UnknownNovelValueError
+    if case .recoveredFrom(let error, _) = fixture.$normalEnum.outcome {
+      #expect(error is UnknownNovelValueError)
+      if let unknownError = error as? UnknownNovelValueError {
+        #expect(unknownError.novelValue as? String == "third")
+      }
+    } else {
+      Issue.record("Expected recoveredFrom outcome for non-frozen enum")
+    }
+    
+    #expect(fixture.$frozenEnum.outcome == .decodedSuccessfully)
+    #endif
+  }
+  
+  @Test("RawRepresentable with unknown raw values (frozen)")
+  func testRawRepresentableUnknownValueFrozen() throws {
+    // given
+    let json = """
+    {
+      "normalEnum": "first",
+      "frozenEnum": "gamma"
+    }
+    """
+    
+    // when
+    let decoder = JSONDecoder()
+    let errorReporter = decoder.enableResilientDecodingErrorReporting()
+    let data = json.data(using: .utf8)!
+    let fixture = try decoder.decode(RawRepresentableFixture.self, from: data)
+    
+    // then
+    #expect(fixture.normalEnum == .first)
+    #expect(fixture.frozenEnum == .fallback) // Should use default value due to error
+    
+    #if DEBUG
+    // Frozen enum should report DecodingError
+    if case .recoveredFrom(let error, _) = fixture.$frozenEnum.outcome {
+      #expect(error is DecodingError)
+      if case .dataCorrupted = error as? DecodingError {
+        // Expected
+      } else {
+        Issue.record("Expected dataCorrupted DecodingError for frozen enum")
+      }
+    } else {
+      Issue.record("Expected recoveredFrom outcome for frozen enum")
+    }
+    
+    // Error should be reported to error reporter
+    let errorDigest = errorReporter.flushReportedErrors()
+    #expect(errorDigest != nil)
+    #endif
+  }
+  
+  @Test("RawRepresentable with missing keys")
+  func testRawRepresentableMissingKeys() throws {
+    // given
+    let json = "{}"
+    
+    // when
+    let decoder = JSONDecoder()
+    let data = json.data(using: .utf8)!
+    let fixture = try decoder.decode(RawRepresentableFixture.self, from: data)
+    
+    // then
+    #expect(fixture.normalEnum == .unknown)
+    #expect(fixture.frozenEnum == .fallback)
+    
+    #if DEBUG
+    #expect(fixture.$normalEnum.outcome == .keyNotFound)
+    #expect(fixture.$frozenEnum.outcome == .keyNotFound)
+    #expect(fixture.$normalEnum.error == nil)
+    #expect(fixture.$frozenEnum.error == nil)
+    #endif
+  }
+  
+  @Test("RawRepresentable with null values")
+  func testRawRepresentableNullValues() throws {
+    // given
+    let json = """
+    {
+      "normalEnum": null,
+      "frozenEnum": null
+    }
+    """
+    
+    // when
+    let decoder = JSONDecoder()
+    let data = json.data(using: .utf8)!
+    let fixture = try decoder.decode(RawRepresentableFixture.self, from: data)
+    
+    // then
+    #expect(fixture.normalEnum == .unknown)
+    #expect(fixture.frozenEnum == .fallback)
+    
+    #if DEBUG
+    #expect(fixture.$normalEnum.outcome == .valueWasNil)
+    #expect(fixture.$frozenEnum.outcome == .valueWasNil)
+    #expect(fixture.$normalEnum.error == nil)
+    #expect(fixture.$frozenEnum.error == nil)
+    #endif
+  }
+  
+  @Test("RawRepresentable with type mismatch")
+  func testRawRepresentableTypeMismatch() throws {
+    // given - enums expect String but we provide numbers
+    let json = """
+    {
+      "normalEnum": 123,
+      "frozenEnum": true
+    }
+    """
+    
+    // when
+    let decoder = JSONDecoder()
+    let data = json.data(using: .utf8)!
+    let fixture = try decoder.decode(RawRepresentableFixture.self, from: data)
+    
+    // then
+    #expect(fixture.normalEnum == .unknown)
+    #expect(fixture.frozenEnum == .fallback)
+    
+    #if DEBUG
+    // Both should have type mismatch errors
+    if case .recoveredFrom(let error, _) = fixture.$normalEnum.outcome {
+      #expect(error is DecodingError)
+      if case .typeMismatch = error as? DecodingError {
+        // Expected
+      } else {
+        Issue.record("Expected typeMismatch DecodingError")
+      }
+    } else {
+      Issue.record("Expected recoveredFrom outcome")
+    }
+    #endif
+  }
 }
