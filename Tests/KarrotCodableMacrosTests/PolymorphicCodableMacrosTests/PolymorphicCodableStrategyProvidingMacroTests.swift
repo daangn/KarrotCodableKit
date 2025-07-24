@@ -59,7 +59,7 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
             PolymorphicMetaCodingKey.type
           }
 
-          public static func decode(from decoder: Decoder) throws -> Notice {
+          public static func decode(from decoder: Decoder) throws -> any Notice {
             try decoder.decode(
               codingKey: Self.polymorphicMetaCodingKey,
               matchingTypes: [
@@ -120,7 +120,7 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
             PolymorphicMetaCodingKey.type
           }
 
-          public static func decode(from decoder: Decoder) throws -> Notice {
+          public static func decode(from decoder: Decoder) throws -> any Notice {
             try decoder.decode(
               codingKey: Self.polymorphicMetaCodingKey,
               matchingTypes: [

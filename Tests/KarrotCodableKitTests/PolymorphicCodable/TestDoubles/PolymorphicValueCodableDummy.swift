@@ -24,53 +24,53 @@ enum CalloutBadge {
 struct DummyResponse {
 
   @DummyNotice.Polymorphic
-  var notice: DummyNotice
+  var notice: any DummyNotice
 
   @DummyNotice.PolymorphicArray
-  var notices: [DummyNotice]
+  var notices: [any DummyNotice]
 }
 
 @CustomCodable(codingKeyStyle: .snakeCase)
 struct LossyOptionalDummyResponse {
 
   @DummyNotice.LossyOptionalPolymorphic
-  var notice1: DummyNotice?
+  var notice1: (any DummyNotice)?
 
   @DummyNotice.LossyOptionalPolymorphic
-  var notice2: DummyNotice?
+  var notice2: (any DummyNotice)?
 }
 
 @CustomCodable(codingKeyStyle: .snakeCase)
 struct OptionalDummyResponse {
 
   @DummyNotice.OptionalPolymorphic
-  var notice1: DummyNotice?
+  var notice1: (any DummyNotice)?
 
   @DummyNotice.OptionalPolymorphic
-  var notice2: DummyNotice?
+  var notice2: (any DummyNotice)?
 
   @DummyNotice.OptionalPolymorphic
-  var notice3: DummyNotice?
+  var notice3: (any DummyNotice)?
 }
 
 @CustomCodable(codingKeyStyle: .snakeCase)
 struct OptionalArrayDummyResponse {
 
   @DummyNotice.DefaultEmptyPolymorphicArray
-  var notices1: [DummyNotice]
+  var notices1: [any DummyNotice]
 
   @DummyNotice.DefaultEmptyPolymorphicArray
-  var notices2: [DummyNotice]
+  var notices2: [any DummyNotice]
 }
 
 @CustomCodable(codingKeyStyle: .snakeCase)
 struct OptionalLossyArrayDummyResponse {
 
   @DummyNotice.PolymorphicLossyArray
-  var notices1: [DummyNotice]
+  var notices1: [any DummyNotice]
 
   @DummyNotice.PolymorphicLossyArray
-  var notices2: [DummyNotice]
+  var notices2: [any DummyNotice]
 }
 
 // MARK: - PolymorphicCodable
@@ -84,7 +84,7 @@ struct OptionalLossyArrayDummyResponse {
   ],
   fallbackType: DummyUndefinedCallout.self
 )
-public protocol DummyNotice: Codable {
+public protocol DummyNotice: Codable, Equatable {
   var type: DummyNoticeType { get }
   var title: String? { get }
   var description: String { get }
