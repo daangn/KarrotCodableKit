@@ -105,6 +105,7 @@ extension PolymorphicCodableStrategyProvidingMacro: ExtensionMacro {
             raw: strategyStructName
           )>
           \(raw: accessModifier)typealias PolymorphicArray = PolymorphicArrayValue<\(raw: strategyStructName)>
+          \(raw: accessModifier)typealias OptionalPolymorphicArray = OptionalPolymorphicArrayValue<\(raw: strategyStructName)>
           \(raw: accessModifier)typealias PolymorphicLossyArray = PolymorphicLossyArrayValue<\(raw: strategyStructName)>
           \(raw: accessModifier)typealias DefaultEmptyPolymorphicArray = DefaultEmptyPolymorphicArrayValue<\(
             raw: strategyStructName

@@ -76,6 +76,7 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
           public typealias OptionalPolymorphic = OptionalPolymorphicValue<NoticeCodableStrategy>
           public typealias LossyOptionalPolymorphic = LossyOptionalPolymorphicValue<NoticeCodableStrategy>
           public typealias PolymorphicArray = PolymorphicArrayValue<NoticeCodableStrategy>
+          public typealias OptionalPolymorphicArray = OptionalPolymorphicArrayValue<NoticeCodableStrategy>
           public typealias PolymorphicLossyArray = PolymorphicLossyArrayValue<NoticeCodableStrategy>
           public typealias DefaultEmptyPolymorphicArray = DefaultEmptyPolymorphicArrayValue<NoticeCodableStrategy>
         }
@@ -137,6 +138,7 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
           public typealias OptionalPolymorphic = OptionalPolymorphicValue<NoticeCodableStrategy>
           public typealias LossyOptionalPolymorphic = LossyOptionalPolymorphicValue<NoticeCodableStrategy>
           public typealias PolymorphicArray = PolymorphicArrayValue<NoticeCodableStrategy>
+          public typealias OptionalPolymorphicArray = OptionalPolymorphicArrayValue<NoticeCodableStrategy>
           public typealias PolymorphicLossyArray = PolymorphicLossyArrayValue<NoticeCodableStrategy>
           public typealias DefaultEmptyPolymorphicArray = DefaultEmptyPolymorphicArrayValue<NoticeCodableStrategy>
         }
@@ -213,6 +215,7 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
           typealias OptionalPolymorphic = OptionalPolymorphicValue<NoticeCodableStrategy>
           typealias LossyOptionalPolymorphic = LossyOptionalPolymorphicValue<NoticeCodableStrategy>
           typealias PolymorphicArray = PolymorphicArrayValue<NoticeCodableStrategy>
+          typealias OptionalPolymorphicArray = OptionalPolymorphicArrayValue<NoticeCodableStrategy>
           typealias PolymorphicLossyArray = PolymorphicLossyArrayValue<NoticeCodableStrategy>
           typealias DefaultEmptyPolymorphicArray = DefaultEmptyPolymorphicArrayValue<NoticeCodableStrategy>
         }
