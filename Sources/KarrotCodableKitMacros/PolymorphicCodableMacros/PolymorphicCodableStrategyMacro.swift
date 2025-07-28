@@ -62,7 +62,7 @@ public struct PolymorphicCodableStrategyProvidingMacro: PeerMacro {
             PolymorphicMetaCodingKey.\(raw: identifierCodingKeyString)
           }
 
-          \(raw: accessModifier)static func decode(from decoder: Decoder) throws -> \(raw: identifier) {
+          \(raw: accessModifier)static func decode(from decoder: Decoder) throws -> any \(raw: identifier) {
             try decoder.decode(
               codingKey: Self.polymorphicMetaCodingKey,
               matchingTypes: \(raw: formattedMatchingTypes),
@@ -105,6 +105,7 @@ extension PolymorphicCodableStrategyProvidingMacro: ExtensionMacro {
             raw: strategyStructName
           )>
           \(raw: accessModifier)typealias PolymorphicArray = PolymorphicArrayValue<\(raw: strategyStructName)>
+          \(raw: accessModifier)typealias OptionalPolymorphicArray = OptionalPolymorphicArrayValue<\(raw: strategyStructName)>
           \(raw: accessModifier)typealias PolymorphicLossyArray = PolymorphicLossyArrayValue<\(raw: strategyStructName)>
           \(raw: accessModifier)typealias DefaultEmptyPolymorphicArray = DefaultEmptyPolymorphicArrayValue<\(
             raw: strategyStructName
