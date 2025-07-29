@@ -26,9 +26,30 @@ public struct OptionalPolymorphicValue<PolymorphicType: PolymorphicCodableStrate
   /// The decoded optional value of the expected polymorphic type.
   public var wrappedValue: PolymorphicType.ExpectedType?
 
+  /// Tracks the outcome of the decoding process for resilient decoding
+  public let outcome: ResilientDecodingOutcome
+
   public init(wrappedValue: PolymorphicType.ExpectedType?) {
     self.wrappedValue = wrappedValue
+    self.outcome = .decodedSuccessfully
   }
+
+  init(wrappedValue: PolymorphicType.ExpectedType?, outcome: ResilientDecodingOutcome) {
+    self.wrappedValue = wrappedValue
+    self.outcome = outcome
+  }
+
+  #if DEBUG
+  /// The projected value providing access to decoding outcome
+  public var projectedValue: PolymorphicProjectedValue {
+    PolymorphicProjectedValue(outcome: outcome)
+  }
+  #else
+  /// In non-DEBUG builds, accessing projectedValue is a programmer error
+  public var projectedValue: Never {
+    fatalError("@\(Self.self) projectedValue should not be used in non-DEBUG builds")
+  }
+  #endif
 }
 
 extension OptionalPolymorphicValue: Encodable {
@@ -42,10 +63,26 @@ extension OptionalPolymorphicValue: Encodable {
 
 extension OptionalPolymorphicValue: Decodable {
   public init(from decoder: Decoder) throws {
-    self.wrappedValue = try PolymorphicType.decode(from: decoder)
+    do {
+      self.wrappedValue = try PolymorphicType.decode(from: decoder)
+      self.outcome = .decodedSuccessfully
+    } catch {
+      // OptionalPolymorphicValue throws errors instead of recovering
+      throw error
+    }
   }
 }
 
-extension OptionalPolymorphicValue: Equatable where PolymorphicType.ExpectedType: Equatable {}
-extension OptionalPolymorphicValue: Hashable where PolymorphicType.ExpectedType: Hashable {}
+extension OptionalPolymorphicValue: Equatable where PolymorphicType.ExpectedType: Equatable {
+  public static func == (lhs: Self, rhs: Self) -> Bool {
+    lhs.wrappedValue == rhs.wrappedValue
+  }
+}
+
+extension OptionalPolymorphicValue: Hashable where PolymorphicType.ExpectedType: Hashable {
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(wrappedValue)
+  }
+}
+
 extension OptionalPolymorphicValue: Sendable where PolymorphicType.ExpectedType: Sendable {}
