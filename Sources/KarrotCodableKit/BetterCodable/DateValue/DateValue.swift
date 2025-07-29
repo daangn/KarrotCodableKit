@@ -24,16 +24,34 @@ public protocol DateValueCodableStrategy {
 @propertyWrapper
 public struct DateValue<Formatter: DateValueCodableStrategy> {
   public var wrappedValue: Date
+  
+  public let outcome: ResilientDecodingOutcome
 
   public init(wrappedValue: Date) {
     self.wrappedValue = wrappedValue
+    self.outcome = .decodedSuccessfully
   }
+  
+  init(wrappedValue: Date, outcome: ResilientDecodingOutcome) {
+    self.wrappedValue = wrappedValue
+    self.outcome = outcome
+  }
+  
+  #if DEBUG
+  public var projectedValue: ResilientProjectedValue { ResilientProjectedValue(outcome: outcome) }
+  #endif
 }
 
 extension DateValue: Decodable where Formatter.RawValue: Decodable {
   public init(from decoder: Decoder) throws {
-    let value = try Formatter.RawValue(from: decoder)
-    self.wrappedValue = try Formatter.decode(value)
+    do {
+      let value = try Formatter.RawValue(from: decoder)
+      self.wrappedValue = try Formatter.decode(value)
+      self.outcome = .decodedSuccessfully
+    } catch {
+      decoder.reportError(error)
+      throw error
+    }
   }
 }
 
@@ -45,7 +63,7 @@ extension DateValue: Encodable where Formatter.RawValue: Encodable {
 }
 
 extension DateValue: Equatable {
-  public static func == (lhs: DateValue<Formatter>, rhs: DateValue<Formatter>) -> Bool {
+  public static func == (lhs: Self, rhs: Self) -> Bool {
     lhs.wrappedValue == rhs.wrappedValue
   }
 }
