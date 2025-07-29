@@ -119,11 +119,7 @@ struct DateValueResilientTests {
     
     let errorDigest = errorReporter.flushReportedErrors()
     
-    #if DEBUG
     let digest = try #require(errorDigest)
     #expect(digest.errors.count >= 1)
-    #else
-    #expect(errorDigest == nil)
-    #endif
   }
 }

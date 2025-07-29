@@ -87,14 +87,12 @@ struct LosslessArrayResilientTests {
     
     let errorDigest = errorReporter.flushReportedErrors()
     
-    #if DEBUG
     // Check if errors were reported
     let digest = try #require(errorDigest)
     // null and conversion failure errors
     #expect(digest.errors.count >= 3)
+    #if DEBUG
     print("Error digest: \(digest.debugDescription)")
-    #else
-    #expect(errorDigest == nil)
     #endif
   }
   

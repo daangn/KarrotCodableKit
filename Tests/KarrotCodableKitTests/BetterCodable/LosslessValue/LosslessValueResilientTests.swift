@@ -126,12 +126,8 @@ struct LosslessValueResilientTests {
     
     let errorDigest = errorReporter.flushReportedErrors()
     
-    #if DEBUG
     // Check if errors were reported
     let digest = try #require(errorDigest)
     #expect(digest.errors.count >= 1)  // At least 1 error occurred
-    #else
-    #expect(errorDigest == nil)
-    #endif
   }
 }

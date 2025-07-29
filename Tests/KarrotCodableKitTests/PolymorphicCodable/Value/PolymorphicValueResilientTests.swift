@@ -132,13 +132,9 @@ struct PolymorphicValueResilientTests {
     // then
     let errorDigest = errorReporter.flushReportedErrors()
     
-    #if DEBUG
     // Check if error was reported
     let digest = try #require(errorDigest)
     #expect(digest.errors.count >= 1)
-    #else
-    #expect(errorDigest == nil)
-    #endif
   }
 }
 

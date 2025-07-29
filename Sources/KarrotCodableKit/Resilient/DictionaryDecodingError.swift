@@ -2,7 +2,7 @@
 //  DictionaryDecodingError.swift
 //  KarrotCodableKit
 //
-//  Created by Elon on 4/9/25.
+//  Created by Elon on 7/28/25.
 //
 
 import Foundation
