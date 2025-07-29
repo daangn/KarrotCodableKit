@@ -10,7 +10,7 @@ import Foundation
 
 @available(*, deprecated, renamed: "PolymorphicLossyArrayValue")
 public typealias DefaultEmptyPolymorphicLossyArrayValue<PolymorphicType: PolymorphicCodableStrategy> =
-PolymorphicLossyArrayValue<PolymorphicType>
+  PolymorphicLossyArrayValue<PolymorphicType>
 
 /// A property wrapper that decodes an array of polymorphic objects with lossy behavior for individual elements,
 /// and defaults to an empty array `[]` if the array key is missing, the value is `null`, or not a valid JSON array.
@@ -40,9 +40,50 @@ public struct PolymorphicLossyArrayValue<PolymorphicType: PolymorphicCodableStra
   /// The decoded array containing only the successfully decoded polymorphic elements. Defaults to an empty array `[]` if the array key is missing or the value is not an array.
   public var wrappedValue: [PolymorphicType.ExpectedType]
 
+  /// Tracks the outcome of the decoding process for resilient decoding
+  public let outcome: ResilientDecodingOutcome
+
+  #if DEBUG
+  /// Results of decoding each element in the array (DEBUG only)
+  let results: [Result<PolymorphicType.ExpectedType, Error>]
+  #endif
+
   public init(wrappedValue: [PolymorphicType.ExpectedType]) {
     self.wrappedValue = wrappedValue
+    self.outcome = .decodedSuccessfully
+    #if DEBUG
+    self.results = []
+    #endif
   }
+
+  #if DEBUG
+  init(
+    wrappedValue: [PolymorphicType.ExpectedType],
+    outcome: ResilientDecodingOutcome,
+    results: [Result<PolymorphicType.ExpectedType, Error>] = []
+  ) {
+    self.wrappedValue = wrappedValue
+    self.outcome = outcome
+    self.results = results
+  }
+  #else
+  init(wrappedValue: [PolymorphicType.ExpectedType], outcome: ResilientDecodingOutcome) {
+    self.wrappedValue = wrappedValue
+    self.outcome = outcome
+  }
+  #endif
+
+  #if DEBUG
+  /// The projected value providing access to decoding outcome
+  public var projectedValue: PolymorphicLossyArrayProjectedValue<PolymorphicType.ExpectedType> {
+    PolymorphicLossyArrayProjectedValue(outcome: outcome, results: results)
+  }
+  #else
+  /// In non-DEBUG builds, accessing projectedValue is a programmer error
+  public var projectedValue: Never {
+    fatalError("@\(Self.self) projectedValue should not be used in non-DEBUG builds")
+  }
+  #endif
 }
 
 extension PolymorphicLossyArrayValue: Decodable {
@@ -51,20 +92,32 @@ extension PolymorphicLossyArrayValue: Decodable {
   public init(from decoder: Decoder) throws {
     var container = try decoder.unkeyedContainer()
 
-    var elements = [PolymorphicType.ExpectedType?]()
+    var elements = [PolymorphicType.ExpectedType]()
+    #if DEBUG
+    var results = [Result<PolymorphicType.ExpectedType, Error>]()
+    #endif
+
     while !container.isAtEnd {
       do {
         let value = try container.decode(PolymorphicValue<PolymorphicType>.self).wrappedValue
         elements.append(value)
+        #if DEBUG
+        results.append(.success(value))
+        #endif
       } catch {
-        print("`PolymorphicLossyArrayValue` decode catch error: \(error)")
-
         // Decoding processing to prevent infinite loops if decoding fails.
         _ = try? container.decode(AnyDecodableValue.self)
+        #if DEBUG
+        results.append(.failure(error))
+        #endif
       }
     }
 
-    wrappedValue = elements.compactMap { $0 }
+    self.wrappedValue = elements
+    self.outcome = .decodedSuccessfully
+    #if DEBUG
+    self.results = results
+    #endif
   }
 }
 
@@ -77,6 +130,16 @@ extension PolymorphicLossyArrayValue: Encodable {
   }
 }
 
-extension PolymorphicLossyArrayValue: Equatable where PolymorphicType.ExpectedType: Equatable {}
-extension PolymorphicLossyArrayValue: Hashable where PolymorphicType.ExpectedType: Hashable {}
+extension PolymorphicLossyArrayValue: Equatable where PolymorphicType.ExpectedType: Equatable {
+  public static func == (lhs: Self, rhs: Self) -> Bool {
+    lhs.wrappedValue == rhs.wrappedValue
+  }
+}
+
+extension PolymorphicLossyArrayValue: Hashable where PolymorphicType.ExpectedType: Hashable {
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(wrappedValue)
+  }
+}
+
 extension PolymorphicLossyArrayValue: Sendable where PolymorphicType.ExpectedType: Sendable {}
