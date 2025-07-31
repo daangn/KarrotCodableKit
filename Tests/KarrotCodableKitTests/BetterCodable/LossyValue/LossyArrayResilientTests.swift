@@ -12,13 +12,13 @@ import Foundation
 @Suite("LossyArray Resilient Decoding")
 struct LossyArrayResilientTests {
   struct Fixture: Decodable {
-    @LossyArray var integers: [Int]
-    @LossyArray var strings: [String]
-    
     struct NestedObject: Decodable, Equatable {
       let id: Int
       let name: String
     }
+
+    @LossyArray var integers: [Int]
+    @LossyArray var strings: [String]
     @LossyArray var objects: [NestedObject]
   }
   
@@ -144,15 +144,5 @@ struct LossyArrayResilientTests {
     #expect(fixture.$strings.error != nil)
     #expect(fixture.$objects.error == nil) // null is not an error
     #endif
-  }
-}
-
-// Result extension for testing
-extension Result {
-  var isFailure: Bool {
-    switch self {
-    case .success: return false
-    case .failure: return true
-    }
   }
 }

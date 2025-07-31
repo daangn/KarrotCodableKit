@@ -32,7 +32,9 @@ public struct LosslessArray<T: LosslessStringCodable> {
   }
   
   #if DEBUG
-  public var projectedValue: ResilientArrayProjectedValue<T> { ResilientArrayProjectedValue(outcome: outcome) }
+  public var projectedValue: ResilientArrayProjectedValue<T> {
+    ResilientArrayProjectedValue(outcome: outcome)
+  }
   #endif
 }
 

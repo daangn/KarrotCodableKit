@@ -34,7 +34,7 @@ struct DefaultCodableResilientTests {
     let decoder = JSONDecoder()
     let data = json.data(using: .utf8)!
     let fixture = try decoder.decode(Fixture.self, from: data)
-    
+
     // Verify default behavior - use default value on decoding failure
     #expect(fixture.intValue == 0)
     #expect(fixture.stringValue == "")

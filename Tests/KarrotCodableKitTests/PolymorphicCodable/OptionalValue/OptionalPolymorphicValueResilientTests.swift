@@ -91,7 +91,7 @@ struct OptionalPolymorphicValueResilientTests {
       }
       """
 
-    // when/Then
+    // when/then
     let data = try #require(json.data(using: .utf8))
     #expect(throws: Error.self) {
       _ = try JSONDecoder().decode(Fixture.self, from: data)
@@ -107,7 +107,7 @@ struct OptionalPolymorphicValueResilientTests {
       }
       """
 
-    // when/Then
+    // when/then
     let data = try #require(json.data(using: .utf8))
     #expect(throws: Error.self) {
       _ = try JSONDecoder().decode(Fixture.self, from: data)

@@ -65,10 +65,7 @@ struct PolymorphicLossyArrayValueResilientTests {
     #expect(result.$notices.outcome == .decodedSuccessfully)
     #expect(result.$notices.error == nil)
     #expect(result.$notices.results.count == 2)
-    #expect(result.$notices.results.allSatisfy { result in
-      if case .success = result { return true }
-      return false
-    })
+    #expect(try result.$notices.results.allSatisfy(\.isSuccess))
     #endif
   }
 
@@ -114,24 +111,12 @@ struct PolymorphicLossyArrayValueResilientTests {
     #expect(result.$notices.results.count == 6)
 
     // Only first and third elements succeed
-    if case .success = result.$notices.results[0] {} else {
-      Issue.record("Expected success at index 0")
-    }
-    if case .failure = result.$notices.results[1] {} else {
-      Issue.record("Expected failure at index 1")
-    }
-    if case .success = result.$notices.results[2] {} else {
-      Issue.record("Expected success at index 2")
-    }
-    if case .failure = result.$notices.results[3] {} else {
-      Issue.record("Expected failure at index 3")
-    }
-    if case .failure = result.$notices.results[4] {} else {
-      Issue.record("Expected failure at index 4")
-    }
-    if case .failure = result.$notices.results[5] {} else {
-      Issue.record("Expected failure at index 5")
-    }
+    #expect(result.$notices.results[0].isSuccess)
+    #expect(result.$notices.results[1].isFailure)
+    #expect(result.$notices.results[2].isSuccess)
+    #expect(result.$notices.results[3].isFailure)
+    #expect(result.$notices.results[4].isFailure)
+    #expect(result.$notices.results[5].isFailure)
     #endif
   }
 

@@ -24,12 +24,13 @@ extension [CodingUserInfoKey: Any] {
   /// - note: May only be called once on a particular `userInfo` dictionary
   public mutating func enableResilientDecodingErrorReporting() -> ResilientDecodingErrorReporter {
     let errorReporter = ResilientDecodingErrorReporter()
-    _ = replaceResilientDecodingErrorReporter(with: errorReporter)
+    replaceResilientDecodingErrorReporter(with: errorReporter)
     return errorReporter
   }
 
   /// Replaces the existing error reporter with the provided one
   /// - returns: The previous value of the `resilientDecodingErrorReporter` key, which can be used to restore this dictionary to its original state.
+  @discardableResult
   fileprivate mutating func replaceResilientDecodingErrorReporter(
     with errorReporter: ResilientDecodingErrorReporter
   ) -> Any? {
@@ -43,7 +44,6 @@ extension [CodingUserInfoKey: Any] {
     self[.resilientDecodingErrorReporter] = errorReporter
     return errorReporter
   }
-
 }
 
 extension JSONDecoder {
@@ -109,12 +109,11 @@ public struct ErrorDigest {
   }
 
   public func errors(includeUnknownNovelValueErrors: Bool) -> [Error] {
-    let allErrors: [Error] =
-      if mayBeMissingReportedErrors {
-        [MayBeMissingReportedErrors()] + root.errors
-      } else {
-        root.errors
-      }
+    let allErrors: [Error] = if mayBeMissingReportedErrors {
+      [MayBeMissingReportedErrors()] + root.errors
+    } else {
+      root.errors
+    }
 
     return allErrors.filter { includeUnknownNovelValueErrors || !($0 is UnknownNovelValueError) }
   }

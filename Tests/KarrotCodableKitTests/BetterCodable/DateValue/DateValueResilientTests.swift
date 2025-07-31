@@ -62,7 +62,7 @@ struct DateValueResilientTests {
         _ = try decoder.decode(Fixture.self, from: data)
         Issue.record("Should have thrown")
       } catch {
-        // Invalid Base64 format causes decoding failure
+        // Invalid date format causes decoding failure
         confirmation()
       }
     }
@@ -86,7 +86,7 @@ struct DateValueResilientTests {
         _ = try decoder.decode(Fixture.self, from: data)
         Issue.record("Should have thrown")
       } catch {
-        // null values cannot be converted to Data
+        // null values cannot be converted to Date
         confirmation()
       }
     }

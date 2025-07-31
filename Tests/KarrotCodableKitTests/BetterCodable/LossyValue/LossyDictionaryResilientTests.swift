@@ -65,15 +65,9 @@ struct LossyDictionaryResilientTests {
     
     // Check success/failure of each key
     let stringResults = fixture.$stringDict.results
-    #expect(stringResults["one"] != nil)
-    if let result = stringResults["one"], case .success(let value) = result {
-      #expect(value == 1)
-    }
-    #expect(stringResults["two"] != nil)
-    if let result = stringResults["two"], case .failure = result {
-      // Expected failure
-    }
-    
+    #expect(stringResults["one"]?.success == 1)
+    #expect(stringResults["two"]?.isFailure == true)
+
     // intDict validation - Int key type  
     #expect(fixture.$intDict.errors.count == 0) // All keys are valid
     
