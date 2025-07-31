@@ -24,19 +24,19 @@ public protocol DateValueCodableStrategy {
 @propertyWrapper
 public struct DateValue<Formatter: DateValueCodableStrategy> {
   public var wrappedValue: Date
-  
+
   public let outcome: ResilientDecodingOutcome
 
   public init(wrappedValue: Date) {
     self.wrappedValue = wrappedValue
     self.outcome = .decodedSuccessfully
   }
-  
+
   init(wrappedValue: Date, outcome: ResilientDecodingOutcome) {
     self.wrappedValue = wrappedValue
     self.outcome = outcome
   }
-  
+
   #if DEBUG
   public var projectedValue: ResilientProjectedValue { ResilientProjectedValue(outcome: outcome) }
   #endif

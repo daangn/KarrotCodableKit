@@ -143,7 +143,7 @@ final class PolymorphicEnumDecodableMacroTests: XCTestCase {
           message: "`@PolymorphicEnumDecodable` can only be attached to enums",
           line: 1,
           column: 1
-        )
+        ),
       ],
       macros: testMacros,
       indentationWidth: .spaces(2)
@@ -176,7 +176,7 @@ final class PolymorphicEnumDecodableMacroTests: XCTestCase {
           message: "Invalid polymorphic identifier: expected a non-empty string.",
           line: 1,
           column: 1
-        )
+        ),
       ],
       macros: testMacros,
       indentationWidth: .spaces(2)
@@ -209,7 +209,7 @@ final class PolymorphicEnumDecodableMacroTests: XCTestCase {
           message: "Polymorphic Enum cases can only have one associated value",
           line: 1,
           column: 1
-        )
+        ),
       ],
       macros: testMacros,
       indentationWidth: .spaces(2)
@@ -242,7 +242,7 @@ final class PolymorphicEnumDecodableMacroTests: XCTestCase {
           message: "Polymorphic Enum cases should have one associated value",
           line: 1,
           column: 1
-        )
+        ),
       ],
       macros: testMacros,
       indentationWidth: .spaces(2)
@@ -252,7 +252,6 @@ final class PolymorphicEnumDecodableMacroTests: XCTestCase {
     #endif
   }
 }
-
 
 // MARK: - fallbackCaseName
 
@@ -333,7 +332,7 @@ extension PolymorphicEnumDecodableMacroTests {
           message: "Missing fallback case: should be defined as `case undefinedCallout",
           line: 1,
           column: 1
-        )
+        ),
       ],
       macros: testMacros,
       indentationWidth: .spaces(2)
@@ -366,7 +365,7 @@ extension PolymorphicEnumDecodableMacroTests {
           message: "Invalid fallback case name: expected a non-empty string.",
           line: 1,
           column: 1
-        )
+        ),
       ],
       macros: testMacros,
       indentationWidth: .spaces(2)

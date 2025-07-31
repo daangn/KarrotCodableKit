@@ -30,7 +30,7 @@ public struct LosslessValueCodable<Strategy: LosslessDecodingStrategy>: Codable 
   private let type: LosslessStringCodable.Type
 
   public var wrappedValue: Strategy.Value
-  
+
   public let outcome: ResilientDecodingOutcome
 
   public init(wrappedValue: Strategy.Value) {
@@ -38,7 +38,7 @@ public struct LosslessValueCodable<Strategy: LosslessDecodingStrategy>: Codable 
     self.type = Strategy.Value.self
     self.outcome = .decodedSuccessfully
   }
-  
+
   init(
     wrappedValue: Strategy.Value,
     outcome: ResilientDecodingOutcome,
@@ -48,7 +48,7 @@ public struct LosslessValueCodable<Strategy: LosslessDecodingStrategy>: Codable 
     self.outcome = outcome
     self.type = type
   }
-  
+
   #if DEBUG
   public var projectedValue: ResilientProjectedValue {
     ResilientProjectedValue(outcome: outcome)
@@ -147,5 +147,3 @@ public struct LosslessDefaultStrategy<Value: LosslessStringCodable>: LosslessDec
 public typealias LosslessValue<
   T: LosslessStringCodable
 > = LosslessValueCodable<LosslessDefaultStrategy<T>>
-
-

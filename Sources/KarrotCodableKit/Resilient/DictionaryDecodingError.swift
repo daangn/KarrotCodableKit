@@ -12,30 +12,27 @@ extension ResilientDecodingOutcome {
   public struct DictionaryDecodingError<Key: Hashable, Value>: Error {
     public let results: [Key: Result<Value, Error>]
     public var errors: [Key: Error] {
-      results.compactMapValues { result in
-        switch result {
-        case .success:
-          return nil
-        case .failure(let error):
-          return error
-        }
-      }
+      results.compactMapValues(\.failure)
     }
-    
+
     public init(results: [Key: Result<Value, Error>]) {
       self.results = results
     }
   }
-  
+
   func dictionaryDecodingError<K: Hashable, V>() -> ResilientDecodingOutcome.DictionaryDecodingError<K, V> {
     typealias DictionaryDecodingError = ResilientDecodingOutcome.DictionaryDecodingError<K, V>
     switch self {
     case .decodedSuccessfully, .keyNotFound, .valueWasNil:
       return .init(results: [:])
-    case let .recoveredFrom(error as DictionaryDecodingError, wasReported):
+
+    case .recoveredFrom(let error as DictionaryDecodingError, let wasReported):
+      /// `DictionaryDecodingError` should not be reported
       assert(!wasReported)
       return error
-    case .recoveredFrom(_, _):
+
+    case .recoveredFrom:
+      /// Unlike array, we chose not to provide the top level error in the dictionary since there isn't a good way to choose an appropriate key.
       return .init(results: [:])
     }
   }

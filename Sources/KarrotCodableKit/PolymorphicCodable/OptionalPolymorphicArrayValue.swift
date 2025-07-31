@@ -37,7 +37,7 @@ import Foundation
 public struct OptionalPolymorphicArrayValue<PolymorphicType: PolymorphicCodableStrategy> {
   /// The decoded optional array of values conforming to the expected polymorphic type.
   public var wrappedValue: [PolymorphicType.ExpectedType]?
-  
+
   /// The outcome of the decoding process
   public let outcome: ResilientDecodingOutcome
 
@@ -46,17 +46,17 @@ public struct OptionalPolymorphicArrayValue<PolymorphicType: PolymorphicCodableS
     self.wrappedValue = wrappedValue
     self.outcome = .decodedSuccessfully
   }
-  
+
   /// Initializes the property wrapper with an optional array of values and a decoding outcome.
   init(wrappedValue: [PolymorphicType.ExpectedType]?, outcome: ResilientDecodingOutcome) {
     self.wrappedValue = wrappedValue
     self.outcome = outcome
   }
-  
+
   #if DEBUG
   /// Provides access to the decoding outcome and error information in DEBUG builds.
-  public var projectedValue: PolymorphicProjectedValue { 
-    PolymorphicProjectedValue(outcome: outcome) 
+  public var projectedValue: PolymorphicProjectedValue {
+    PolymorphicProjectedValue(outcome: outcome)
   }
   #endif
 }
@@ -65,7 +65,7 @@ extension OptionalPolymorphicArrayValue: Decodable {
   public init(from decoder: Decoder) throws {
     // First check if the value is nil
     let container = try decoder.singleValueContainer()
-    
+
     if container.decodeNil() {
       // Value is explicitly nil
       #if DEBUG
@@ -75,19 +75,19 @@ extension OptionalPolymorphicArrayValue: Decodable {
       #endif
       return
     }
-    
+
     // Try to decode as an array
     do {
       var unkeyedContainer = try decoder.unkeyedContainer()
       var elements = [PolymorphicType.ExpectedType]()
-      
+
       while !unkeyedContainer.isAtEnd {
         // Decode each element using PolymorphicValue
         // This ensures proper polymorphic decoding and error propagation
         let value = try unkeyedContainer.decode(PolymorphicValue<PolymorphicType>.self)
         elements.append(value.wrappedValue)
       }
-      
+
       // Successfully decoded the array
       #if DEBUG
       self.init(wrappedValue: elements, outcome: .decodedSuccessfully)

@@ -14,9 +14,9 @@ extension KeyedDecodingContainer {
     forKey key: Key
   ) throws -> OptionalPolymorphicValue<T> where T: PolymorphicCodableStrategy {
     if let value = try decodeIfPresent(type, forKey: key) {
-      return value
+      value
     } else {
-      return OptionalPolymorphicValue(wrappedValue: nil, outcome: .keyNotFound)
+      OptionalPolymorphicValue(wrappedValue: nil, outcome: .keyNotFound)
     }
   }
 
@@ -28,12 +28,12 @@ extension KeyedDecodingContainer {
     guard contains(key) else {
       return nil
     }
-    
+
     // Check if value is null
     if try decodeNil(forKey: key) {
       return OptionalPolymorphicValue(wrappedValue: nil, outcome: .valueWasNil)
     }
-    
+
     // Try to decode the polymorphic value
     do {
       let decoder = try superDecoder(forKey: key)

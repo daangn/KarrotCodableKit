@@ -30,7 +30,7 @@ import Foundation
 public struct DefaultEmptyPolymorphicArrayValue<PolymorphicType: PolymorphicCodableStrategy> {
   /// The decoded array of values. Defaults to an empty array `[]` if the array key is missing or decoding fails at the array level.
   public var wrappedValue: [PolymorphicType.ExpectedType]
-  
+
   /// Tracks the outcome of the decoding process for resilient decoding
   public let outcome: ResilientDecodingOutcome
 
@@ -38,16 +38,16 @@ public struct DefaultEmptyPolymorphicArrayValue<PolymorphicType: PolymorphicCoda
     self.wrappedValue = wrappedValue
     self.outcome = .decodedSuccessfully
   }
-  
+
   init(wrappedValue: [PolymorphicType.ExpectedType], outcome: ResilientDecodingOutcome) {
     self.wrappedValue = wrappedValue
     self.outcome = outcome
   }
-  
+
   #if DEBUG
   /// The projected value providing access to decoding outcome
   public var projectedValue: PolymorphicProjectedValue {
-    return PolymorphicProjectedValue(outcome: outcome)
+    PolymorphicProjectedValue(outcome: outcome)
   }
   #else
   /// In non-DEBUG builds, accessing projectedValue is a programmer error
@@ -62,7 +62,7 @@ extension DefaultEmptyPolymorphicArrayValue: Decodable {
     do {
       var container = try decoder.unkeyedContainer()
       var elements = [PolymorphicType.ExpectedType]()
-      
+
       while !container.isAtEnd {
         let value = try container.decode(PolymorphicValue<PolymorphicType>.self).wrappedValue
         elements.append(value)
@@ -90,7 +90,7 @@ extension DefaultEmptyPolymorphicArrayValue: Encodable {
 
 extension DefaultEmptyPolymorphicArrayValue: Equatable where PolymorphicType.ExpectedType: Equatable {
   public static func == (lhs: Self, rhs: Self) -> Bool {
-    return lhs.wrappedValue == rhs.wrappedValue
+    lhs.wrappedValue == rhs.wrappedValue
   }
 }
 

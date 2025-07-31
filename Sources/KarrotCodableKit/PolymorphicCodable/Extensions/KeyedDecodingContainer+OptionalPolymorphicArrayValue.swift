@@ -32,7 +32,7 @@ extension KeyedDecodingContainer {
     guard contains(key) else {
       return nil
     }
-    
+
     // Check if the value is null
     if try decodeNil(forKey: key) {
       #if DEBUG
@@ -41,18 +41,18 @@ extension KeyedDecodingContainer {
       return OptionalPolymorphicArrayValue(wrappedValue: nil)
       #endif
     }
-    
+
     // Try to decode the array
     do {
       var container = try nestedUnkeyedContainer(forKey: key)
       var elements = [T.ExpectedType]()
-      
+
       while !container.isAtEnd {
         // Use PolymorphicValue for decoding each element
         let value = try container.decode(PolymorphicValue<T>.self)
         elements.append(value.wrappedValue)
       }
-      
+
       #if DEBUG
       return OptionalPolymorphicArrayValue(wrappedValue: elements, outcome: .decodedSuccessfully)
       #else

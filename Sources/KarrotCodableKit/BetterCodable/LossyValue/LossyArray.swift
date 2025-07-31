@@ -15,19 +15,19 @@ import Foundation
 @propertyWrapper
 public struct LossyArray<T> {
   public var wrappedValue: [T]
-  
+
   public let outcome: ResilientDecodingOutcome
 
   public init(wrappedValue: [T]) {
     self.wrappedValue = wrappedValue
     self.outcome = .decodedSuccessfully
   }
-  
+
   init(wrappedValue: [T], outcome: ResilientDecodingOutcome) {
     self.wrappedValue = wrappedValue
     self.outcome = outcome
   }
-  
+
   #if DEBUG
   public var projectedValue: ResilientArrayProjectedValue<T> { ResilientArrayProjectedValue(outcome: outcome) }
   #endif
@@ -51,7 +51,7 @@ extension LossyArray: Decodable where T: Decodable {
     } catch {
       // Not a single value container, proceed with array decoding
     }
-    
+
     do {
       var container = try decoder.unkeyedContainer()
 
@@ -59,7 +59,7 @@ extension LossyArray: Decodable where T: Decodable {
       #if DEBUG
       var results: [Result<T, Error>] = []
       #endif
-      
+
       while !container.isAtEnd {
         let elementDecoder = try container.superDecoder()
         do {
@@ -104,7 +104,7 @@ extension LossyArray: Encodable where T: Encodable {
 }
 
 extension LossyArray: Equatable where T: Equatable {
-  public static func ==(lhs: Self, rhs: Self) -> Bool {
+  public static func == (lhs: Self, rhs: Self) -> Bool {
     lhs.wrappedValue == rhs.wrappedValue
   }
 }

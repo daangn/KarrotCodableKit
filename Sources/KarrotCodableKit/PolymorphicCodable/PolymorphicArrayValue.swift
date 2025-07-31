@@ -19,7 +19,7 @@ import Foundation
 public struct PolymorphicArrayValue<PolymorphicType: PolymorphicCodableStrategy> {
   /// The decoded array of values, each conforming to the expected polymorphic type.
   public var wrappedValue: [PolymorphicType.ExpectedType]
-  
+
   /// Tracks the outcome of the decoding process for resilient decoding
   public let outcome: ResilientDecodingOutcome
 
@@ -28,16 +28,16 @@ public struct PolymorphicArrayValue<PolymorphicType: PolymorphicCodableStrategy>
     self.wrappedValue = wrappedValue
     self.outcome = .decodedSuccessfully
   }
-  
+
   init(wrappedValue: [PolymorphicType.ExpectedType], outcome: ResilientDecodingOutcome) {
     self.wrappedValue = wrappedValue
     self.outcome = outcome
   }
-  
+
   #if DEBUG
   /// The projected value providing access to decoding outcome
   public var projectedValue: PolymorphicProjectedValue {
-    return PolymorphicProjectedValue(outcome: outcome)
+    PolymorphicProjectedValue(outcome: outcome)
   }
   #else
   /// In non-DEBUG builds, accessing projectedValue is a programmer error

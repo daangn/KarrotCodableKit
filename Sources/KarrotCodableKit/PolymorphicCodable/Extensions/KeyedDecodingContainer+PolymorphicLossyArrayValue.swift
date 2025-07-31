@@ -21,7 +21,7 @@ extension KeyedDecodingContainer {
       return PolymorphicLossyArrayValue(wrappedValue: [], outcome: .keyNotFound)
       #endif
     }
-    
+
     // Check if value is null
     if try decodeNil(forKey: key) {
       #if DEBUG
@@ -30,7 +30,7 @@ extension KeyedDecodingContainer {
       return PolymorphicLossyArrayValue(wrappedValue: [], outcome: .valueWasNil)
       #endif
     }
-    
+
     // Try to decode the array
     do {
       let decoder = try superDecoder(forKey: key)
@@ -38,7 +38,11 @@ extension KeyedDecodingContainer {
     } catch {
       // If decoding fails (e.g., not an array), return empty array
       #if DEBUG
-      return PolymorphicLossyArrayValue(wrappedValue: [], outcome: .recoveredFrom(error, wasReported: false), results: [])
+      return PolymorphicLossyArrayValue(
+        wrappedValue: [],
+        outcome: .recoveredFrom(error, wasReported: false),
+        results: []
+      )
       #else
       return PolymorphicLossyArrayValue(wrappedValue: [], outcome: .recoveredFrom(error, wasReported: false))
       #endif
@@ -53,7 +57,7 @@ extension KeyedDecodingContainer {
     guard contains(key) else {
       return nil
     }
-    
+
     // Check if value is null
     if try decodeNil(forKey: key) {
       #if DEBUG
@@ -62,7 +66,7 @@ extension KeyedDecodingContainer {
       return PolymorphicLossyArrayValue(wrappedValue: [])
       #endif
     }
-    
+
     // Try to decode using PolymorphicLossyArrayValue's decoder
     let decoder = try superDecoder(forKey: key)
     return try PolymorphicLossyArrayValue(from: decoder)

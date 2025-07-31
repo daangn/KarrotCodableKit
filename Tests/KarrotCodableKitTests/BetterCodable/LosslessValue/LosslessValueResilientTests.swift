@@ -5,8 +5,8 @@
 //  Created by Elon on 4/9/25.
 //
 
-import Testing
 import Foundation
+import Testing
 @testable import KarrotCodableKit
 
 @Suite("LosslessValue Resilient Decoding")
@@ -17,28 +17,28 @@ struct LosslessValueResilientTests {
     @LosslessValue var boolValue: Bool
     @LosslessValue var doubleValue: Double
   }
-  
+
   @Test("projected value provides error information")
-  func testProjectedValueProvidesErrorInfo() throws {
+  func projectedValueProvidesErrorInfo() throws {
     let json = """
-    {
-      "stringValue": 123,
-      "intValue": "456",
-      "boolValue": "true",
-      "doubleValue": "3.14"
-    }
-    """
-    
+      {
+        "stringValue": 123,
+        "intValue": "456",
+        "boolValue": "true",
+        "doubleValue": "3.14"
+      }
+      """
+
     let decoder = JSONDecoder()
     let data = try #require(json.data(using: .utf8))
     let fixture = try decoder.decode(Fixture.self, from: data)
-    
+
     // Verify default behavior - all values converted
     #expect(fixture.stringValue == "123")
     #expect(fixture.intValue == 456)
     #expect(fixture.boolValue == true)
     #expect(fixture.doubleValue == 3.14)
-    
+
     #if DEBUG
     // Access success info through projected value
     #expect(fixture.$stringValue.outcome == .decodedSuccessfully)
@@ -47,21 +47,21 @@ struct LosslessValueResilientTests {
     #expect(fixture.$doubleValue.outcome == .decodedSuccessfully)
     #endif
   }
-  
+
   @Test("null values handling")
-  func testNullValues() async throws {
+  func nullValues() async throws {
     let json = """
-    {
-      "stringValue": null,
-      "intValue": null,
-      "boolValue": null,
-      "doubleValue": null
-    }
-    """
-    
+      {
+        "stringValue": null,
+        "intValue": null,
+        "boolValue": null,
+        "doubleValue": null
+      }
+      """
+
     let decoder = JSONDecoder()
     let data = try #require(json.data(using: .utf8))
-    
+
     await confirmation(expectedCount: 1) { confirmation in
       do {
         _ = try decoder.decode(Fixture.self, from: data)
@@ -72,21 +72,21 @@ struct LosslessValueResilientTests {
       }
     }
   }
-  
+
   @Test("unconvertible values")
-  func testUnconvertibleValues() async throws {
+  func unconvertibleValues() async throws {
     let json = """
-    {
-      "stringValue": {"key": "value"},
-      "intValue": [1, 2, 3],
-      "boolValue": {"nested": true},
-      "doubleValue": ["array"]
-    }
-    """
-    
+      {
+        "stringValue": {"key": "value"},
+        "intValue": [1, 2, 3],
+        "boolValue": {"nested": true},
+        "doubleValue": ["array"]
+      }
+      """
+
     let decoder = JSONDecoder()
     let data = try #require(json.data(using: .utf8))
-    
+
     await confirmation(expectedCount: 1) { confirmation in
       do {
         _ = try decoder.decode(Fixture.self, from: data)
@@ -97,23 +97,23 @@ struct LosslessValueResilientTests {
       }
     }
   }
-  
+
   @Test("error reporting with JSONDecoder")
-  func testErrorReporting() async throws {
+  func errorReporting() async throws {
     let json = """
-    {
-      "stringValue": {"key": "value"},
-      "intValue": [1, 2, 3],
-      "boolValue": {"nested": true},
-      "doubleValue": ["array"]
-    }
-    """
-    
+      {
+        "stringValue": {"key": "value"},
+        "intValue": [1, 2, 3],
+        "boolValue": {"nested": true},
+        "doubleValue": ["array"]
+      }
+      """
+
     let decoder = JSONDecoder()
     let errorReporter = decoder.enableResilientDecodingErrorReporting()
-    
+
     let data = try #require(json.data(using: .utf8))
-    
+
     await confirmation(expectedCount: 1) { confirmation in
       do {
         _ = try decoder.decode(Fixture.self, from: data)
@@ -123,11 +123,11 @@ struct LosslessValueResilientTests {
         confirmation()
       }
     }
-    
+
     let errorDigest = errorReporter.flushReportedErrors()
-    
+
     // Check if errors were reported
     let digest = try #require(errorDigest)
-    #expect(digest.errors.count >= 1)  // At least 1 error occurred
+    #expect(digest.errors.count >= 1) // At least 1 error occurred
   }
 }

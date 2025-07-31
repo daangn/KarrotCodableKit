@@ -176,4 +176,3 @@ extension PolymorphicValueTests {
     XCTAssertEqual(result.notices[2].type, .undefinedCallout)
   }
 }
-

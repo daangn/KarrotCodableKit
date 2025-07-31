@@ -19,9 +19,9 @@ extension ResilientProjectedValueProtocol {
   public var error: Error? {
     switch outcome {
     case .decodedSuccessfully, .keyNotFound, .valueWasNil:
-      return nil
+      nil
     case .recoveredFrom(let error, _):
-      return error
+      error
     }
   }
 }
@@ -32,7 +32,7 @@ extension ResilientProjectedValueProtocol {
 /// including error tracking and resilient decoding outcome information.
 public struct ResilientProjectedValue: ResilientProjectedValueProtocol {
   public let outcome: ResilientDecodingOutcome
-  
+
   public init(outcome: ResilientDecodingOutcome) {
     self.outcome = outcome
   }
@@ -45,11 +45,11 @@ public struct ResilientProjectedValue: ResilientProjectedValueProtocol {
 @dynamicMemberLookup
 public struct ResilientArrayProjectedValue<Element>: ResilientProjectedValueProtocol {
   public let outcome: ResilientDecodingOutcome
-  
+
   public init(outcome: ResilientDecodingOutcome) {
     self.outcome = outcome
   }
-  
+
   public subscript<U>(
     dynamicMember keyPath: KeyPath<ResilientDecodingOutcome.ArrayDecodingError<Element>, U>
   ) -> U {
@@ -64,11 +64,11 @@ public struct ResilientArrayProjectedValue<Element>: ResilientProjectedValueProt
 @dynamicMemberLookup
 public struct ResilientDictionaryProjectedValue<Key: Hashable, Value>: ResilientProjectedValueProtocol {
   public let outcome: ResilientDecodingOutcome
-  
+
   public init(outcome: ResilientDecodingOutcome) {
     self.outcome = outcome
   }
-  
+
   public subscript<U>(
     dynamicMember keyPath: KeyPath<ResilientDecodingOutcome.DictionaryDecodingError<Key, Value>, U>
   ) -> U {

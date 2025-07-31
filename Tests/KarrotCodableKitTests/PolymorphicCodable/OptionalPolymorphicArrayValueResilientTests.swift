@@ -16,23 +16,23 @@ import KarrotCodableKit
 struct ResilientOptionalPolymorphicArrayDummyResponse {
   @DummyNotice.OptionalPolymorphicArray
   var notices: [any DummyNotice]?
-  
+
   @DummyNotice.OptionalPolymorphicArray
   var notices2: [any DummyNotice]?
-  
+
   @DummyNotice.OptionalPolymorphicArray
   var notices3: [any DummyNotice]?
-  
+
   @DummyNotice.OptionalPolymorphicArray
   var notices4: [any DummyNotice]?
 }
 
 struct OptionalPolymorphicArrayValueResilientTests {
-  
+
   // MARK: - Successful Decoding Tests
-  
+
   @Test
-  func testDecodesValidArrayWithoutErrors() throws {
+  func decodesValidArrayWithoutErrors() throws {
     // given
     let jsonData = #"""
     {
@@ -50,93 +50,105 @@ struct OptionalPolymorphicArrayValueResilientTests {
       ]
     }
     """#
-    
+
     // when
-    let result = try JSONDecoder().decode(ResilientOptionalPolymorphicArrayDummyResponse.self, from: Data(jsonData.utf8))
-    
+    let result = try JSONDecoder().decode(
+      ResilientOptionalPolymorphicArrayDummyResponse.self,
+      from: Data(jsonData.utf8)
+    )
+
     // then
     let notices = try #require(result.notices)
     #expect(notices.count == 2)
-    
+
     let firstNotice = try #require(notices[0] as? DummyCallout)
     #expect(firstNotice.description == "test1")
     #expect(firstNotice.icon == "test_icon1")
     #expect(firstNotice.type == .callout)
-    
+
     let secondNotice = try #require(notices[1] as? DummyActionableCallout)
     #expect(secondNotice.description == "test2")
     #expect(secondNotice.action == URL(string: "https://example.com"))
     #expect(secondNotice.type == .actionableCallout)
-    
+
     #if DEBUG
     #expect(result.$notices.error == nil)
     #endif
   }
-  
+
   @Test
-  func testDecodesEmptyArrayWithoutErrors() throws {
+  func decodesEmptyArrayWithoutErrors() throws {
     // given
     let jsonData = #"""
     {
       "notices": []
     }
     """#
-    
+
     // when
-    let result = try JSONDecoder().decode(ResilientOptionalPolymorphicArrayDummyResponse.self, from: Data(jsonData.utf8))
-    
+    let result = try JSONDecoder().decode(
+      ResilientOptionalPolymorphicArrayDummyResponse.self,
+      from: Data(jsonData.utf8)
+    )
+
     // then
     let notices = try #require(result.notices)
     #expect(notices.isEmpty)
-    
+
     #if DEBUG
     #expect(result.$notices.error == nil)
     #endif
   }
-  
+
   @Test
-  func testDecodesNullValueWithoutErrors() throws {
+  func decodesNullValueWithoutErrors() throws {
     // given
     let jsonData = #"""
     {
       "notices": null
     }
     """#
-    
+
     // when
-    let result = try JSONDecoder().decode(ResilientOptionalPolymorphicArrayDummyResponse.self, from: Data(jsonData.utf8))
-    
+    let result = try JSONDecoder().decode(
+      ResilientOptionalPolymorphicArrayDummyResponse.self,
+      from: Data(jsonData.utf8)
+    )
+
     // then
     #expect(result.notices == nil)
-    
+
     #if DEBUG
     #expect(result.$notices.error == nil)
     #endif
   }
-  
+
   @Test
-  func testDecodesMissingKeyWithoutErrors() throws {
+  func decodesMissingKeyWithoutErrors() throws {
     // given
     let jsonData = #"""
     {
     }
     """#
-    
+
     // when
-    let result = try JSONDecoder().decode(ResilientOptionalPolymorphicArrayDummyResponse.self, from: Data(jsonData.utf8))
-    
+    let result = try JSONDecoder().decode(
+      ResilientOptionalPolymorphicArrayDummyResponse.self,
+      from: Data(jsonData.utf8)
+    )
+
     // then
     #expect(result.notices == nil)
-    
+
     #if DEBUG
     #expect(result.$notices.error == nil)
     #endif
   }
-  
+
   // MARK: - Error Reporting Tests
-  
+
   @Test
-  func testReportsErrorWhenInvalidElementInArray() throws {
+  func reportsErrorWhenInvalidElementInArray() throws {
     // given - Missing required 'description' field in second element
     let jsonData = #"""
     {
@@ -151,47 +163,47 @@ struct OptionalPolymorphicArrayValueResilientTests {
       ]
     }
     """#
-    
+
     let decoder = JSONDecoder()
     let errorReporter = decoder.enableResilientDecodingErrorReporting()
-    
+
     // when & then
     #expect(throws: Error.self) {
       _ = try decoder.decode(ResilientOptionalPolymorphicArrayDummyResponse.self, from: Data(jsonData.utf8))
     }
-    
+
     // Verify errors were reported
     let errorDigest = errorReporter.flushReportedErrors()
     #expect(errorDigest != nil)
   }
-  
+
   @Test
-  func testReportsErrorWhenNotArrayType() throws {
+  func reportsErrorWhenNotArrayType() throws {
     // given
     let jsonData = #"""
     {
       "notices": "not an array"
     }
     """#
-    
+
     let decoder = JSONDecoder()
     let errorReporter = decoder.enableResilientDecodingErrorReporting()
-    
+
     // when & then
     #expect(throws: Error.self) {
       _ = try decoder.decode(ResilientOptionalPolymorphicArrayDummyResponse.self, from: Data(jsonData.utf8))
     }
-    
+
     // Verify errors were reported
     let errorDigest = errorReporter.flushReportedErrors()
     #expect(errorDigest != nil)
   }
-  
+
   // MARK: - Projected Value Tests
-  
+
   #if DEBUG
   @Test
-  func testProjectedValueReturnsNilErrorForSuccessfulDecoding() throws {
+  func projectedValueReturnsNilErrorForSuccessfulDecoding() throws {
     // given
     let jsonData = #"""
     {
@@ -203,53 +215,62 @@ struct OptionalPolymorphicArrayValueResilientTests {
       ]
     }
     """#
-    
+
     // when
-    let result = try JSONDecoder().decode(ResilientOptionalPolymorphicArrayDummyResponse.self, from: Data(jsonData.utf8))
-    
+    let result = try JSONDecoder().decode(
+      ResilientOptionalPolymorphicArrayDummyResponse.self,
+      from: Data(jsonData.utf8)
+    )
+
     // then
     #expect(result.$notices.error == nil)
     #expect(result.$notices.outcome == .decodedSuccessfully)
   }
-  
+
   @Test
-  func testProjectedValueReturnsOutcomeForNilValue() throws {
+  func projectedValueReturnsOutcomeForNilValue() throws {
     // given
     let jsonData = #"""
     {
       "notices": null
     }
     """#
-    
+
     // when
-    let result = try JSONDecoder().decode(ResilientOptionalPolymorphicArrayDummyResponse.self, from: Data(jsonData.utf8))
-    
+    let result = try JSONDecoder().decode(
+      ResilientOptionalPolymorphicArrayDummyResponse.self,
+      from: Data(jsonData.utf8)
+    )
+
     // then
     #expect(result.$notices.error == nil)
     #expect(result.$notices.outcome == .valueWasNil)
   }
-  
+
   @Test
-  func testProjectedValueReturnsOutcomeForMissingKey() throws {
+  func projectedValueReturnsOutcomeForMissingKey() throws {
     // given
     let jsonData = #"""
     {
     }
     """#
-    
+
     // when
-    let result = try JSONDecoder().decode(ResilientOptionalPolymorphicArrayDummyResponse.self, from: Data(jsonData.utf8))
-    
+    let result = try JSONDecoder().decode(
+      ResilientOptionalPolymorphicArrayDummyResponse.self,
+      from: Data(jsonData.utf8)
+    )
+
     // then
     #expect(result.$notices.error == nil)
     #expect(result.$notices.outcome == .keyNotFound)
   }
   #endif
-  
+
   // MARK: - Multiple Properties Test
-  
+
   @Test
-  func testDecodesMultiplePropertiesCorrectly() throws {
+  func decodesMultiplePropertiesCorrectly() throws {
     // given
     let jsonData = #"""
     {
@@ -263,20 +284,23 @@ struct OptionalPolymorphicArrayValueResilientTests {
       "notices3": []
     }
     """#
-    
+
     // when
-    let result = try JSONDecoder().decode(ResilientOptionalPolymorphicArrayDummyResponse.self, from: Data(jsonData.utf8))
-    
+    let result = try JSONDecoder().decode(
+      ResilientOptionalPolymorphicArrayDummyResponse.self,
+      from: Data(jsonData.utf8)
+    )
+
     // then
     let notices = try #require(result.notices)
     #expect(notices.count == 1)
     #expect(result.notices2 == nil)
-    
+
     let notices3 = try #require(result.notices3)
     #expect(notices3.isEmpty)
-    
+
     #expect(result.notices4 == nil) // missing key
-    
+
     #if DEBUG
     #expect(result.$notices.outcome == .decodedSuccessfully)
     #expect(result.$notices2.outcome == .valueWasNil)

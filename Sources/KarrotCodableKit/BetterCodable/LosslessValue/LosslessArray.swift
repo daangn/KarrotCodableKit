@@ -5,7 +5,6 @@
 //  Created by Elon on 4/9/25.
 //
 
-
 import Foundation
 
 /// Decodes Arrays by attempting to decode its elements into their preferred types.
@@ -18,21 +17,23 @@ import Foundation
 @propertyWrapper
 public struct LosslessArray<T: LosslessStringCodable> {
   public var wrappedValue: [T]
-  
+
   public let outcome: ResilientDecodingOutcome
 
   public init(wrappedValue: [T]) {
     self.wrappedValue = wrappedValue
     self.outcome = .decodedSuccessfully
   }
-  
+
   init(wrappedValue: [T], outcome: ResilientDecodingOutcome) {
     self.wrappedValue = wrappedValue
     self.outcome = outcome
   }
-  
+
   #if DEBUG
-  public var projectedValue: ResilientArrayProjectedValue<T> { ResilientArrayProjectedValue(outcome: outcome) }
+  public var projectedValue: ResilientArrayProjectedValue<T> {
+    ResilientArrayProjectedValue(outcome: outcome)
+  }
   #endif
 }
 
@@ -46,7 +47,7 @@ extension LosslessArray: Decodable where T: Decodable {
     #if DEBUG
     var results: [Result<T, Error>] = []
     #endif
-    
+
     while !container.isAtEnd {
       do {
         let value = try container.decode(LosslessValue<T>.self).wrappedValue
@@ -83,7 +84,7 @@ extension LosslessArray: Encodable where T: Encodable {
 }
 
 extension LosslessArray: Equatable where T: Equatable {
-  public static func ==(lhs: Self, rhs: Self) -> Bool {
+  public static func == (lhs: Self, rhs: Self) -> Bool {
     lhs.wrappedValue == rhs.wrappedValue
   }
 }

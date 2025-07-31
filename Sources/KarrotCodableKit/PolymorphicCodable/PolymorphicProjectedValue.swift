@@ -20,9 +20,9 @@ extension PolymorphicProjectedValueProtocol {
   public var error: Error? {
     switch outcome {
     case .decodedSuccessfully, .keyNotFound, .valueWasNil:
-      return nil
+      nil
     case .recoveredFrom(let error, _):
-      return error
+      error
     }
   }
 }
@@ -47,10 +47,10 @@ public struct PolymorphicProjectedValue: PolymorphicProjectedValueProtocol {
 public struct PolymorphicLossyArrayProjectedValue<T>: PolymorphicProjectedValueProtocol {
   /// The outcome of the decoding process
   public let outcome: ResilientDecodingOutcome
-  
+
   /// Results of decoding each element in the array
   public let results: [Result<T, Error>]
-  
+
   public init(outcome: ResilientDecodingOutcome, results: [Result<T, Error>]) {
     self.outcome = outcome
     self.results = results

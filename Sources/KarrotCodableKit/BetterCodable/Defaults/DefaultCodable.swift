@@ -16,14 +16,14 @@ public protocol DefaultCodableStrategy {
 
   /// The fallback value used when decoding fails
   static var defaultValue: DefaultValue { get }
-  
+
   /// When true, unknown raw values for RawRepresentable types will be reported as errors.
   /// When false, unknown raw values will use the defaultValue without reporting an error.
   /// Defaults to false.
   static var isFrozen: Bool { get }
 }
 
-// Default implementation
+/// Default implementation
 extension DefaultCodableStrategy {
   public static var isFrozen: Bool { false }
 }
@@ -35,19 +35,19 @@ extension DefaultCodableStrategy {
 @propertyWrapper
 public struct DefaultCodable<Default: DefaultCodableStrategy> {
   public var wrappedValue: Default.DefaultValue
-  
+
   public let outcome: ResilientDecodingOutcome
 
   public init(wrappedValue: Default.DefaultValue) {
     self.wrappedValue = wrappedValue
     self.outcome = .decodedSuccessfully
   }
-  
+
   init(wrappedValue: Default.DefaultValue, outcome: ResilientDecodingOutcome) {
     self.wrappedValue = wrappedValue
     self.outcome = outcome
   }
-  
+
   #if DEBUG
   public var projectedValue: ResilientProjectedValue { ResilientProjectedValue(outcome: outcome) }
   #endif
@@ -63,7 +63,7 @@ extension DefaultCodable where Default.Type == Default.DefaultValue.Type {
 extension DefaultCodable: Decodable {
   public init(from decoder: Decoder) throws {
     let container = try decoder.singleValueContainer()
-    
+
     // Check for nil first
     if container.decodeNil() {
       #if DEBUG
@@ -73,7 +73,7 @@ extension DefaultCodable: Decodable {
       #endif
       return
     }
-    
+
     do {
       let value = try container.decode(Default.DefaultValue.self)
       self.init(wrappedValue: value)
@@ -96,7 +96,7 @@ extension DefaultCodable: Encodable where Default.DefaultValue: Encodable {
 }
 
 extension DefaultCodable: Equatable where Default.DefaultValue: Equatable {
-  public static func ==(lhs: Self, rhs: Self) -> Bool {
+  public static func == (lhs: Self, rhs: Self) -> Bool {
     lhs.wrappedValue == rhs.wrappedValue
   }
 }
@@ -126,7 +126,7 @@ extension KeyedDecodingContainer {
       return DefaultCodable(wrappedValue: P.defaultValue)
       #endif
     }
-    
+
     // Check for nil
     if (try? decodeNil(forKey: key)) == true {
       #if DEBUG
@@ -135,7 +135,7 @@ extension KeyedDecodingContainer {
       return DefaultCodable(wrappedValue: P.defaultValue)
       #endif
     }
-    
+
     // Try to decode normally
     if let value = try decodeIfPresent(DefaultCodable<P>.self, forKey: key) {
       return value
@@ -163,22 +163,24 @@ extension KeyedDecodingContainer {
       return DefaultCodable(wrappedValue: P.defaultValue)
       #endif
     }
-    
+
     // Check for nil first
     if (try? decodeNil(forKey: key)) == true {
       #if DEBUG
       return DefaultCodable(wrappedValue: P.defaultValue, outcome: .valueWasNil)
-      #else  
+      #else
       return DefaultCodable(wrappedValue: P.defaultValue)
       #endif
     }
-    
+
     do {
       let value = try decode(Bool.self, forKey: key)
       return DefaultCodable(wrappedValue: value)
     } catch let error {
-      guard let decodingError = error as? DecodingError,
-            case .typeMismatch = decodingError else {
+      guard
+        let decodingError = error as? DecodingError,
+        case .typeMismatch = decodingError
+      else {
         // Report error and use default
         let decoder = try superDecoder(forKey: key)
         decoder.reportError(error)
@@ -188,11 +190,15 @@ extension KeyedDecodingContainer {
         return DefaultCodable(wrappedValue: P.defaultValue)
         #endif
       }
-      if let intValue = try? decodeIfPresent(Int.self, forKey: key),
-         let bool = Bool(exactly: NSNumber(value: intValue)) {
+      if
+        let intValue = try? decodeIfPresent(Int.self, forKey: key),
+        let bool = Bool(exactly: NSNumber(value: intValue))
+      {
         return DefaultCodable(wrappedValue: bool)
-      } else if let stringValue = try? decodeIfPresent(String.self, forKey: key),
-                let bool = Bool(stringValue) {
+      } else if
+        let stringValue = try? decodeIfPresent(String.self, forKey: key),
+        let bool = Bool(stringValue)
+      {
         return DefaultCodable(wrappedValue: bool)
       } else {
         // Type mismatch - report error
@@ -206,7 +212,7 @@ extension KeyedDecodingContainer {
       }
     }
   }
-  
+
   /// Decodes a DefaultCodable where the strategy's DefaultValue is RawRepresentable
   ///
   /// This method provides special handling for RawRepresentable types:
@@ -223,7 +229,7 @@ extension KeyedDecodingContainer {
       return DefaultCodable(wrappedValue: P.defaultValue)
       #endif
     }
-    
+
     // Check for nil
     if (try? decodeNil(forKey: key)) == true {
       #if DEBUG
@@ -232,11 +238,11 @@ extension KeyedDecodingContainer {
       return DefaultCodable(wrappedValue: P.defaultValue)
       #endif
     }
-    
+
     // Try to decode the raw value
     do {
       let rawValue = try decode(P.DefaultValue.RawValue.self, forKey: key)
-      
+
       // Try to create the enum from raw value
       if let value = P.DefaultValue(rawValue: rawValue) {
         return DefaultCodable(wrappedValue: value)
@@ -251,7 +257,7 @@ extension KeyedDecodingContainer {
 
         let decoder = try superDecoder(forKey: key)
         decoder.reportError(error)
-        
+
         #if DEBUG
         return DefaultCodable(wrappedValue: P.defaultValue, outcome: .recoveredFrom(error, wasReported: true))
         #else
@@ -262,7 +268,7 @@ extension KeyedDecodingContainer {
       // Decoding the raw value failed (e.g., type mismatch)
       let decoder = try superDecoder(forKey: key)
       decoder.reportError(error)
-      
+
       #if DEBUG
       return DefaultCodable(wrappedValue: P.defaultValue, outcome: .recoveredFrom(error, wasReported: true))
       #else

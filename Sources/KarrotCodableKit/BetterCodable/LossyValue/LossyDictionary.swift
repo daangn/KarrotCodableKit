@@ -15,19 +15,19 @@ import Foundation
 @propertyWrapper
 public struct LossyDictionary<Key: Hashable, Value> {
   public var wrappedValue: [Key: Value]
-  
+
   public let outcome: ResilientDecodingOutcome
 
   public init(wrappedValue: [Key: Value]) {
     self.wrappedValue = wrappedValue
     self.outcome = .decodedSuccessfully
   }
-  
+
   init(wrappedValue: [Key: Value], outcome: ResilientDecodingOutcome) {
     self.wrappedValue = wrappedValue
     self.outcome = outcome
   }
-  
+
   #if DEBUG
   public var projectedValue: ResilientDictionaryProjectedValue<Key, Value> {
     ResilientDictionaryProjectedValue(outcome: outcome)
@@ -60,12 +60,12 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
       self.value = try container.decode(DecodablValue.self)
     }
   }
-  
+
   private struct ExtractedKey {
     let codingKey: DictionaryCodingKey
     let originalKey: String
   }
-  
+
   private struct DecodingState {
     var elements: [Key: Value] = [:]
     #if DEBUG
@@ -81,18 +81,18 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
       return false
     }
   }
-  
+
   private static func decodeStringKeyedDictionary(
     from decoder: Decoder
   ) throws -> DecodingState {
     guard Key.self == String.self else {
       fatalError("This method should only be called for String keys")
     }
-    
+
     var state = DecodingState()
     let container = try decoder.container(keyedBy: DictionaryCodingKey.self)
     let keys = try extractKeys(from: decoder, container: container)
-    
+
     for extractedKey in keys {
       decodeSingleKeyValue(
         container: container,
@@ -101,26 +101,26 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
         state: &state
       )
     }
-    
+
     return state
   }
-  
+
   private static func decodeIntKeyedDictionary(
     from decoder: Decoder
   ) throws -> DecodingState {
     guard Key.self == Int.self else {
       fatalError("This method should only be called for Int keys")
     }
-    
+
     var state = DecodingState()
     let container = try decoder.container(keyedBy: DictionaryCodingKey.self)
-    
+
     for key in container.allKeys {
       guard let intValue = key.intValue else {
         // Skip non-integer keys instead of throwing
         continue
       }
-      
+
       decodeSingleKeyValueForInt(
         container: container,
         key: key,
@@ -128,10 +128,10 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
         state: &state
       )
     }
-    
+
     return state
   }
-  
+
   private static func decodeSingleKeyValue(
     container: KeyedDecodingContainer<DictionaryCodingKey>,
     key: DictionaryCodingKey,
@@ -140,7 +140,7 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
   ) {
     // Safe casting - if it fails, we skip this key entirely
     guard let castKey = originalKey as? Key else { return }
-    
+
     do {
       let value = try container.decode(LossyDecodableValue<Value>.self, forKey: key).value
       state.elements[castKey] = value
@@ -156,7 +156,7 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
       #endif
     }
   }
-  
+
   private static func decodeSingleKeyValueForInt(
     container: KeyedDecodingContainer<DictionaryCodingKey>,
     key: DictionaryCodingKey,
@@ -165,7 +165,7 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
   ) {
     // Safe casting - if it fails, we skip this key entirely
     guard let castKey = intKey as? Key else { return }
-    
+
     do {
       let value = try container.decode(LossyDecodableValue<Value>.self, forKey: key).value
       state.elements[castKey] = value
@@ -181,7 +181,7 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
       #endif
     }
   }
-  
+
   private static func createFinalResult(from state: DecodingState) -> LossyDictionary {
     #if DEBUG
     if state.elements.count == state.results.count {
@@ -194,7 +194,7 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
     return LossyDictionary(wrappedValue: state.elements)
     #endif
   }
-  
+
   public init(from decoder: Decoder) throws {
     // Check for nil first
     if Self.decodeNilValue(from: decoder) {
@@ -205,10 +205,10 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
       #endif
       return
     }
-    
+
     do {
       let state: DecodingState
-      
+
       if Key.self == String.self {
         state = try Self.decodeStringKeyedDictionary(from: decoder)
       } else if Key.self == Int.self {
@@ -221,7 +221,7 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
           )
         )
       }
-      
+
       self = Self.createFinalResult(from: state)
     } catch {
       decoder.reportError(error)
@@ -256,7 +256,7 @@ extension LossyDictionary: Encodable where Key: Encodable, Value: Encodable {
 }
 
 extension LossyDictionary: Equatable where Value: Equatable {
-  public static func ==(lhs: Self, rhs: Self) -> Bool {
+  public static func == (lhs: Self, rhs: Self) -> Bool {
     lhs.wrappedValue == rhs.wrappedValue
   }
 }
@@ -266,7 +266,12 @@ extension LossyDictionary: Sendable where Key: Sendable, Value: Sendable {}
 // MARK: - KeyedDecodingContainer
 
 extension KeyedDecodingContainer {
-  public func decode<DictKey, DictValue>(_: LossyDictionary<DictKey, DictValue>.Type, forKey key: Key) throws -> LossyDictionary<DictKey, DictValue> where DictKey: Hashable & Decodable, DictValue: Decodable {
+  public func decode<DictKey, DictValue>(
+    _: LossyDictionary<DictKey, DictValue>.Type,
+    forKey key: Key
+  ) throws -> LossyDictionary<DictKey, DictValue>
+    where DictKey: Hashable & Decodable, DictValue: Decodable
+  {
     if let value = try decodeIfPresent(LossyDictionary<DictKey, DictValue>.self, forKey: key) {
       return value
     } else {
@@ -278,4 +283,3 @@ extension KeyedDecodingContainer {
     }
   }
 }
-

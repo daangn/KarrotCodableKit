@@ -17,12 +17,12 @@ extension KeyedDecodingContainer {
     guard contains(key) else {
       return DefaultEmptyPolymorphicArrayValue(wrappedValue: [], outcome: .keyNotFound)
     }
-    
+
     // Check if value is null
     if try decodeNil(forKey: key) {
       return DefaultEmptyPolymorphicArrayValue(wrappedValue: [], outcome: .valueWasNil)
     }
-    
+
     // Try to decode using the property wrapper's decoder
     let decoder = try superDecoder(forKey: key)
     return try DefaultEmptyPolymorphicArrayValue(from: decoder)
@@ -36,12 +36,12 @@ extension KeyedDecodingContainer {
     guard contains(key) else {
       return nil
     }
-    
+
     // Check if value is null
     if try decodeNil(forKey: key) {
       return DefaultEmptyPolymorphicArrayValue(wrappedValue: [], outcome: .valueWasNil)
     }
-    
+
     // Try to decode using the property wrapper's decoder
     let decoder = try superDecoder(forKey: key)
     return try DefaultEmptyPolymorphicArrayValue(from: decoder)
