@@ -89,7 +89,6 @@ final class CustomDecodableMacroTests: XCTestCase {
   }
 }
 
-
 // MARK: - Nested Decodable
 
 extension CustomDecodableMacroTests {
@@ -188,7 +187,6 @@ extension CustomDecodableMacroTests {
   }
 }
 
-
 // MARK: - CodableKey
 
 extension CustomDecodableMacroTests {
@@ -275,7 +273,6 @@ extension CustomDecodableMacroTests {
   }
 }
 
-
 // MARK: - cannotApplyToEnum
 
 extension CustomDecodableMacroTests {
@@ -305,7 +302,7 @@ extension CustomDecodableMacroTests {
           message: "`@CustomCodable`, `@CustomEncodable`, `@CustomDecodable` cannot be applied to enum",
           line: 1,
           column: 1
-        )
+        ),
       ],
       macros: testMacros,
       indentationWidth: .spaces(2)

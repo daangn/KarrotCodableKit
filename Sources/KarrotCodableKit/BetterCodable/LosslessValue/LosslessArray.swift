@@ -5,7 +5,6 @@
 //  Created by Elon on 4/9/25.
 //
 
-
 import Foundation
 
 /// Decodes Arrays by attempting to decode its elements into their preferred types.
@@ -19,9 +18,23 @@ import Foundation
 public struct LosslessArray<T: LosslessStringCodable> {
   public var wrappedValue: [T]
 
+  public let outcome: ResilientDecodingOutcome
+
   public init(wrappedValue: [T]) {
     self.wrappedValue = wrappedValue
+    self.outcome = .decodedSuccessfully
   }
+
+  init(wrappedValue: [T], outcome: ResilientDecodingOutcome) {
+    self.wrappedValue = wrappedValue
+    self.outcome = outcome
+  }
+
+  #if DEBUG
+  public var projectedValue: ResilientArrayProjectedValue<T> {
+    ResilientArrayProjectedValue(outcome: outcome)
+  }
+  #endif
 }
 
 extension LosslessArray: Decodable where T: Decodable {
@@ -31,16 +44,36 @@ extension LosslessArray: Decodable where T: Decodable {
     var container = try decoder.unkeyedContainer()
 
     var elements: [T] = []
+    #if DEBUG
+    var results: [Result<T, Error>] = []
+    #endif
+
     while !container.isAtEnd {
       do {
         let value = try container.decode(LosslessValue<T>.self).wrappedValue
         elements.append(value)
+        #if DEBUG
+        results.append(.success(value))
+        #endif
       } catch {
         _ = try? container.decode(AnyDecodableValue.self)
+        decoder.reportError(error)
+        #if DEBUG
+        results.append(.failure(error))
+        #endif
       }
     }
 
-    self.wrappedValue = elements
+    #if DEBUG
+    if elements.count == results.count {
+      self.init(wrappedValue: elements, outcome: .decodedSuccessfully)
+    } else {
+      let error = ResilientDecodingOutcome.ArrayDecodingError(results: results)
+      self.init(wrappedValue: elements, outcome: .recoveredFrom(error, wasReported: false))
+    }
+    #else
+    self.init(wrappedValue: elements)
+    #endif
   }
 }
 
@@ -50,6 +83,16 @@ extension LosslessArray: Encodable where T: Encodable {
   }
 }
 
-extension LosslessArray: Equatable where T: Equatable {}
-extension LosslessArray: Hashable where T: Hashable {}
+extension LosslessArray: Equatable where T: Equatable {
+  public static func == (lhs: Self, rhs: Self) -> Bool {
+    lhs.wrappedValue == rhs.wrappedValue
+  }
+}
+
+extension LosslessArray: Hashable where T: Hashable {
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(wrappedValue)
+  }
+}
+
 extension LosslessArray: Sendable where T: Sendable {}

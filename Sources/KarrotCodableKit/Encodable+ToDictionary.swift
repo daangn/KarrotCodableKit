@@ -19,10 +19,11 @@ extension Encodable {
    */
   public func toDictionary() throws -> [String: Any] {
     let data = try JSONEncoder().encode(self)
-    guard let dictionary = try JSONSerialization.jsonObject(
-      with: data,
-      options: .fragmentsAllowed
-    ) as? [String: Any]
+    guard
+      let dictionary = try JSONSerialization.jsonObject(
+        with: data,
+        options: .fragmentsAllowed
+      ) as? [String: Any]
     else {
       throw NSError(domain: "JSONSerialization Failed", code: 0)
     }

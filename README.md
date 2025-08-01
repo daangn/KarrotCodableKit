@@ -277,3 +277,4 @@ This project is licensed under the MIT. See LICENSE for details.
 - PolymorphicCodable was inspired by [Encode and decode polymorphic types in Swift](https://nilcoalescing.com/blog/BringingPolymorphismToCodable/).
 - AnyCodable was adapted from [Flight-School/AnyCodable](https://github.com/Flight-School/AnyCodable).
 - BetterCodable was adapted from [marksands/BetterCodable](https://github.com/marksands/BetterCodable).
+- ResilientDecodingOutcome was adapted from [airbnb/ResilientDecoding](https://github.com/airbnb/ResilientDecoding).

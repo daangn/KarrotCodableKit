@@ -132,7 +132,7 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
             )
           }
         }
-        
+
         extension Notice {
           public typealias Polymorphic = PolymorphicValue<NoticeCodableStrategy>
           public typealias OptionalPolymorphic = OptionalPolymorphicValue<NoticeCodableStrategy>

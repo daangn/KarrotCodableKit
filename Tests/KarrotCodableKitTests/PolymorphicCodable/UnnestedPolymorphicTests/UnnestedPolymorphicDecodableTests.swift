@@ -56,7 +56,7 @@ struct UnnestedPolymorphicDecodableTests {
       """
 
     // when
-    let data = json.data(using: .utf8)!
+    let data = try #require(json.data(using: .utf8))
     let decoder = JSONDecoder()
     let result = try decoder.decode(OptionalDecodableViewItem.self, from: data)
 
@@ -82,7 +82,7 @@ struct UnnestedPolymorphicDecodableTests {
       """
 
     // when
-    let data = json.data(using: .utf8)!
+    let data = try #require(json.data(using: .utf8))
     let decoder = JSONDecoder()
     let result = try decoder.decode(OptionalDecodableViewItem.self, from: data)
 
@@ -106,7 +106,7 @@ struct UnnestedPolymorphicDecodableTests {
       """
 
     // when
-    let data = json.data(using: .utf8)!
+    let data = try #require(json.data(using: .utf8))
     let decoder = JSONDecoder()
 
     // then
@@ -125,7 +125,7 @@ struct UnnestedPolymorphicDecodableTests {
       """
 
     // when
-    let data = json.data(using: .utf8)!
+    let data = try #require(json.data(using: .utf8))
     let decoder = JSONDecoder()
 
     // then
@@ -145,7 +145,7 @@ struct UnnestedPolymorphicDecodableTests {
       """
 
     // when
-    let data = json.data(using: .utf8)!
+    let data = try #require(json.data(using: .utf8))
     let decoder = JSONDecoder()
 
     // then

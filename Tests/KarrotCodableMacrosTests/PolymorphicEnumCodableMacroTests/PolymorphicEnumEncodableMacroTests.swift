@@ -125,7 +125,7 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
           message: "`@PolymorphicEnumEncodable` can only be attached to enums",
           line: 1,
           column: 1
-        )
+        ),
       ],
       macros: testMacros,
       indentationWidth: .spaces(2)
@@ -158,7 +158,7 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
           message: "Invalid polymorphic identifier: expected a non-empty string.",
           line: 1,
           column: 1
-        )
+        ),
       ],
       macros: testMacros,
       indentationWidth: .spaces(2)
@@ -191,7 +191,7 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
           message: "Polymorphic Enum cases can only have one associated value",
           line: 1,
           column: 1
-        )
+        ),
       ],
       macros: testMacros,
       indentationWidth: .spaces(2)
@@ -224,7 +224,7 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
           message: "Polymorphic Enum cases should have one associated value",
           line: 1,
           column: 1
-        )
+        ),
       ],
       macros: testMacros,
       indentationWidth: .spaces(2)

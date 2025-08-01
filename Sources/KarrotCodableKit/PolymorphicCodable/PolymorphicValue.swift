@@ -24,10 +24,22 @@ public struct PolymorphicValue<PolymorphicType: PolymorphicCodableStrategy> {
   /// The decoded value of the expected polymorphic type.
   public var wrappedValue: PolymorphicType.ExpectedType
 
+  public let outcome: ResilientDecodingOutcome
+
   /// Initializes the property wrapper with a pre-decoded value.
   public init(wrappedValue: PolymorphicType.ExpectedType) {
     self.wrappedValue = wrappedValue
+    self.outcome = .decodedSuccessfully
   }
+
+  init(wrappedValue: PolymorphicType.ExpectedType, outcome: ResilientDecodingOutcome) {
+    self.wrappedValue = wrappedValue
+    self.outcome = outcome
+  }
+
+  #if DEBUG
+  public var projectedValue: PolymorphicProjectedValue { PolymorphicProjectedValue(outcome: outcome) }
+  #endif
 }
 
 extension PolymorphicValue: Encodable {
@@ -38,10 +50,26 @@ extension PolymorphicValue: Encodable {
 
 extension PolymorphicValue: Decodable {
   public init(from decoder: Decoder) throws {
-    self.wrappedValue = try PolymorphicType.decode(from: decoder)
+    do {
+      self.wrappedValue = try PolymorphicType.decode(from: decoder)
+      self.outcome = .decodedSuccessfully
+    } catch {
+      decoder.reportError(error)
+      throw error
+    }
   }
 }
 
-extension PolymorphicValue: Equatable where PolymorphicType.ExpectedType: Equatable {}
-extension PolymorphicValue: Hashable where PolymorphicType.ExpectedType: Hashable {}
+extension PolymorphicValue: Equatable where PolymorphicType.ExpectedType: Equatable {
+  public static func == (lhs: Self, rhs: Self) -> Bool {
+    lhs.wrappedValue == rhs.wrappedValue
+  }
+}
+
+extension PolymorphicValue: Hashable where PolymorphicType.ExpectedType: Hashable {
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(wrappedValue)
+  }
+}
+
 extension PolymorphicValue: Sendable where PolymorphicType.ExpectedType: Sendable {}

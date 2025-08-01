@@ -38,31 +38,66 @@ public struct OptionalPolymorphicArrayValue<PolymorphicType: PolymorphicCodableS
   /// The decoded optional array of values conforming to the expected polymorphic type.
   public var wrappedValue: [PolymorphicType.ExpectedType]?
 
+  /// The outcome of the decoding process
+  public let outcome: ResilientDecodingOutcome
+
   /// Initializes the property wrapper with an optional array of values.
   public init(wrappedValue: [PolymorphicType.ExpectedType]?) {
     self.wrappedValue = wrappedValue
+    self.outcome = .decodedSuccessfully
   }
+
+  /// Initializes the property wrapper with an optional array of values and a decoding outcome.
+  init(wrappedValue: [PolymorphicType.ExpectedType]?, outcome: ResilientDecodingOutcome) {
+    self.wrappedValue = wrappedValue
+    self.outcome = outcome
+  }
+
+  #if DEBUG
+  /// Provides access to the decoding outcome and error information in DEBUG builds.
+  public var projectedValue: PolymorphicProjectedValue {
+    PolymorphicProjectedValue(outcome: outcome)
+  }
+  #endif
 }
 
 extension OptionalPolymorphicArrayValue: Decodable {
   public init(from decoder: Decoder) throws {
-    // Try to decode as an array container
-    if let container = try? decoder.unkeyedContainer() {
-      var mutableContainer = container
+    // First check if the value is nil
+    let container = try decoder.singleValueContainer()
+
+    if container.decodeNil() {
+      // Value is explicitly nil
+      #if DEBUG
+      self.init(wrappedValue: nil, outcome: .valueWasNil)
+      #else
+      self.init(wrappedValue: nil)
+      #endif
+      return
+    }
+
+    // Try to decode as an array
+    do {
+      var unkeyedContainer = try decoder.unkeyedContainer()
       var elements = [PolymorphicType.ExpectedType]()
-      
-      while !mutableContainer.isAtEnd {
+
+      while !unkeyedContainer.isAtEnd {
         // Decode each element using PolymorphicValue
         // This ensures proper polymorphic decoding and error propagation
-        let value = try mutableContainer.decode(PolymorphicValue<PolymorphicType>.self)
+        let value = try unkeyedContainer.decode(PolymorphicValue<PolymorphicType>.self)
         elements.append(value.wrappedValue)
       }
-      
-      self.wrappedValue = elements
-    } else {
-      // If we can't get an unkeyed container, the value is either nil, missing, or not an array
-      // Set wrappedValue to nil without throwing an error
-      self.wrappedValue = nil
+
+      // Successfully decoded the array
+      #if DEBUG
+      self.init(wrappedValue: elements, outcome: .decodedSuccessfully)
+      #else
+      self.init(wrappedValue: elements)
+      #endif
+    } catch {
+      // Report the error and re-throw it
+      decoder.reportError(error)
+      throw error
     }
   }
 }
@@ -83,6 +118,16 @@ extension OptionalPolymorphicArrayValue: Encodable {
   }
 }
 
-extension OptionalPolymorphicArrayValue: Equatable where PolymorphicType.ExpectedType: Equatable {}
-extension OptionalPolymorphicArrayValue: Hashable where PolymorphicType.ExpectedType: Hashable {}
+extension OptionalPolymorphicArrayValue: Equatable where PolymorphicType.ExpectedType: Equatable {
+  public static func == (lhs: Self, rhs: Self) -> Bool {
+    lhs.wrappedValue == rhs.wrappedValue
+  }
+}
+
+extension OptionalPolymorphicArrayValue: Hashable where PolymorphicType.ExpectedType: Hashable {
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(wrappedValue)
+  }
+}
+
 extension OptionalPolymorphicArrayValue: Sendable where PolymorphicType.ExpectedType: Sendable {}

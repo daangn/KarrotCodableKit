@@ -16,28 +16,84 @@ import Foundation
 public struct LossyArray<T> {
   public var wrappedValue: [T]
 
+  public let outcome: ResilientDecodingOutcome
+
   public init(wrappedValue: [T]) {
     self.wrappedValue = wrappedValue
+    self.outcome = .decodedSuccessfully
   }
+
+  init(wrappedValue: [T], outcome: ResilientDecodingOutcome) {
+    self.wrappedValue = wrappedValue
+    self.outcome = outcome
+  }
+
+  #if DEBUG
+  public var projectedValue: ResilientArrayProjectedValue<T> { ResilientArrayProjectedValue(outcome: outcome) }
+  #endif
 }
 
 extension LossyArray: Decodable where T: Decodable {
   private struct AnyDecodableValue: Decodable {}
 
   public init(from decoder: Decoder) throws {
-    var container = try decoder.unkeyedContainer()
-
-    var elements: [T] = []
-    while !container.isAtEnd {
-      do {
-        let value = try container.decode(T.self)
-        elements.append(value)
-      } catch {
-        _ = try? container.decode(AnyDecodableValue.self)
+    do {
+      // Check for null first
+      let singleValueContainer = try decoder.singleValueContainer()
+      if singleValueContainer.decodeNil() {
+        #if DEBUG
+        self.init(wrappedValue: [], outcome: .valueWasNil)
+        #else
+        self.init(wrappedValue: [])
+        #endif
+        return
       }
+    } catch {
+      // Not a single value container, proceed with array decoding
     }
 
-    self.wrappedValue = elements
+    do {
+      var container = try decoder.unkeyedContainer()
+
+      var elements: [T] = []
+      #if DEBUG
+      var results: [Result<T, Error>] = []
+      #endif
+
+      while !container.isAtEnd {
+        let elementDecoder = try container.superDecoder()
+        do {
+          let value = try elementDecoder.singleValueContainer().decode(T.self)
+          elements.append(value)
+          #if DEBUG
+          results.append(.success(value))
+          #endif
+        } catch {
+          elementDecoder.reportError(error)
+          #if DEBUG
+          results.append(.failure(error))
+          #endif
+        }
+      }
+
+      #if DEBUG
+      if elements.count == results.count {
+        self.init(wrappedValue: elements, outcome: .decodedSuccessfully)
+      } else {
+        let error = ResilientDecodingOutcome.ArrayDecodingError(results: results)
+        self.init(wrappedValue: elements, outcome: .recoveredFrom(error, wasReported: false))
+      }
+      #else
+      self.init(wrappedValue: elements)
+      #endif
+    } catch {
+      decoder.reportError(error)
+      #if DEBUG
+      self.init(wrappedValue: [], outcome: .recoveredFrom(error, wasReported: true))
+      #else
+      self.init(wrappedValue: [])
+      #endif
+    }
   }
 }
 
@@ -47,6 +103,16 @@ extension LossyArray: Encodable where T: Encodable {
   }
 }
 
-extension LossyArray: Equatable where T: Equatable {}
-extension LossyArray: Hashable where T: Hashable {}
+extension LossyArray: Equatable where T: Equatable {
+  public static func == (lhs: Self, rhs: Self) -> Bool {
+    lhs.wrappedValue == rhs.wrappedValue
+  }
+}
+
+extension LossyArray: Hashable where T: Hashable {
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(wrappedValue)
+  }
+}
+
 extension LossyArray: Sendable where T: Sendable {}

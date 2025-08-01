@@ -58,4 +58,3 @@ final class DefaultEmptyArrayTests: XCTestCase {
     XCTAssertEqual(fixture.nonPrimitiveValues, [Fixture.NestedFixture(one: "one", two: ["key": ["value"]])])
   }
 }
-

@@ -25,14 +25,33 @@ public protocol DataValueCodableStrategy {
 public struct DataValue<Coder: DataValueCodableStrategy> {
   public var wrappedValue: Coder.DataType
 
+  public let outcome: ResilientDecodingOutcome
+
   public init(wrappedValue: Coder.DataType) {
     self.wrappedValue = wrappedValue
+    self.outcome = .decodedSuccessfully
   }
+
+  init(wrappedValue: Coder.DataType, outcome: ResilientDecodingOutcome) {
+    self.wrappedValue = wrappedValue
+    self.outcome = outcome
+  }
+
+  #if DEBUG
+  public var projectedValue: ResilientProjectedValue { ResilientProjectedValue(outcome: outcome) }
+  #endif
 }
 
 extension DataValue: Decodable {
   public init(from decoder: Decoder) throws {
-    self.wrappedValue = try Coder.decode(String(from: decoder))
+    do {
+      let stringValue = try String(from: decoder)
+      self.wrappedValue = try Coder.decode(stringValue)
+      self.outcome = .decodedSuccessfully
+    } catch {
+      decoder.reportError(error)
+      throw error
+    }
   }
 }
 
@@ -42,6 +61,16 @@ extension DataValue: Encodable {
   }
 }
 
-extension DataValue: Equatable where Coder.DataType: Equatable {}
-extension DataValue: Hashable where Coder.DataType: Hashable {}
+extension DataValue: Equatable where Coder.DataType: Equatable {
+  public static func == (lhs: Self, rhs: Self) -> Bool {
+    lhs.wrappedValue == rhs.wrappedValue
+  }
+}
+
+extension DataValue: Hashable where Coder.DataType: Hashable {
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(wrappedValue)
+  }
+}
+
 extension DataValue: Sendable where Coder.DataType: Sendable {}

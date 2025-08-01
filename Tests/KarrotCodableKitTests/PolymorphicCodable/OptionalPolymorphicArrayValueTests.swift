@@ -13,7 +13,7 @@ import KarrotCodableKit
 struct OptionalPolymorphicArrayValueTests {
 
   @Test
-  func testDecodingOptionalPolymorphicArrayValue() throws {
+  func decodingOptionalPolymorphicArrayValue() throws {
     // given
     let jsonData = #"""
     {
@@ -39,22 +39,22 @@ struct OptionalPolymorphicArrayValueTests {
     // then
     let notices1 = try #require(result.notices1)
     #expect(notices1.count == 2)
-    
+
     let firstNotice = try #require(notices1[0] as? DummyCallout)
     #expect(firstNotice.description == "test1")
     #expect(firstNotice.icon == "test_icon1")
     #expect(firstNotice.type == .callout)
-    
+
     let secondNotice = try #require(notices1[1] as? DummyActionableCallout)
     #expect(secondNotice.description == "test2")
     #expect(secondNotice.action == URL(string: "https://example.com"))
     #expect(secondNotice.type == .actionableCallout)
-    
+
     #expect(result.notices2 == nil)
   }
 
   @Test
-  func testEncodingOptionalPolymorphicArrayValue() throws {
+  func encodingOptionalPolymorphicArrayValue() throws {
     // given
     let response = OptionalPolymorphicArrayDummyResponse(
       notices1: [
@@ -92,7 +92,7 @@ struct OptionalPolymorphicArrayValueTests {
   }
 
   @Test
-  func testDecodingOptionalPolymorphicArrayValueWithEmptyArray() throws {
+  func decodingOptionalPolymorphicArrayValueWithEmptyArray() throws {
     // given
     let jsonData = #"""
     {
@@ -111,7 +111,7 @@ struct OptionalPolymorphicArrayValueTests {
   }
 
   @Test
-  func testDecodingOptionalPolymorphicArrayValueWithMissingKey() throws {
+  func decodingOptionalPolymorphicArrayValueWithMissingKey() throws {
     // given
     let jsonData = #"""
     {
@@ -130,7 +130,7 @@ struct OptionalPolymorphicArrayValueTests {
 
     // then
     #expect(result.notices1 == nil)
-    
+
     let notices2 = try #require(result.notices2)
     #expect(notices2.count == 1)
     let notice = try #require(notices2[0] as? DummyCallout)
@@ -138,7 +138,7 @@ struct OptionalPolymorphicArrayValueTests {
   }
 
   @Test
-  func testDecodingOptionalPolymorphicArrayValueWithInvalidElement() throws {
+  func decodingOptionalPolymorphicArrayValueWithInvalidElement() throws {
     // given - Array with one invalid element (missing required 'description' property)
     let jsonData = #"""
     {
@@ -163,7 +163,7 @@ struct OptionalPolymorphicArrayValueTests {
   }
 
   @Test
-  func testDecodingOptionalPolymorphicArrayValueWhenNotArray() throws {
+  func decodingOptionalPolymorphicArrayValueWhenNotArray() throws {
     // given - Value is not an array
     let jsonData = #"""
     {
@@ -182,7 +182,7 @@ struct OptionalPolymorphicArrayValueTests {
   }
 
   @Test
-  func testEncodingDecodingNilValues() throws {
+  func encodingDecodingNilValues() throws {
     // given
     let response = OptionalPolymorphicArrayDummyResponse(
       notices1: nil,

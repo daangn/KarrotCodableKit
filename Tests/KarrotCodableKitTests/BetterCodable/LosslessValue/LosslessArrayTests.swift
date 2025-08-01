@@ -56,4 +56,3 @@ final class LosslessArrayTests: XCTestCase {
     XCTAssertEqual(fixture.values, [1, 2, 3])
   }
 }
-
