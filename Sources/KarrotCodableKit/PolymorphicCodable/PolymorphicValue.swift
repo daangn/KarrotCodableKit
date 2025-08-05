@@ -38,7 +38,9 @@ public struct PolymorphicValue<PolymorphicType: PolymorphicCodableStrategy> {
   }
 
   #if DEBUG
-  public var projectedValue: PolymorphicProjectedValue { PolymorphicProjectedValue(outcome: outcome) }
+  public var projectedValue: PolymorphicProjectedValue {
+    PolymorphicProjectedValue(outcome: outcome)
+  }
   #endif
 }
 

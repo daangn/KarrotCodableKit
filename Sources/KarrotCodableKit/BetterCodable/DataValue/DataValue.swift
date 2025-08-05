@@ -38,7 +38,9 @@ public struct DataValue<Coder: DataValueCodableStrategy> {
   }
 
   #if DEBUG
-  public var projectedValue: ResilientProjectedValue { ResilientProjectedValue(outcome: outcome) }
+  public var projectedValue: ResilientProjectedValue {
+    ResilientProjectedValue(outcome: outcome)
+  }
   #endif
 }
 

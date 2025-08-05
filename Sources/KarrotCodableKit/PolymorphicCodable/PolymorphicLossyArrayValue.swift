@@ -78,11 +78,6 @@ public struct PolymorphicLossyArrayValue<PolymorphicType: PolymorphicCodableStra
   public var projectedValue: PolymorphicLossyArrayProjectedValue<PolymorphicType.ExpectedType> {
     PolymorphicLossyArrayProjectedValue(outcome: outcome, results: results)
   }
-  #else
-  /// In non-DEBUG builds, accessing projectedValue is a programmer error
-  public var projectedValue: Never {
-    fatalError("@\(Self.self) projectedValue should not be used in non-DEBUG builds")
-  }
   #endif
 }
 

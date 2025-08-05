@@ -29,7 +29,9 @@ public struct LossyArray<T> {
   }
 
   #if DEBUG
-  public var projectedValue: ResilientArrayProjectedValue<T> { ResilientArrayProjectedValue(outcome: outcome) }
+  public var projectedValue: ResilientArrayProjectedValue<T> {
+    ResilientArrayProjectedValue(outcome: outcome)
+  }
   #endif
 }
 

@@ -38,7 +38,9 @@ public struct DateValue<Formatter: DateValueCodableStrategy> {
   }
 
   #if DEBUG
-  public var projectedValue: ResilientProjectedValue { ResilientProjectedValue(outcome: outcome) }
+  public var projectedValue: ResilientProjectedValue {
+    ResilientProjectedValue(outcome: outcome)
+  }
   #endif
 }
 

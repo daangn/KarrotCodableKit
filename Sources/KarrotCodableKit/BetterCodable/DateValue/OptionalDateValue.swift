@@ -39,7 +39,9 @@ public struct OptionalDateValue<Formatter: OptionalDateValueCodableStrategy> {
   }
 
   #if DEBUG
-  public var projectedValue: ResilientProjectedValue { ResilientProjectedValue(outcome: outcome) }
+  public var projectedValue: ResilientProjectedValue {
+    ResilientProjectedValue(outcome: outcome)
+  }
   #endif
 }
 
