@@ -31,22 +31,47 @@ public struct LosslessValueCodable<Strategy: LosslessDecodingStrategy>: Codable 
 
   public var wrappedValue: Strategy.Value
 
+  public let outcome: ResilientDecodingOutcome
+
   public init(wrappedValue: Strategy.Value) {
     self.wrappedValue = wrappedValue
     self.type = Strategy.Value.self
+    self.outcome = .decodedSuccessfully
   }
+
+  init(
+    wrappedValue: Strategy.Value,
+    outcome: ResilientDecodingOutcome,
+    type: LosslessStringCodable.Type
+  ) {
+    self.wrappedValue = wrappedValue
+    self.outcome = outcome
+    self.type = type
+  }
+
+  #if DEBUG
+  public var projectedValue: ResilientProjectedValue {
+    ResilientProjectedValue(outcome: outcome)
+  }
+  #endif
 
   public init(from decoder: Decoder) throws {
     do {
       self.wrappedValue = try Strategy.Value(from: decoder)
       self.type = Strategy.Value.self
-    } catch let error {
-      guard let rawValue = Strategy.losslessDecodableTypes.lazy.compactMap({ $0(decoder) }).first,
-            let value = Strategy.Value("\(rawValue)")
-      else { throw error }
+      self.outcome = .decodedSuccessfully
+    } catch {
+      guard
+        let rawValue = Strategy.losslessDecodableTypes.lazy.compactMap({ $0(decoder) }).first,
+        let value = Strategy.Value("\(rawValue)")
+      else {
+        decoder.reportError(error)
+        throw error
+      }
 
       self.wrappedValue = value
       self.type = Swift.type(of: rawValue)
+      self.outcome = .decodedSuccessfully
     }
   }
 
@@ -63,7 +88,7 @@ public struct LosslessValueCodable<Strategy: LosslessDecodingStrategy>: Codable 
 }
 
 extension LosslessValueCodable: Equatable where Strategy.Value: Equatable {
-  public static func == (lhs: LosslessValueCodable<Strategy>, rhs: LosslessValueCodable<Strategy>) -> Bool {
+  public static func == (lhs: Self, rhs: Self) -> Bool {
     lhs.wrappedValue == rhs.wrappedValue
   }
 }
@@ -122,5 +147,3 @@ public struct LosslessDefaultStrategy<Value: LosslessStringCodable>: LosslessDec
 public typealias LosslessValue<
   T: LosslessStringCodable
 > = LosslessValueCodable<LosslessDefaultStrategy<T>>
-
-

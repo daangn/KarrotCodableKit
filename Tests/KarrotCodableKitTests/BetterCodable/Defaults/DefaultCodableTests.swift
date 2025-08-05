@@ -59,7 +59,6 @@ final class DefaultCodableTest_DateStrategy: XCTestCase {
   }
 }
 
-
 // MARK: - Nested Property Wrapper
 
 final class DefaultCodableTest_NestedPropertyWrapper: XCTestCase {
@@ -92,7 +91,6 @@ final class DefaultCodableTest_NestedPropertyWrapper: XCTestCase {
     XCTAssertEqual(fixture3.returnDate, _1971)
   }
 }
-
 
 // MARK: - Types with Containers
 
@@ -144,7 +142,6 @@ final class DefaultCodableTests_TypesWithContainers: XCTestCase {
   }
 }
 
-
 // MARK: - Enums with Associated Values
 
 final class DefaultCodableTests_EnumWithAssociatedValue: XCTestCase {
@@ -180,6 +177,7 @@ final class DefaultCodableTests_EnumWithAssociatedValue: XCTestCase {
       case .ziz(let i):
         try c.encode("ziz", forKey: .z)
         try c.encode(i, forKey: .i)
+
       case .zaz(let i):
         try c.encode("zaz", forKey: .z)
         try c.encode(i, forKey: .i)

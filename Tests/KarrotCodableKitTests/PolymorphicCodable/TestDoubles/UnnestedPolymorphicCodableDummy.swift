@@ -55,7 +55,6 @@ struct OptionalViewItem: ViewItem {
   let url: URL?
 }
 
-
 // MARK: - Edge Case Test Structs
 
 @UnnestedPolymorphicCodable(

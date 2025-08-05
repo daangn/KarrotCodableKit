@@ -104,7 +104,7 @@ final class PolymorphicDecodableMacroTests: XCTestCase {
           message: "Invalid polymorphic identifier: expected a non-empty string.",
           line: 1,
           column: 1
-        )
+        ),
       ],
       macros: testMacros,
       indentationWidth: .spaces(2)
@@ -114,4 +114,3 @@ final class PolymorphicDecodableMacroTests: XCTestCase {
     #endif
   }
 }
-

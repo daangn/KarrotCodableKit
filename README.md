@@ -120,10 +120,10 @@ extension User: Codable {
 
 ### PolymorphicCodable
 
-`PolymorphicCodable` provides functionality to easily decode polymorphic types from JSON. It includes several interfaces like `PolymorphicIdentifiable`, `PolymorphicCodableStrategy`, and property wrappers like `PolymorphicValue` and `PolymorphicArrayValue`.
+`PolymorphicCodable` provides functionality to easily decode polymorphic types from JSON. This functionality provides Swift implementation for the OpenAPI Specification's `oneOf` pattern, allowing type-safe handling of multiple possible schemas. It includes several interfaces like `PolymorphicIdentifiable`, `PolymorphicCodableStrategy`, and property wrappers like `PolymorphicValue` and `PolymorphicArrayValue`.
 
 **Parameters:**
-- `identifierCodingKey`: Specifies the JSON key used to determine the type of object being decoded. Defaults to "type" if not specified, allowing you to omit this parameter when using the default value.
+- `identifierCodingKey`: Specifies the JSON key used to determine the type of object being decoded. This parameter corresponds to the `discriminator.propertyName` in OpenAPI Specification's oneOf definition. Defaults to "type" if not specified, allowing you to omit this parameter when using the default value.
 - `fallbackType`: Defines a default type to use when the identifier in the JSON doesn't match any of the registered types, preventing decoding failures for unknown types. If this parameter is omitted and an unknown type identifier is encountered during decoding, a decoding error will be thrown.
 
 The following example demonstrates how to decode dynamic JSON content where the type of object is determined at runtime:
@@ -277,3 +277,4 @@ This project is licensed under the MIT. See LICENSE for details.
 - PolymorphicCodable was inspired by [Encode and decode polymorphic types in Swift](https://nilcoalescing.com/blog/BringingPolymorphismToCodable/).
 - AnyCodable was adapted from [Flight-School/AnyCodable](https://github.com/Flight-School/AnyCodable).
 - BetterCodable was adapted from [marksands/BetterCodable](https://github.com/marksands/BetterCodable).
+- ResilientDecodingErrorReporter was adapted from [airbnb/ResilientDecoding](https://github.com/airbnb/ResilientDecoding).

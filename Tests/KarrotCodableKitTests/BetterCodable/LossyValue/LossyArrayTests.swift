@@ -80,4 +80,3 @@ final class LossyArrayTests: XCTestCase {
     XCTAssertEqual(fixture2.theValues, [Date(timeIntervalSince1970: 123)])
   }
 }
-

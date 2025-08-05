@@ -1,8 +1,8 @@
 //
-//  DefaultEmptyPolymorphicArrayValueTests.swift
+//  PolymorphicLossyArrayValueTests.swift
 //
 //
-//  Created by Elon on 10/17/24.
+//  Created by Elon on 10/18/24.
 //  Copyright © 2025 Danggeun Market Inc. All rights reserved.
 //
 
@@ -10,11 +10,11 @@ import XCTest
 
 import KarrotCodableKit
 
-class DefaultEmptyPolymorphicArrayValueTests: XCTestCase {
+class PolymorphicLossyArrayValueTests: XCTestCase {
 
   func testEncodingDefaultEmptyPolymorphicArrayValue() throws {
     // given
-    let response = OptionalArrayDummyResponse(
+    let response = OptionalLossyArrayDummyResponse(
       notices1: [
         DummyCallout(
           type: .callout,
@@ -66,7 +66,7 @@ class DefaultEmptyPolymorphicArrayValueTests: XCTestCase {
     """#
 
     // when
-    let result = try JSONDecoder().decode(OptionalArrayDummyResponse.self, from: Data(jsonData.utf8))
+    let result = try JSONDecoder().decode(OptionalLossyArrayDummyResponse.self, from: Data(jsonData.utf8))
 
     // then
     XCTAssertEqual(result.notices1.count, 1)
@@ -84,7 +84,7 @@ class DefaultEmptyPolymorphicArrayValueTests: XCTestCase {
     """#
 
     // when
-    let result = try JSONDecoder().decode(OptionalArrayDummyResponse.self, from: Data(json.utf8))
+    let result = try JSONDecoder().decode(OptionalLossyArrayDummyResponse.self, from: Data(json.utf8))
 
     // then
     XCTAssertTrue(result.notices1.isEmpty)
@@ -111,7 +111,7 @@ class DefaultEmptyPolymorphicArrayValueTests: XCTestCase {
   }
 }
 
-extension DefaultEmptyPolymorphicArrayValueTests {
+extension PolymorphicLossyArrayValueTests {
   func testDecodingFailElementInDefaultEmptyPolymorphicArrayValue() throws {
     // given: An array where one element (notice) is missing the required 'description' parameter.
     let jsonData = #"""
@@ -131,14 +131,15 @@ extension DefaultEmptyPolymorphicArrayValueTests {
     """#
 
     // when: During decoding.
-    let result = try JSONDecoder().decode(OptionalArrayDummyResponse.self, from: Data(jsonData.utf8))
+    let result = try JSONDecoder().decode(OptionalLossyArrayDummyResponse.self, from: Data(jsonData.utf8))
 
-    // then: Returns an empty array.
-    XCTAssertTrue(result.notices1.isEmpty)
+    // then: Returns an array excluding the element that failed decoding.
+    XCTAssertEqual(result.notices1.count, 1)
+    XCTAssertEqual(result.notices1.first?.description, "test")
   }
 }
 
-extension DefaultEmptyPolymorphicArrayValueTests {
+extension PolymorphicLossyArrayValueTests {
   func testDecodingOnlyValue() throws {
     // given
     let jsonData = #"""
@@ -156,11 +157,11 @@ extension DefaultEmptyPolymorphicArrayValueTests {
 
     // when
     let result = try JSONDecoder().decode(
-      OptionalAarrayDummyDecodableResponse.self,
+      OptionalLossyAarrayDummyDecodableResponse.self,
       from: Data(jsonData.utf8)
     )
 
-    // thens
+    // then
     XCTAssertTrue(result.notices1.isEmpty)
     XCTAssertEqual(result.notices2.first?.type, .callout)
     XCTAssertTrue(result.notices3.isEmpty)

@@ -31,26 +31,50 @@ public struct DefaultEmptyPolymorphicArrayValue<PolymorphicType: PolymorphicCoda
   /// The decoded array of values. Defaults to an empty array `[]` if the array key is missing or decoding fails at the array level.
   public var wrappedValue: [PolymorphicType.ExpectedType]
 
+  /// Tracks the outcome of the decoding process for resilient decoding
+  public let outcome: ResilientDecodingOutcome
+
   public init(wrappedValue: [PolymorphicType.ExpectedType]) {
     self.wrappedValue = wrappedValue
+    self.outcome = .decodedSuccessfully
   }
+
+  init(wrappedValue: [PolymorphicType.ExpectedType], outcome: ResilientDecodingOutcome) {
+    self.wrappedValue = wrappedValue
+    self.outcome = outcome
+  }
+
+  #if DEBUG
+  /// The projected value providing access to decoding outcome
+  public var projectedValue: PolymorphicProjectedValue {
+    PolymorphicProjectedValue(outcome: outcome)
+  }
+  #else
+  /// In non-DEBUG builds, accessing projectedValue is a programmer error
+  public var projectedValue: Never {
+    fatalError("@\(Self.self) projectedValue should not be used in non-DEBUG builds")
+  }
+  #endif
 }
 
 extension DefaultEmptyPolymorphicArrayValue: Decodable {
   public init(from decoder: Decoder) throws {
-    var container = try decoder.unkeyedContainer()
-
     do {
+      var container = try decoder.unkeyedContainer()
       var elements = [PolymorphicType.ExpectedType]()
+
       while !container.isAtEnd {
         let value = try container.decode(PolymorphicValue<PolymorphicType>.self).wrappedValue
         elements.append(value)
       }
 
       self.wrappedValue = elements
+      self.outcome = .decodedSuccessfully
     } catch {
-      print("`DefaultEmptyPolymorphicArrayValue` decode catch error: \(error)")
+      // Report error to error reporter
+      decoder.reportError(error)
       self.wrappedValue = []
+      self.outcome = .recoveredFrom(error, wasReported: true)
     }
   }
 }
@@ -64,6 +88,16 @@ extension DefaultEmptyPolymorphicArrayValue: Encodable {
   }
 }
 
-extension DefaultEmptyPolymorphicArrayValue: Equatable where PolymorphicType.ExpectedType: Equatable {}
-extension DefaultEmptyPolymorphicArrayValue: Hashable where PolymorphicType.ExpectedType: Hashable {}
+extension DefaultEmptyPolymorphicArrayValue: Equatable where PolymorphicType.ExpectedType: Equatable {
+  public static func == (lhs: Self, rhs: Self) -> Bool {
+    lhs.wrappedValue == rhs.wrappedValue
+  }
+}
+
+extension DefaultEmptyPolymorphicArrayValue: Hashable where PolymorphicType.ExpectedType: Hashable {
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(wrappedValue)
+  }
+}
+
 extension DefaultEmptyPolymorphicArrayValue: Sendable where PolymorphicType.ExpectedType: Sendable {}
