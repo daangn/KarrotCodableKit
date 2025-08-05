@@ -49,7 +49,9 @@ public struct DefaultCodable<Default: DefaultCodableStrategy> {
   }
 
   #if DEBUG
-  public var projectedValue: ResilientProjectedValue { ResilientProjectedValue(outcome: outcome) }
+  public var projectedValue: ResilientProjectedValue {
+    ResilientProjectedValue(outcome: outcome)
+  }
   #endif
 }
 

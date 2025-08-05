@@ -49,11 +49,6 @@ public struct DefaultEmptyPolymorphicArrayValue<PolymorphicType: PolymorphicCoda
   public var projectedValue: PolymorphicProjectedValue {
     PolymorphicProjectedValue(outcome: outcome)
   }
-  #else
-  /// In non-DEBUG builds, accessing projectedValue is a programmer error
-  public var projectedValue: Never {
-    fatalError("@\(Self.self) projectedValue should not be used in non-DEBUG builds")
-  }
   #endif
 }
 
