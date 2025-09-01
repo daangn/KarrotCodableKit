@@ -13,6 +13,7 @@ import XCTest
 class RawRepresentableTests: XCTestCase {
 
   func testEnumDecodingWithDefaultValue() throws {
+    // given
     enum VehicleType: String, Codable, DefaultCodableStrategy {
       case car
       case motorcycle
@@ -31,7 +32,10 @@ class RawRepresentableTests: XCTestCase {
 
     let json = "{ \"name\": \"Tesla\", \"vehicleType\": \"electric\" }".data(using: .utf8)!
 
+    // when
     let car = try JSONDecoder().decode(Vehicle.self, from: json)
+
+    // then
     XCTAssertEqual(car.vehicleType, .unknown)
   }
 }

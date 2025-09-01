@@ -19,6 +19,7 @@ final class AnyCodableTests: XCTestCase {
   }
 
   func testJSONDecoding() throws {
+    // given
     let json = """
       {
           "boolean": true,
@@ -34,10 +35,12 @@ final class AnyCodableTests: XCTestCase {
           "null": null
       }
       """.data(using: .utf8)!
-
     let decoder = JSONDecoder()
+
+    // when
     let dictionary = try decoder.decode([String: AnyCodable].self, from: json)
 
+    // then
     XCTAssertEqual(dictionary["boolean"]?.value as! Bool, true)
     XCTAssertEqual(dictionary["integer"]?.value as! Int, 42)
     XCTAssertEqual(dictionary["double"]?.value as! Double, 3.141592653589793, accuracy: 0.001)
@@ -48,6 +51,7 @@ final class AnyCodableTests: XCTestCase {
   }
 
   func testJSONDecodingEquatable() throws {
+    // given
     let json = """
       {
           "boolean": true,
@@ -63,11 +67,13 @@ final class AnyCodableTests: XCTestCase {
           "null": null
       }
       """.data(using: .utf8)!
-
     let decoder = JSONDecoder()
+
+    // when
     let dictionary1 = try decoder.decode([String: AnyCodable].self, from: json)
     let dictionary2 = try decoder.decode([String: AnyCodable].self, from: json)
 
+    // then
     XCTAssertEqual(dictionary1["boolean"], dictionary2["boolean"])
     XCTAssertEqual(dictionary1["integer"], dictionary2["integer"])
     XCTAssertEqual(dictionary1["double"], dictionary2["double"])
@@ -78,6 +84,7 @@ final class AnyCodableTests: XCTestCase {
   }
 
   func testJSONEncoding() throws {
+    // given
     let someCodable = AnyCodable(SomeCodable(
       string: "String",
       int: 100,
@@ -101,12 +108,13 @@ final class AnyCodableTests: XCTestCase {
       "someCodable": someCodable,
       "null": nil,
     ]
-
     let encoder = JSONEncoder()
 
+    // when
     let json = try encoder.encode(dictionary)
     let encodedJSONObject = try JSONSerialization.jsonObject(with: json) as! NSDictionary
 
+    // then
     let expected = """
       {
           "boolean": true,

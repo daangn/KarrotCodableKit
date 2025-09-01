@@ -24,6 +24,7 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
 
   func testPolymorphicEnumEncodableMacro() throws {
     #if canImport(KarrotCodableKitMacros)
+    // given
     assertMacroExpansion(
       """
       @PolymorphicEnumEncodable(identifierCodingKey: "type")
@@ -33,6 +34,7 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
         case dismissibleCallout(value: DummyDismissibleCallout)
       }
       """,
+      // when
       expandedSource: """
 
         public enum CalloutBadge {
@@ -64,6 +66,7 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
 
   func testPolymorphicEnumEncodableMacroWithDefaultParameters() throws {
     #if canImport(KarrotCodableKitMacros)
+    // given
     assertMacroExpansion(
       """
       @PolymorphicEnumEncodable
@@ -73,6 +76,7 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
         case dismissibleCallout(value: DummyDismissibleCallout)
       }
       """,
+      // when
       expandedSource: """
 
         public enum CalloutBadge {
@@ -104,6 +108,7 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
 
   func testPolymorphicEnumEncodableMacroTypeError() {
     #if canImport(KarrotCodableKitMacros)
+    // given
     assertMacroExpansion(
       """
       @PolymorphicEnumEncodable(identifierCodingKey: "test")
@@ -113,6 +118,7 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
         let dismissibleCallout: DummyDismissibleCallout
       }
       """,
+      // when
       expandedSource: """
         struct CalloutBadge {
           let callout: DummyCallout
@@ -137,6 +143,7 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
 
   func testPolymorphicEnumEncodableMacroIdentifierValueError() {
     #if canImport(KarrotCodableKitMacros)
+    // given
     assertMacroExpansion(
       """
       @PolymorphicEnumEncodable(identifierCodingKey: "")
@@ -146,6 +153,7 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
         case dismissibleCallout(DummyDismissibleCallout)
       }
       """,
+      // when
       expandedSource: """
         enum CalloutBadge {
           case callout(DummyCallout)
@@ -170,6 +178,7 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
 
   func testPolymorphicEnumEncodableMacroAssociatedValueCountError() {
     #if canImport(KarrotCodableKitMacros)
+    // given
     assertMacroExpansion(
       """
       @PolymorphicEnumEncodable(identifierCodingKey: "type")
@@ -179,6 +188,7 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
         case dismissibleCallout(DummyDismissibleCallout)
       }
       """,
+      // when
       expandedSource: """
         enum CalloutBadge {
           case callout(DummyCallout, String)
@@ -203,6 +213,7 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
 
   func testPolymorphicEnumEncodableMacroMissingAssociatedValueError() {
     #if canImport(KarrotCodableKitMacros)
+    // given
     assertMacroExpansion(
       """
       @PolymorphicEnumEncodable(identifierCodingKey: "type")
@@ -212,6 +223,7 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
         case dismissibleCallout(DummyDismissibleCallout)
       }
       """,
+      // when
       expandedSource: """
         enum CalloutBadge {
           case callout

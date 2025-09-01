@@ -23,6 +23,7 @@ final class UnnestedPolymorphicDecodableMacroTests: XCTestCase {
 
   func testUnnestedPolymorphicDecodableMacroExpansion() throws {
     #if canImport(KarrotCodableKitMacros)
+    // given
     assertMacroExpansion(
       """
       @UnnestedPolymorphicDecodable(
@@ -43,6 +44,7 @@ final class UnnestedPolymorphicDecodableMacroTests: XCTestCase {
         static let staticValue = true
       }
       """,
+      // when
       expandedSource: """
         struct TitleViewItem: ViewItem {
           let id: String
@@ -101,6 +103,7 @@ final class UnnestedPolymorphicDecodableMacroTests: XCTestCase {
 
   func testUnnestedPolymorphicDecodableMacroWithSnakeCaseKeys() throws {
     #if canImport(KarrotCodableKitMacros)
+    // given
     assertMacroExpansion(
       """
       @UnnestedPolymorphicDecodable(
@@ -113,6 +116,7 @@ final class UnnestedPolymorphicDecodableMacroTests: XCTestCase {
         let itemTitle: String?
       }
       """,
+      // when
       expandedSource: """
         struct TitleViewItem: ViewItem {
           let id: String
@@ -153,6 +157,7 @@ final class UnnestedPolymorphicDecodableMacroTests: XCTestCase {
 
   func testUnnestedPolymorphicDecodableMacroWithoutProperties() throws {
     #if canImport(KarrotCodableKitMacros)
+    // given
     assertMacroExpansion(
       """
       @UnnestedPolymorphicDecodable(
@@ -164,6 +169,7 @@ final class UnnestedPolymorphicDecodableMacroTests: XCTestCase {
 
       }
       """,
+      // when
       expandedSource: """
         struct TitleViewItem: ViewItem {
 
@@ -198,6 +204,7 @@ final class UnnestedPolymorphicDecodableMacroTests: XCTestCase {
 
   func testUnnestedPolymorphicDecodableMacroWithBacktickedProperties() throws {
     #if canImport(KarrotCodableKitMacros)
+    // given
     assertMacroExpansion(
       """
       @UnnestedPolymorphicDecodable(
@@ -210,6 +217,7 @@ final class UnnestedPolymorphicDecodableMacroTests: XCTestCase {
         let `private`: String?
       }
       """,
+      // when
       expandedSource: """
         struct SpecialViewItem: ViewItem {
           let id: String
@@ -253,6 +261,7 @@ final class UnnestedPolymorphicDecodableMacroTests: XCTestCase {
 
   func testUnnestedPolymorphicDecodableMacroAppliedToEnum() throws {
     #if canImport(KarrotCodableKitMacros)
+    // given
     assertMacroExpansion(
       """
       @UnnestedPolymorphicDecodable(
@@ -264,6 +273,7 @@ final class UnnestedPolymorphicDecodableMacroTests: XCTestCase {
         case second(String)
       }
       """,
+      // when
       expandedSource: """
         enum SomeEnum {
           case first
@@ -292,6 +302,7 @@ final class UnnestedPolymorphicDecodableMacroTests: XCTestCase {
 
   func testUnnestedPolymorphicDecodableMacroWithEmptyIdentifier() throws {
     #if canImport(KarrotCodableKitMacros)
+    // given
     assertMacroExpansion(
       """
       @UnnestedPolymorphicDecodable(
@@ -302,6 +313,7 @@ final class UnnestedPolymorphicDecodableMacroTests: XCTestCase {
         let id: String
       }
       """,
+      // when
       expandedSource: """
         struct TestItem: ViewItem {
           let id: String
@@ -329,6 +341,7 @@ final class UnnestedPolymorphicDecodableMacroTests: XCTestCase {
 
   func testUnnestedPolymorphicDecodableMacroWithConstantInitializedProperties() throws {
     #if canImport(KarrotCodableKitMacros)
+    // given
     assertMacroExpansion(
       """
       @UnnestedPolymorphicDecodable(
@@ -341,6 +354,7 @@ final class UnnestedPolymorphicDecodableMacroTests: XCTestCase {
         var mutableProperty: String = "initialValue"
       }
       """,
+      // when
       expandedSource: """
         struct ConstantItem: ViewItem {
           let id: String
@@ -394,6 +408,7 @@ final class UnnestedPolymorphicDecodableMacroTests: XCTestCase {
 
   func testUnnestedPolymorphicDecodableMacroWithEmptyKey() throws {
     #if canImport(KarrotCodableKitMacros)
+    // given
     assertMacroExpansion(
       """
       @UnnestedPolymorphicDecodable(
@@ -404,6 +419,7 @@ final class UnnestedPolymorphicDecodableMacroTests: XCTestCase {
         let id: String
       }
       """,
+      // when
       expandedSource: """
         struct TestItem: ViewItem {
           let id: String

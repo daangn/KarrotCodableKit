@@ -16,20 +16,35 @@ final class DefaultZeroDoubleTests: XCTestCase {
   }
 
   func testDecodingFailableDoubleDefaultZeroDouble() throws {
+    // given
     let jsonData = #"{ "doubleValue": null }"#.data(using: .utf8)!
+
+    // when
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
+
+    // then
     XCTAssertEqual(fixture.doubleValue, 0.0)
   }
 
   func testDecodingKeyNotPresentDefaultZeroDouble() throws {
+    // given
     let jsonData = #"{}"#.data(using: .utf8)!
+
+    // when
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
+
+    // then
     XCTAssertEqual(fixture.doubleValue, 0.0)
   }
 
   func testDecodinSuccessDefaultZeroDouble() throws {
+    // given
     let jsonData = #"{ "doubleValue": 0.001 }"#.data(using: .utf8)!
+
+    // when
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
+
+    // then
     XCTAssertEqual(fixture.doubleValue, 0.001)
   }
 }

@@ -18,8 +18,13 @@ final class LosslessValueTests: XCTestCase {
   }
 
   func testDecodingMisalignedTypesFromJSONTraversesCorrectType() throws {
+    // given
     let jsonData = #"{ "bool": "true", "string": 42, "int": "1", "double": "7.1" }"#.data(using: .utf8)!
+
+    // when
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
+
+    // then
     XCTAssertEqual(fixture.bool, true)
     XCTAssertEqual(fixture.string, "42")
     XCTAssertEqual(fixture.int, 1)
@@ -27,14 +32,21 @@ final class LosslessValueTests: XCTestCase {
   }
 
   func testDecodingEncodedMisalignedTypesFromJSONDecodesCorrectTypes() throws {
+    // given
     let jsonData = #"{ "bool": "true", "string": 42, "int": "7", "double": "7.1" }"#.data(using: .utf8)!
+
+    // when
     var _fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
 
     _fixture.bool = false
     _fixture.double = 3.14
 
+    // when
     let fixtureData = try JSONEncoder().encode(_fixture)
+    // when
     let fixture = try JSONDecoder().decode(Fixture.self, from: fixtureData)
+
+    // then
     XCTAssertEqual(fixture.bool, false)
     XCTAssertEqual(fixture.string, "42")
     XCTAssertEqual(fixture.int, 7)
@@ -42,10 +54,17 @@ final class LosslessValueTests: XCTestCase {
   }
 
   func testEncodingAndDecodedExpectedTypes() throws {
+    // given
     let jsonData = #"{ "bool": true, "string": "42", "int": 7, "double": 7.1 }"#.data(using: .utf8)!
+
+    // when
     let _fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
+    // when
     let fixtureData = try JSONEncoder().encode(_fixture)
+    // when
     let fixture = try JSONDecoder().decode(Fixture.self, from: fixtureData)
+
+    // then
     XCTAssertEqual(fixture.bool, true)
     XCTAssertEqual(fixture.string, "42")
     XCTAssertEqual(fixture.int, 7)
@@ -60,10 +79,17 @@ final class LosslessValueTests: XCTestCase {
       @LosslessValue var double: Double
     }
 
+    // given
     let jsonData = #"{ "bool": 1, "string": "42", "int": 7, "double": 7.1 }"#.data(using: .utf8)!
+
+    // when
     let _fixture = try JSONDecoder().decode(FixtureWithBooleanAsInteger.self, from: jsonData)
+    // when
     let fixtureData = try JSONEncoder().encode(_fixture)
+    // when
     let fixture = try JSONDecoder().decode(FixtureWithBooleanAsInteger.self, from: fixtureData)
+
+    // then
     XCTAssertEqual(fixture.bool, true)
     XCTAssertEqual(fixture.string, "42")
     XCTAssertEqual(fixture.int, 7)
@@ -76,9 +102,13 @@ final class LosslessValueTests: XCTestCase {
       @LosslessBoolValue var bool: Bool
     }
 
+    // given
     let json = #"{ "id": 1, "bool": 1 }"#.data(using: .utf8)!
+
+    // when
     let result = try JSONDecoder().decode(Response.self, from: json)
 
+    // then
     XCTAssertEqual(result.id, "1")
     XCTAssertEqual(result.bool, true)
   }
@@ -94,10 +124,14 @@ final class LosslessValueTests: XCTestCase {
       @LosslessBoolValue var g: Bool
     }
 
+    // given
     let json = #"{ "a": "TRUE", "b": "yes", "c": "1", "d": "y", "e": "t","f":"11", "g":11 }"#
       .data(using: .utf8)!
+
+    // when
     let result = try JSONDecoder().decode(Response.self, from: json)
 
+    // then
     XCTAssertEqual(result.a, true)
     XCTAssertEqual(result.b, true)
     XCTAssertEqual(result.c, true)
@@ -106,10 +140,14 @@ final class LosslessValueTests: XCTestCase {
     XCTAssertEqual(result.f, true)
     XCTAssertEqual(result.g, true)
 
+    // given
     let json2 = #"{ "a": "FALSE", "b": "no", "c": "0", "d": "n", "e": "f","f":"-11", "g":-11  }"#
       .data(using: .utf8)!
+
+    // when
     let result2 = try JSONDecoder().decode(Response.self, from: json2)
 
+    // then
     XCTAssertEqual(result2.a, false)
     XCTAssertEqual(result2.b, false)
     XCTAssertEqual(result2.c, false)

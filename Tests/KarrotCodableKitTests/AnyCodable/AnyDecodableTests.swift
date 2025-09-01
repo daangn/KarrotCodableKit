@@ -10,6 +10,7 @@ import XCTest
 
 final class AnyDecodableTests: XCTestCase {
   func testJSONDecoding() throws {
+    // given
     let json = """
       {
           "boolean": true,
@@ -25,10 +26,12 @@ final class AnyDecodableTests: XCTestCase {
           "null": null
       }
       """.data(using: .utf8)!
-
     let decoder = JSONDecoder()
+
+    // when
     let dictionary = try decoder.decode([String: AnyDecodable].self, from: json)
 
+    // then
     XCTAssertEqual(dictionary["boolean"]?.value as! Bool, true)
     XCTAssertEqual(dictionary["integer"]?.value as! Int, 42)
     XCTAssertEqual(dictionary["double"]?.value as! Double, 3.141592653589793, accuracy: 0.001)
