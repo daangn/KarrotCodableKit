@@ -134,8 +134,8 @@ struct PolymorphicLossyArrayValueResilientTests {
     // then
     #expect(result.notices.isEmpty)
     #if DEBUG
-    #expect(result.$notices.outcome == .keyNotFound)
-    #expect(result.$notices.error == nil)
+    // missing key should error for non-optional property
+    #expect(result.$notices.error != nil)
     #expect(result.$notices.results.isEmpty)
     #endif
   }
