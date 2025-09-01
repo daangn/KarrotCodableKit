@@ -128,7 +128,7 @@ struct LossyDictionaryResilientTests {
     // Error info when entire dictionary decoding fails
     #expect(fixture.$stringDict.error != nil)
     #expect(fixture.$intDict.error != nil)
-    #expect(fixture.$objectDict.error == nil) // null is not an error
+    #expect(fixture.$objectDict.error != nil) // null value should error for non-optional property
     #endif
   }
 
@@ -146,14 +146,10 @@ struct LossyDictionaryResilientTests {
     #expect(fixture.objectDict == [:])
 
     #if DEBUG
-    #expect(fixture.$stringDict.outcome == .keyNotFound)
-    #expect(fixture.$intDict.outcome == .keyNotFound)
-    #expect(fixture.$objectDict.outcome == .keyNotFound)
-
-    // No error when key is missing
-    #expect(fixture.$stringDict.error == nil)
-    #expect(fixture.$intDict.error == nil)
-    #expect(fixture.$objectDict.error == nil)
+    // Missing key should error for non-optional properties
+    #expect(fixture.$stringDict.error != nil)
+    #expect(fixture.$intDict.error != nil)
+    #expect(fixture.$objectDict.error != nil)
     #endif
   }
 }

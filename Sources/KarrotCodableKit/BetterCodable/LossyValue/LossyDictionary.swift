@@ -199,7 +199,13 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
     // Check for nil first
     if Self.decodeNilValue(from: decoder) {
       #if DEBUG
-      self.init(wrappedValue: [:], outcome: .valueWasNil)
+      let context = DecodingError.Context(
+        codingPath: decoder.codingPath,
+        debugDescription: "Value was nil but property is non-optional"
+      )
+      let error = DecodingError.valueNotFound([Key: Value].self, context)
+      decoder.reportError(error)
+      self.init(wrappedValue: [:], outcome: .recoveredFrom(error, wasReported: true))
       #else
       self.init(wrappedValue: [:])
       #endif
@@ -276,7 +282,14 @@ extension KeyedDecodingContainer {
       return value
     } else {
       #if DEBUG
-      return LossyDictionary(wrappedValue: [:], outcome: .keyNotFound)
+      let context = DecodingError.Context(
+        codingPath: codingPath + [key],
+        debugDescription: "Key not found but property is non-optional"
+      )
+      let error = DecodingError.keyNotFound(key, context)
+      let decoder = try superDecoder(forKey: key)
+      decoder.reportError(error)
+      return LossyDictionary(wrappedValue: [:], outcome: .recoveredFrom(error, wasReported: true))
       #else
       return LossyDictionary(wrappedValue: [:])
       #endif
