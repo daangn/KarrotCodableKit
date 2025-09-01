@@ -100,9 +100,13 @@ struct LossyDictionaryResilientTests {
 
     let errorDigest = errorReporter.flushReportedErrors()
 
-    // Check if errors were reported
+    #if DEBUG
+    /// Check if errors were reported
     let digest = try #require(errorDigest)
     #expect(digest.errors.count >= 2) // Errors for keys "a" and "c"
+    #else
+    #expect(errorDigest == nil)
+    #endif
   }
 
   @Test("complete failure results in empty dictionary")

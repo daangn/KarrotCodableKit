@@ -169,7 +169,7 @@ struct DefaultEmptyPolymorphicArrayValueResilientTests {
 
   @Test("Error reporter should be called")
   func errorReporting() throws {
-    // given
+    /// given
     let json = """
       {
         "notices": [
@@ -197,8 +197,13 @@ struct DefaultEmptyPolymorphicArrayValueResilientTests {
     #expect(result.notices.isEmpty)
 
     let errorDigest = errorReporter.flushReportedErrors()
+
+    #if DEBUG
     let digest = try #require(errorDigest)
     let errors = digest.errors
     #expect(errors.count >= 1)
+    #else
+    #expect(errorDigest == nil)
+    #endif
   }
 }

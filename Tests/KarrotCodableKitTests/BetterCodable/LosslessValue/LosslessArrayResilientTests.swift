@@ -16,17 +16,9 @@ struct LosslessArrayResilientTests {
     @LosslessArray var intArray: [Int]
     @LosslessArray var doubleArray: [Double]
 
-    struct NestedObject: Decodable, Equatable, LosslessStringConvertible {
+    struct NestedObject: Decodable {
       let id: Int
       let name: String
-
-      init?(_ description: String) {
-        nil // Not convertible from string
-      }
-
-      var description: String {
-        "NestedObject(id: \(id), name: \(name))"
-      }
     }
 
     @LosslessArray var objectArray: [String] // Objects cannot be converted to String
@@ -88,12 +80,14 @@ struct LosslessArrayResilientTests {
 
     let errorDigest = errorReporter.flushReportedErrors()
 
-    // Check if errors were reported
+    #if DEBUG
+    /// Check if errors were reported
     let digest = try #require(errorDigest)
     // null and conversion failure errors
     #expect(digest.errors.count >= 3)
-    #if DEBUG
     print("Error digest: \(digest.debugDescription)")
+    #else
+    #expect(errorDigest == nil)
     #endif
   }
 

@@ -67,9 +67,14 @@ extension DefaultEmptyPolymorphicArrayValue: Decodable {
       self.outcome = .decodedSuccessfully
     } catch {
       // Report error to error reporter
+      #if DEBUG
       decoder.reportError(error)
       self.wrappedValue = []
       self.outcome = .recoveredFrom(error, wasReported: true)
+      #else
+      self.wrappedValue = []
+      self.outcome = .recoveredFrom(error, wasReported: false)
+      #endif
     }
   }
 }

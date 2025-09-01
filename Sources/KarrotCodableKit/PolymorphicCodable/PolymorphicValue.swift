@@ -56,7 +56,9 @@ extension PolymorphicValue: Decodable {
       self.wrappedValue = try PolymorphicType.decode(from: decoder)
       self.outcome = .decodedSuccessfully
     } catch {
+      #if DEBUG
       decoder.reportError(error)
+      #endif
       throw error
     }
   }

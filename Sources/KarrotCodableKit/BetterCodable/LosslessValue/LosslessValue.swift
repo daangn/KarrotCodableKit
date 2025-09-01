@@ -1,5 +1,5 @@
 //
-//  LosslessDecodingStrategy.swift
+//  LosslessValue.swift
 //  KarrotCodableKit
 //
 //  Created by Elon on 4/9/25.
@@ -65,7 +65,9 @@ public struct LosslessValueCodable<Strategy: LosslessDecodingStrategy>: Codable 
         let rawValue = Strategy.losslessDecodableTypes.lazy.compactMap({ $0(decoder) }).first,
         let value = Strategy.Value("\(rawValue)")
       else {
+        #if DEBUG
         decoder.reportError(error)
+        #endif
         throw error
       }
 

@@ -16,11 +16,7 @@ extension KeyedDecodingContainer {
     if let value = try decodeIfPresent(type, forKey: key) {
       return value
     } else {
-      #if DEBUG
       return OptionalPolymorphicArrayValue(wrappedValue: nil, outcome: .keyNotFound)
-      #else
-      return OptionalPolymorphicArrayValue(wrappedValue: nil)
-      #endif
     }
   }
 
@@ -35,11 +31,7 @@ extension KeyedDecodingContainer {
 
     // Check if the value is null
     if try decodeNil(forKey: key) {
-      #if DEBUG
       return OptionalPolymorphicArrayValue(wrappedValue: nil, outcome: .valueWasNil)
-      #else
-      return OptionalPolymorphicArrayValue(wrappedValue: nil)
-      #endif
     }
 
     // Try to decode the array
@@ -53,15 +45,13 @@ extension KeyedDecodingContainer {
         elements.append(value.wrappedValue)
       }
 
-      #if DEBUG
       return OptionalPolymorphicArrayValue(wrappedValue: elements, outcome: .decodedSuccessfully)
-      #else
-      return OptionalPolymorphicArrayValue(wrappedValue: elements)
-      #endif
     } catch {
+      #if DEBUG
       // Report the error through superDecoder
       let decoder = try superDecoder(forKey: key)
       decoder.reportError(error)
+      #endif
       throw error
     }
   }

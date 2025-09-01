@@ -51,7 +51,9 @@ extension DataValue: Decodable {
       self.wrappedValue = try Coder.decode(stringValue)
       self.outcome = .decodedSuccessfully
     } catch {
+      #if DEBUG
       decoder.reportError(error)
+      #endif
       throw error
     }
   }

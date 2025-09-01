@@ -150,8 +150,8 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
     } catch {
       _ = try? container.decode(AnyDecodableValue.self, forKey: key)
       let decoder = try? container.superDecoder(forKey: key)
-      decoder?.reportError(error)
       #if DEBUG
+      decoder?.reportError(error)
       state.results[castKey] = .failure(error)
       #endif
     }
@@ -174,9 +174,9 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
       #endif
     } catch {
       _ = try? container.decode(AnyDecodableValue.self, forKey: key)
+      #if DEBUG
       let decoder = try? container.superDecoder(forKey: key)
       decoder?.reportError(error)
-      #if DEBUG
       state.results[castKey] = .failure(error)
       #endif
     }
@@ -213,12 +213,10 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
     }
 
     do {
-      let state: DecodingState
-
-      if Key.self == String.self {
-        state = try Self.decodeStringKeyedDictionary(from: decoder)
+      let state: DecodingState = if Key.self == String.self {
+        try Self.decodeStringKeyedDictionary(from: decoder)
       } else if Key.self == Int.self {
-        state = try Self.decodeIntKeyedDictionary(from: decoder)
+        try Self.decodeIntKeyedDictionary(from: decoder)
       } else {
         throw DecodingError.dataCorrupted(
           DecodingError.Context(
@@ -230,8 +228,8 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
 
       self = Self.createFinalResult(from: state)
     } catch {
-      decoder.reportError(error)
       #if DEBUG
+      decoder.reportError(error)
       self.init(wrappedValue: [:], outcome: .recoveredFrom(error, wasReported: true))
       #else
       self.init(wrappedValue: [:])
@@ -287,9 +285,9 @@ extension KeyedDecodingContainer {
         debugDescription: "Key not found but property is non-optional"
       )
       let error = DecodingError.keyNotFound(key, context)
-      let decoder = try superDecoder(forKey: key)
-      decoder.reportError(error)
-      return LossyDictionary(wrappedValue: [:], outcome: .recoveredFrom(error, wasReported: true))
+      let decoder = try? superDecoder(forKey: key)
+      decoder?.reportError(error)
+      return LossyDictionary(wrappedValue: [:], outcome: .recoveredFrom(error, wasReported: decoder != nil))
       #else
       return LossyDictionary(wrappedValue: [:])
       #endif

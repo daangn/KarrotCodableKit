@@ -169,11 +169,13 @@ struct DefaultCodableResilientTests {
 
     let errorDigest = errorReporter.flushReportedErrors()
 
+    #if DEBUG
     let digest = try #require(errorDigest)
     // At least 3 errors should be reported
     #expect(digest.errors.count >= 3)
-    #if DEBUG
     print("Error digest: \(digest.debugDescription)")
+    #else
+    #expect(errorDigest == nil)
     #endif
   }
 

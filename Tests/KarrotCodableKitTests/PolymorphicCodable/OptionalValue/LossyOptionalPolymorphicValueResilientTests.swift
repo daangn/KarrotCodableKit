@@ -135,7 +135,7 @@ struct LossyOptionalPolymorphicValueResilientTests {
 
   @Test("Error reporter should be called")
   func errorReporterCalled() throws {
-    // given
+    /// given
     let json = """
       {
         "notice": {
@@ -155,9 +155,14 @@ struct LossyOptionalPolymorphicValueResilientTests {
     #expect(result.notice == nil)
 
     let errorDigest = errorReporter.flushReportedErrors()
+
+    #if DEBUG
     let digest = try #require(errorDigest)
     let errors = digest.errors
     #expect(errors.count >= 1)
     #expect(errors.first is DecodingError)
+    #else
+    #expect(errorDigest == nil)
+    #endif
   }
 }

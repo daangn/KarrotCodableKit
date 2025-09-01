@@ -25,7 +25,6 @@ extension Result {
 
   package var failure: Failure? {
     switch self {
-
     case .success:
       nil
     case .failure(let error):

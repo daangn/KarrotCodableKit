@@ -77,8 +77,8 @@ extension LossyArray: Decodable where T: Decodable {
           results.append(.success(value))
           #endif
         } catch {
-          elementDecoder.reportError(error)
           #if DEBUG
+          elementDecoder.reportError(error)
           results.append(.failure(error))
           #endif
         }
@@ -95,8 +95,8 @@ extension LossyArray: Decodable where T: Decodable {
       self.init(wrappedValue: elements)
       #endif
     } catch {
-      decoder.reportError(error)
       #if DEBUG
+      decoder.reportError(error)
       self.init(wrappedValue: [], outcome: .recoveredFrom(error, wasReported: true))
       #else
       self.init(wrappedValue: [])

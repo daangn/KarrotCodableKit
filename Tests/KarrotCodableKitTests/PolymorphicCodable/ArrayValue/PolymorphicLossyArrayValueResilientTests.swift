@@ -168,7 +168,7 @@ struct PolymorphicLossyArrayValueResilientTests {
 
   @Test("Error reporter should be called partially")
   func partialErrorReporting() throws {
-    // given
+    /// given
     let json = """
       {
         "notices": [
@@ -196,8 +196,13 @@ struct PolymorphicLossyArrayValueResilientTests {
     #expect(result.notices.count == 1)
 
     let errorDigest = errorReporter.flushReportedErrors()
+
+    #if DEBUG
     let digest = try #require(errorDigest)
     let errors = digest.errors
     #expect(errors.count >= 1)
+    #else
+    #expect(errorDigest == nil)
+    #endif
   }
 }
