@@ -142,7 +142,7 @@ struct LossyArrayResilientTests {
     // Error info when entire array decoding fails
     #expect(fixture.$integers.error != nil)
     #expect(fixture.$strings.error != nil)
-    #expect(fixture.$objects.error == nil) // null is not an error
+    #expect(fixture.$objects.error != nil) // null value should error for non-optional property
     #endif
   }
 }

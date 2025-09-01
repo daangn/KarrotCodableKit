@@ -44,7 +44,13 @@ extension LossyArray: Decodable where T: Decodable {
       let singleValueContainer = try decoder.singleValueContainer()
       if singleValueContainer.decodeNil() {
         #if DEBUG
-        self.init(wrappedValue: [], outcome: .valueWasNil)
+        let context = DecodingError.Context(
+          codingPath: decoder.codingPath,
+          debugDescription: "Value was nil but property is non-optional"
+        )
+        let error = DecodingError.valueNotFound([T].self, context)
+        decoder.reportError(error)
+        self.init(wrappedValue: [], outcome: .recoveredFrom(error, wasReported: true))
         #else
         self.init(wrappedValue: [])
         #endif
