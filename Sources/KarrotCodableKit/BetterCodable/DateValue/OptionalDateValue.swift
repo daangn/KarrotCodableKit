@@ -53,14 +53,18 @@ extension OptionalDateValue: Decodable where Formatter.RawValue: Decodable {
         self.wrappedValue = try Formatter.decode(value)
         self.outcome = .decodedSuccessfully
       } catch {
+        #if DEBUG
         decoder.reportError(error)
+        #endif
         throw error
       }
     } catch DecodingError.valueNotFound(let rawType, _) where rawType == Formatter.RawValue.self {
       self.wrappedValue = nil
       self.outcome = .valueWasNil
     } catch {
+      #if DEBUG
       decoder.reportError(error)
+      #endif
       throw error
     }
   }

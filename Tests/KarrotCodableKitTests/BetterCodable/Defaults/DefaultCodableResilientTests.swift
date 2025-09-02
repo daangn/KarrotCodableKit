@@ -78,12 +78,11 @@ struct DefaultCodableResilientTests {
     #expect(fixture.dictValue == [:])
 
     #if DEBUG
-    // No error when key is missing (default behavior)
-    #expect(fixture.$intValue.error == nil)
-    #expect(fixture.$stringValue.error == nil)
-    #expect(fixture.$boolValue.error == nil)
-    #expect(fixture.$arrayValue.error == nil)
-    #expect(fixture.$dictValue.error == nil)
+    #expect(fixture.$intValue.error != nil)
+    #expect(fixture.$stringValue.error != nil)
+    #expect(fixture.$boolValue.error != nil)
+    #expect(fixture.$arrayValue.error != nil)
+    #expect(fixture.$dictValue.error != nil)
     #endif
   }
 
@@ -144,12 +143,11 @@ struct DefaultCodableResilientTests {
     #expect(fixture.dictValue == [:])
 
     #if DEBUG
-    // null is not considered an error
-    #expect(fixture.$intValue.error == nil)
-    #expect(fixture.$stringValue.error == nil)
-    #expect(fixture.$boolValue.error == nil)
-    #expect(fixture.$arrayValue.error == nil)
-    #expect(fixture.$dictValue.error == nil)
+    #expect(fixture.$intValue.error != nil)
+    #expect(fixture.$stringValue.error != nil)
+    #expect(fixture.$boolValue.error != nil)
+    #expect(fixture.$arrayValue.error != nil)
+    #expect(fixture.$dictValue.error != nil)
     #endif
   }
 
@@ -171,11 +169,13 @@ struct DefaultCodableResilientTests {
 
     let errorDigest = errorReporter.flushReportedErrors()
 
+    #if DEBUG
     let digest = try #require(errorDigest)
     // At least 3 errors should be reported
     #expect(digest.errors.count >= 3)
-    #if DEBUG
     print("Error digest: \(digest.debugDescription)")
+    #else
+    #expect(errorDigest == nil)
     #endif
   }
 
@@ -340,17 +340,20 @@ struct DefaultCodableResilientTests {
     // when
     let decoder = JSONDecoder()
     let data = json.data(using: .utf8)!
-    let fixture = try decoder.decode(RawRepresentableFixture.self, from: data)
+    let (fixture, errorDigest) = try decoder.decode(
+      RawRepresentableFixture.self,
+      from: data,
+      reportResilientDecodingErrors: true
+    )
 
     // then
     #expect(fixture.normalEnum == .unknown)
     #expect(fixture.frozenEnum == .fallback)
 
     #if DEBUG
-    #expect(fixture.$normalEnum.outcome == .keyNotFound)
-    #expect(fixture.$frozenEnum.outcome == .keyNotFound)
-    #expect(fixture.$normalEnum.error == nil)
-    #expect(fixture.$frozenEnum.error == nil)
+    #expect(errorDigest != nil)
+    #expect(fixture.$normalEnum.error != nil)
+    #expect(fixture.$frozenEnum.error != nil)
     #endif
   }
 
@@ -367,17 +370,20 @@ struct DefaultCodableResilientTests {
     // when
     let decoder = JSONDecoder()
     let data = json.data(using: .utf8)!
-    let fixture = try decoder.decode(RawRepresentableFixture.self, from: data)
+    let (fixture, errorDigest) = try decoder.decode(
+      RawRepresentableFixture.self,
+      from: data,
+      reportResilientDecodingErrors: true
+    )
 
     // then
     #expect(fixture.normalEnum == .unknown)
     #expect(fixture.frozenEnum == .fallback)
 
     #if DEBUG
-    #expect(fixture.$normalEnum.outcome == .valueWasNil)
-    #expect(fixture.$frozenEnum.outcome == .valueWasNil)
-    #expect(fixture.$normalEnum.error == nil)
-    #expect(fixture.$frozenEnum.error == nil)
+    #expect(errorDigest != nil)
+    #expect(fixture.$normalEnum.error != nil)
+    #expect(fixture.$frozenEnum.error != nil)
     #endif
   }
 

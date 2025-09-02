@@ -116,8 +116,8 @@ struct DefaultEmptyPolymorphicArrayValueResilientTests {
     // then
     #expect(result.notices.isEmpty)
     #if DEBUG
-    #expect(result.$notices.outcome == .keyNotFound)
-    #expect(result.$notices.error == nil)
+    // missing key should error for non-optional property
+    #expect(result.$notices.error != nil)
     #endif
   }
 
@@ -137,8 +137,8 @@ struct DefaultEmptyPolymorphicArrayValueResilientTests {
     // then
     #expect(result.notices.isEmpty)
     #if DEBUG
-    #expect(result.$notices.outcome == .valueWasNil)
-    #expect(result.$notices.error == nil)
+    // null value should error for non-optional property
+    #expect(result.$notices.error != nil)
     #endif
   }
 
@@ -169,7 +169,7 @@ struct DefaultEmptyPolymorphicArrayValueResilientTests {
 
   @Test("Error reporter should be called")
   func errorReporting() throws {
-    // given
+    /// given
     let json = """
       {
         "notices": [
@@ -197,8 +197,13 @@ struct DefaultEmptyPolymorphicArrayValueResilientTests {
     #expect(result.notices.isEmpty)
 
     let errorDigest = errorReporter.flushReportedErrors()
+
+    #if DEBUG
     let digest = try #require(errorDigest)
     let errors = digest.errors
     #expect(errors.count >= 1)
+    #else
+    #expect(errorDigest == nil)
+    #endif
   }
 }

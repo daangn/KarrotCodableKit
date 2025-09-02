@@ -40,10 +40,14 @@ extension KeyedDecodingContainer {
       let value = try T.decode(from: decoder)
       return LossyOptionalPolymorphicValue(wrappedValue: value, outcome: .decodedSuccessfully)
     } catch {
-      // Report error to resilient decoding error reporter
+      #if DEBUG
+      /// Report error to resilient decoding error reporter
       let decoder = try? superDecoder(forKey: key)
       decoder?.reportError(error)
       return LossyOptionalPolymorphicValue(wrappedValue: nil, outcome: .recoveredFrom(error, wasReported: true))
+      #else
+      return LossyOptionalPolymorphicValue(wrappedValue: nil, outcome: .recoveredFrom(error, wasReported: false))
+      #endif
     }
   }
 }

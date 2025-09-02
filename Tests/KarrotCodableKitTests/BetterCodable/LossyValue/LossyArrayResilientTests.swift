@@ -89,9 +89,13 @@ struct LossyArrayResilientTests {
 
     let errorDigest = errorReporter.flushReportedErrors()
 
-    // Check if errors were reported
+    #if DEBUG
+    /// Check if errors were reported
     let digest = try #require(errorDigest)
     #expect(digest.errors.count >= 1)
+    #else
+    #expect(errorDigest == nil)
+    #endif
   }
 
   @Test("decode with reportResilientDecodingErrors")
@@ -115,8 +119,12 @@ struct LossyArrayResilientTests {
 
     #expect(fixture.integers == [1, 3])
 
+    #if DEBUG
     #expect(errorDigest != nil)
     #expect(errorDigest?.errors.count ?? 0 >= 1)
+    #else
+    #expect(errorDigest == nil)
+    #endif
   }
 
   @Test("empty array on complete failure")
@@ -142,7 +150,7 @@ struct LossyArrayResilientTests {
     // Error info when entire array decoding fails
     #expect(fixture.$integers.error != nil)
     #expect(fixture.$strings.error != nil)
-    #expect(fixture.$objects.error == nil) // null is not an error
+    #expect(fixture.$objects.error != nil) // null value should error for non-optional property
     #endif
   }
 }

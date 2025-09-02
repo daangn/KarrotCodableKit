@@ -77,7 +77,9 @@ public struct OptionalLosslessValueCodable<Strategy: LosslessDecodingStrategy>: 
       // If we still can't decode, check if it's a null value
       let singleValueContainer = try decoder.singleValueContainer()
       guard singleValueContainer.decodeNil() else {
+        #if DEBUG
         decoder.reportError(error)
+        #endif
         throw error
       }
 

@@ -65,11 +65,14 @@ extension LossyOptionalPolymorphicValue: Decodable {
       self.wrappedValue = try PolymorphicType.decode(from: decoder)
       self.outcome = .decodedSuccessfully
     } catch {
+      #if DEBUG
       // Report error to resilient decoding error reporter
       decoder.reportError(error)
-
       self.wrappedValue = nil
       self.outcome = .recoveredFrom(error, wasReported: true)
+      #else
+      self.outcome = .recoveredFrom(error, wasReported: false)
+      #endif
     }
   }
 }

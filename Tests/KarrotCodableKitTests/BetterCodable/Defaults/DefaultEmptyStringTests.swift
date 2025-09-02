@@ -16,20 +16,35 @@ final class DefaultEmptyStringTests: XCTestCase {
   }
 
   func testDecodingFailableStringDefaultEmptyString() throws {
+    // given
     let jsonData = #"{ "string": null }"#.data(using: .utf8)!
+
+    // when
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
+
+    // then
     XCTAssertEqual(fixture.string, "")
   }
 
   func testDecodingKeyNotPresentDefaultEmptyString() throws {
+    // given
     let jsonData = #"{}"#.data(using: .utf8)!
+
+    // when
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
+
+    // then
     XCTAssertEqual(fixture.string, "")
   }
 
   func testDecodinSuccessDefaultEmptyString() throws {
+    // given
     let jsonData = #"{ "string": "hi" }"#.data(using: .utf8)!
+
+    // when
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
+
+    // then
     XCTAssertEqual(fixture.string, "hi")
   }
 }

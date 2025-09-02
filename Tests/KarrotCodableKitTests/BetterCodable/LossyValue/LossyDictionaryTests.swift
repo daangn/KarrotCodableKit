@@ -16,6 +16,7 @@ final class LossyDictionaryTests: XCTestCase {
   }
 
   func testDecodingLossyDictionaryIgnoresFailableElements() throws {
+    // given
     let jsonData = """
       {
           "stringToInt": {
@@ -31,12 +32,16 @@ final class LossyDictionaryTests: XCTestCase {
       }
       """.data(using: .utf8)!
 
+    // when
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
+
+    // then
     XCTAssertEqual(fixture.stringToInt, ["one": 1, "two": 2])
     XCTAssertEqual(fixture.intToString, [1: "one", 2: "two"])
   }
 
   func testEncodingDecodedLossyDictionaryIgnoresFailableElements() throws {
+    // given
     let jsonData = """
       {
           "stringToInt": {
@@ -51,19 +56,21 @@ final class LossyDictionaryTests: XCTestCase {
           }
       }
       """.data(using: .utf8)!
-
     var _fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
-
     _fixture.stringToInt["three"] = 3
     _fixture.intToString[3] = "three"
 
+    // when
     let fixtureData = try JSONEncoder().encode(_fixture)
     let fixture = try JSONDecoder().decode(Fixture.self, from: fixtureData)
+
+    // then
     XCTAssertEqual(fixture.stringToInt, ["one": 1, "two": 2, "three": 3])
     XCTAssertEqual(fixture.intToString, [1: "one", 2: "two", 3: "three"])
   }
 
   func testEncodingDecodedLosslessArrayRetainsContents() throws {
+    // given
     let jsonData = """
       {
           "stringToInt": {
@@ -79,18 +86,20 @@ final class LossyDictionaryTests: XCTestCase {
       }
       """.data(using: .utf8)!
 
+    // when
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
+
+    // then
     XCTAssertEqual(fixture.stringToInt, ["one": 1, "two": 2, "three": 3])
     XCTAssertEqual(fixture.intToString, [1: "one", 2: "two", 3: "three"])
   }
 
   func testEncodingLosslessDictionaryRetainsKeys() throws {
+    // given
     let decoder = JSONDecoder()
     decoder.keyDecodingStrategy = .convertFromSnakeCase
-
     let encoder = JSONEncoder()
     encoder.keyEncodingStrategy = .convertToSnakeCase
-
     let fixture = Fixture(
       stringToInt: [
         "snake_case.with.dots_99.and_numbers": 1,
@@ -102,8 +111,10 @@ final class LossyDictionaryTests: XCTestCase {
       intToString: [:]
     )
 
+    // when
     let reencodedFixture = try decoder.decode(Fixture.self, from: encoder.encode(fixture))
 
+    // then
     XCTAssertEqual(reencodedFixture, fixture)
   }
 }

@@ -19,6 +19,7 @@ final class AnyEncodableTests: XCTestCase {
   }
 
   func testJSONEncoding() throws {
+    // given
     let someEncodable = AnyEncodable(SomeEncodable(
       string: "String",
       int: 100,
@@ -40,12 +41,13 @@ final class AnyEncodableTests: XCTestCase {
       "someCodable": someEncodable,
       "null": nil,
     ]
-
     let encoder = JSONEncoder()
 
+    // when
     let json = try encoder.encode(dictionary)
     let encodedJSONObject = try JSONSerialization.jsonObject(with: json, options: []) as! NSDictionary
 
+    // then
     let expected = """
       {
           "boolean": true,
@@ -73,6 +75,7 @@ final class AnyEncodableTests: XCTestCase {
   }
 
   func testEncodeNSNumber() throws {
+    // given
     let dictionary: [String: NSNumber] = [
       "boolean": true,
       "char": -127,
@@ -87,12 +90,13 @@ final class AnyEncodableTests: XCTestCase {
       "ulonglong": 18446744073709615,
       "double": 3.141592653589793,
     ]
-
     let encoder = JSONEncoder()
 
+    // when
     let json = try encoder.encode(AnyEncodable(dictionary))
     let encodedJSONObject = try JSONSerialization.jsonObject(with: json, options: []) as! NSDictionary
 
+    // then
     let expected = """
       {
           "boolean": true,
@@ -130,6 +134,7 @@ final class AnyEncodableTests: XCTestCase {
   }
 
   func testStringInterpolationEncoding() throws {
+    // given
     let dictionary: [String: AnyEncodable] = [
       "boolean": "\(true)",
       "integer": "\(42)",
@@ -137,12 +142,13 @@ final class AnyEncodableTests: XCTestCase {
       "string": "\("string")",
       "array": "\([1, 2, 3])",
     ]
-
     let encoder = JSONEncoder()
 
+    // when
     let json = try encoder.encode(dictionary)
     let encodedJSONObject = try JSONSerialization.jsonObject(with: json, options: []) as! NSDictionary
 
+    // then
     let expected = """
       {
           "boolean": "true",

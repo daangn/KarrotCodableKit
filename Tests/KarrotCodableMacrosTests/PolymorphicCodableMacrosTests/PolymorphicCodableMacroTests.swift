@@ -26,6 +26,7 @@ final class PolymorphicCodableMacroTests: XCTestCase {
 
   func testPolymorphicCodableMacro() throws {
     #if canImport(KarrotCodableKitMacros)
+    // given
     assertMacroExpansion(
       """
       @PolymorphicCodable(
@@ -39,6 +40,7 @@ final class PolymorphicCodableMacroTests: XCTestCase {
         let key: String
       }
       """,
+      // when
       expandedSource: """
 
         public struct DismissibleCallout: Notice {
@@ -71,6 +73,7 @@ final class PolymorphicCodableMacroTests: XCTestCase {
 
   func testPolymorphicCodableMacroIdentifierValueError() {
     #if canImport(KarrotCodableKitMacros)
+    // given
     assertMacroExpansion(
       """
       @PolymorphicCodable(identifier: "")
@@ -81,6 +84,7 @@ final class PolymorphicCodableMacroTests: XCTestCase {
         let key: String
       }
       """,
+      // when
       expandedSource: """
         struct DismissibleCallout: Notice {
           let type: String

@@ -31,8 +31,13 @@ final class LosslessCustomValueTests: XCTestCase {
   }
 
   func testDecodingCustomLosslessStrategyDecodesCorrectly() throws {
+    // given
     let jsonData = #"{ "string": 7, "int": "1", "fortytwo": null, "bool": true }"#.data(using: .utf8)!
+
+    // when
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
+
+    // then
     XCTAssertEqual(fixture.string, "7")
     XCTAssertEqual(fixture.int, 1)
     XCTAssertEqual(fixture.fortytwo, 42)
@@ -40,7 +45,10 @@ final class LosslessCustomValueTests: XCTestCase {
   }
 
   func testDecodingCustomLosslessStrategyWithBrokenFieldsThrowsError() throws {
+    // given
     let jsonData = #"{ "string": 7, "int": "1", "fortytwo": null, "bool": 9 }"#.data(using: .utf8)!
+
+    // when/then
     XCTAssertThrowsError(try JSONDecoder().decode(Fixture.self, from: jsonData))
   }
 }

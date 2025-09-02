@@ -57,8 +57,8 @@ extension LosslessArray: Decodable where T: Decodable {
         #endif
       } catch {
         _ = try? container.decode(AnyDecodableValue.self)
-        decoder.reportError(error)
         #if DEBUG
+        decoder.reportError(error)
         results.append(.failure(error))
         #endif
       }

@@ -15,20 +15,35 @@ final class DefaultZeroIntTests: XCTestCase {
   }
 
   func testDecodingFailableIntDefaultZeroInt() throws {
+    // given
     let jsonData = #"{ "intValue": null }"#.data(using: .utf8)!
+
+    // when
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
+
+    // then
     XCTAssertEqual(fixture.intValue, 0)
   }
 
   func testDecodingKeyNotPresentDefaultZeroInt() throws {
+    // given
     let jsonData = #"{}"#.data(using: .utf8)!
+
+    // when
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
+
+    // then
     XCTAssertEqual(fixture.intValue, 0)
   }
 
   func testDecodinSuccessDefaultZeroInt() throws {
+    // given
     let jsonData = #"{ "intValue": 999 }"#.data(using: .utf8)!
+
+    // when
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
+
+    // then
     XCTAssertEqual(fixture.intValue, 999)
   }
 }

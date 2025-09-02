@@ -134,8 +134,8 @@ struct PolymorphicLossyArrayValueResilientTests {
     // then
     #expect(result.notices.isEmpty)
     #if DEBUG
-    #expect(result.$notices.outcome == .keyNotFound)
-    #expect(result.$notices.error == nil)
+    // missing key should error for non-optional property
+    #expect(result.$notices.error != nil)
     #expect(result.$notices.results.isEmpty)
     #endif
   }
@@ -168,7 +168,7 @@ struct PolymorphicLossyArrayValueResilientTests {
 
   @Test("Error reporter should be called partially")
   func partialErrorReporting() throws {
-    // given
+    /// given
     let json = """
       {
         "notices": [
@@ -196,8 +196,13 @@ struct PolymorphicLossyArrayValueResilientTests {
     #expect(result.notices.count == 1)
 
     let errorDigest = errorReporter.flushReportedErrors()
+
+    #if DEBUG
     let digest = try #require(errorDigest)
     let errors = digest.errors
     #expect(errors.count >= 1)
+    #else
+    #expect(errorDigest == nil)
+    #endif
   }
 }

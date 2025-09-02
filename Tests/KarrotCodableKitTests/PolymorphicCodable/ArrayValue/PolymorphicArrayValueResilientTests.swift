@@ -131,7 +131,7 @@ struct PolymorphicArrayValueResilientTests {
 
   @Test("Array element errors should be reported")
   func arrayElementErrorReported() throws {
-    // given
+    /// given
     let json = """
       {
         "notices": [
@@ -154,8 +154,13 @@ struct PolymorphicArrayValueResilientTests {
 
     // PolymorphicValue reports errors, so error digest should exist
     let errorDigest = errorReporter.flushReportedErrors()
+
+    #if DEBUG
     let digest = try #require(errorDigest)
     let errors = digest.errors
     #expect(errors.count >= 1)
+    #else
+    #expect(errorDigest == nil)
+    #endif
   }
 }

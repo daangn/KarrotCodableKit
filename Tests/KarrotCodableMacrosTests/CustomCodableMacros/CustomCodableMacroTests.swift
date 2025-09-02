@@ -192,6 +192,7 @@ extension CustomCodableMacroTests {
 extension CustomCodableMacroTests {
   func testExpansionWithCodableKeyAddsCodingKeys() {
     #if canImport(KarrotCodableKitMacros)
+    // given
     assertMacroExpansion(
       """
       @CustomCodable(codingKeyStyle: .snakeCase)
@@ -203,6 +204,7 @@ extension CustomCodableMacroTests {
         func randomFunction() {}
       }
       """,
+      // when
       expandedSource: """
         struct Person {
           let name: String
@@ -231,6 +233,7 @@ extension CustomCodableMacroTests {
 
   func testExpansionWithComputedPropertyCodingKeys() {
     #if canImport(KarrotCodableKitMacros)
+    // given
     assertMacroExpansion(
       """
       @CustomCodable(codingKeyStyle: .snakeCase)
@@ -244,6 +247,7 @@ extension CustomCodableMacroTests {
         func randomFunction() {}
       }
       """,
+      // when
       expandedSource: """
         struct Person {
           let name: String

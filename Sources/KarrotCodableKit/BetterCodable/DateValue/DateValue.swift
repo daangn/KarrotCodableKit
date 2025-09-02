@@ -51,7 +51,9 @@ extension DateValue: Decodable where Formatter.RawValue: Decodable {
       self.wrappedValue = try Formatter.decode(value)
       self.outcome = .decodedSuccessfully
     } catch {
+      #if DEBUG
       decoder.reportError(error)
+      #endif
       throw error
     }
   }

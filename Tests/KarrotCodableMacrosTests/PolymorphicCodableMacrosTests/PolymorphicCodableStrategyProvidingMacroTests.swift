@@ -26,6 +26,7 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
 
   func testPolymorphicCodableStrategyProvidingMacro() throws {
     #if canImport(KarrotCodableKitMacros)
+    // given
     assertMacroExpansion(
       """
       @PolymorphicCodableStrategyProviding(
@@ -42,6 +43,7 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
         var description: String { get }
       }
       """,
+      // when
       expandedSource: """
 
         public protocol Notice: Codable {
@@ -91,6 +93,7 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
 
   func testPolymorphicCodableStrategyProvidingMacroWithDefaultParameters() throws {
     #if canImport(KarrotCodableKitMacros)
+    // given
     assertMacroExpansion(
       """
       @PolymorphicCodableStrategyProviding(
@@ -105,6 +108,7 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
         var description: String { get }
       }
       """,
+      // when
       expandedSource: """
         public protocol Notice: Codable {
           var type: String { get }
@@ -153,6 +157,7 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
 
   func testPolymorphicCodableStrategyProvidingMacroTypeError() {
     #if canImport(KarrotCodableKitMacros)
+    // given
     assertMacroExpansion(
       """
       @PolymorphicCodableStrategyProviding(
@@ -166,6 +171,7 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
         var description: String
       }
       """,
+      // when
       expandedSource: """
         struct Notice: Codable {
           var type: String
@@ -190,6 +196,7 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
 
   func testPolymorphicCodableStrategyProvidingMacroIdentifierCodingKeyValueError() {
     #if canImport(KarrotCodableKitMacros)
+    // given
     assertMacroExpansion(
       """
       @PolymorphicCodableStrategyProviding(
@@ -203,6 +210,7 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
         var description: String
       }
       """,
+      // when
       expandedSource: """
         protocol Notice: Codable {
           var type: String

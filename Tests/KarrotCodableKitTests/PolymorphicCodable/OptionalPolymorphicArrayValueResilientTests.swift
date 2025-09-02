@@ -149,7 +149,7 @@ struct OptionalPolymorphicArrayValueResilientTests {
 
   @Test
   func reportsErrorWhenInvalidElementInArray() throws {
-    // given - Missing required 'description' field in second element
+    /// given - Missing required 'description' field in second element
     let jsonData = #"""
     {
       "notices": [
@@ -172,14 +172,19 @@ struct OptionalPolymorphicArrayValueResilientTests {
       _ = try decoder.decode(ResilientOptionalPolymorphicArrayDummyResponse.self, from: Data(jsonData.utf8))
     }
 
-    // Verify errors were reported
+    /// Verify errors were reported
     let errorDigest = errorReporter.flushReportedErrors()
+
+    #if DEBUG
     #expect(errorDigest != nil)
+    #else
+    #expect(errorDigest == nil)
+    #endif
   }
 
   @Test
   func reportsErrorWhenNotArrayType() throws {
-    // given
+    /// given
     let jsonData = #"""
     {
       "notices": "not an array"
@@ -194,9 +199,14 @@ struct OptionalPolymorphicArrayValueResilientTests {
       _ = try decoder.decode(ResilientOptionalPolymorphicArrayDummyResponse.self, from: Data(jsonData.utf8))
     }
 
-    // Verify errors were reported
+    /// Verify errors were reported
     let errorDigest = errorReporter.flushReportedErrors()
+
+    #if DEBUG
     #expect(errorDigest != nil)
+    #else
+    #expect(errorDigest == nil)
+    #endif
   }
 
   // MARK: - Projected Value Tests

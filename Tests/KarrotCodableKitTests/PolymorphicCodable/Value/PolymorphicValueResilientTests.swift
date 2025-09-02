@@ -101,7 +101,7 @@ struct PolymorphicValueResilientTests {
 
   @Test("error reporting with JSONDecoder")
   func errorReporting() async throws {
-    // given
+    /// given
     let json = """
       {
         "notice": {
@@ -130,11 +130,15 @@ struct PolymorphicValueResilientTests {
       }
     }
 
-    // then
+    /// then
     let errorDigest = errorReporter.flushReportedErrors()
 
-    // Check if error was reported
+    #if DEBUG
+    /// Check if error was reported
     let digest = try #require(errorDigest)
     #expect(digest.errors.count >= 1)
+    #else
+    #expect(errorDigest == nil)
+    #endif
   }
 }

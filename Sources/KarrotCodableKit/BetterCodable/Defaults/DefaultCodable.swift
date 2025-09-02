@@ -80,8 +80,8 @@ extension DefaultCodable: Decodable {
       let value = try container.decode(Default.DefaultValue.self)
       self.init(wrappedValue: value)
     } catch {
-      decoder.reportError(error)
       #if DEBUG
+      decoder.reportError(error)
       self.init(wrappedValue: Default.defaultValue, outcome: .recoveredFrom(error, wasReported: true))
       #else
       self.init(wrappedValue: Default.defaultValue)
@@ -112,18 +112,25 @@ extension DefaultCodable: Hashable where Default.DefaultValue: Hashable {
 extension DefaultCodable: Sendable where Default.DefaultValue: Sendable {}
 
 // MARK: - KeyedDecodingContainer
+
 public protocol BoolCodableStrategy: DefaultCodableStrategy where DefaultValue == Bool {}
 
 extension KeyedDecodingContainer {
-
   /// Default implementation of decoding a DefaultCodable
   ///
-  /// Decodes successfully if key is available if not fallsback to the default value provided.
+  /// Decodes successfully if key is available if not fallback to the default value provided.
   public func decode<P>(_: DefaultCodable<P>.Type, forKey key: Key) throws -> DefaultCodable<P> {
     // Check if key exists
     if !contains(key) {
       #if DEBUG
-      return DefaultCodable(wrappedValue: P.defaultValue, outcome: .keyNotFound)
+      let context = DecodingError.Context(
+        codingPath: codingPath + [key],
+        debugDescription: "Key not found but property is non-optional"
+      )
+      let error = DecodingError.keyNotFound(key, context)
+      let decoder = try? superDecoder(forKey: key)
+      decoder?.reportError(error)
+      return DefaultCodable(wrappedValue: P.defaultValue, outcome: .recoveredFrom(error, wasReported: decoder != nil))
       #else
       return DefaultCodable(wrappedValue: P.defaultValue)
       #endif
@@ -132,7 +139,14 @@ extension KeyedDecodingContainer {
     // Check for nil
     if (try? decodeNil(forKey: key)) == true {
       #if DEBUG
-      return DefaultCodable(wrappedValue: P.defaultValue, outcome: .valueWasNil)
+      let context = DecodingError.Context(
+        codingPath: codingPath + [key],
+        debugDescription: "Value was nil but property is non-optional"
+      )
+      let error = DecodingError.valueNotFound(P.DefaultValue.self, context)
+      let decoder = try? superDecoder(forKey: key)
+      decoder?.reportError(error)
+      return DefaultCodable(wrappedValue: P.defaultValue, outcome: .recoveredFrom(error, wasReported: decoder != nil))
       #else
       return DefaultCodable(wrappedValue: P.defaultValue)
       #endif
@@ -143,7 +157,14 @@ extension KeyedDecodingContainer {
       return value
     } else {
       #if DEBUG
-      return DefaultCodable(wrappedValue: P.defaultValue, outcome: .keyNotFound)
+      let context = DecodingError.Context(
+        codingPath: codingPath + [key],
+        debugDescription: "Key not found but property is non-optional"
+      )
+      let error = DecodingError.keyNotFound(key, context)
+      let decoder = try? superDecoder(forKey: key)
+      decoder?.reportError(error)
+      return DefaultCodable(wrappedValue: P.defaultValue, outcome: .recoveredFrom(error, wasReported: decoder != nil))
       #else
       return DefaultCodable(wrappedValue: P.defaultValue)
       #endif
@@ -160,7 +181,14 @@ extension KeyedDecodingContainer {
     // Check if key exists
     if !contains(key) {
       #if DEBUG
-      return DefaultCodable(wrappedValue: P.defaultValue, outcome: .keyNotFound)
+      let context = DecodingError.Context(
+        codingPath: codingPath + [key],
+        debugDescription: "Key not found but property is non-optional"
+      )
+      let error = DecodingError.keyNotFound(key, context)
+      let decoder = try? superDecoder(forKey: key)
+      decoder?.reportError(error)
+      return DefaultCodable(wrappedValue: P.defaultValue, outcome: .recoveredFrom(error, wasReported: decoder != nil))
       #else
       return DefaultCodable(wrappedValue: P.defaultValue)
       #endif
@@ -169,7 +197,14 @@ extension KeyedDecodingContainer {
     // Check for nil first
     if (try? decodeNil(forKey: key)) == true {
       #if DEBUG
-      return DefaultCodable(wrappedValue: P.defaultValue, outcome: .valueWasNil)
+      let context = DecodingError.Context(
+        codingPath: codingPath + [key],
+        debugDescription: "Value was nil but property is non-optional"
+      )
+      let error = DecodingError.valueNotFound(Bool.self, context)
+      let decoder = try? superDecoder(forKey: key)
+      decoder?.reportError(error)
+      return DefaultCodable(wrappedValue: P.defaultValue, outcome: .recoveredFrom(error, wasReported: decoder != nil))
       #else
       return DefaultCodable(wrappedValue: P.defaultValue)
       #endif
@@ -178,16 +213,16 @@ extension KeyedDecodingContainer {
     do {
       let value = try decode(Bool.self, forKey: key)
       return DefaultCodable(wrappedValue: value)
-    } catch let error {
+    } catch {
       guard
         let decodingError = error as? DecodingError,
         case .typeMismatch = decodingError
       else {
         // Report error and use default
-        let decoder = try superDecoder(forKey: key)
-        decoder.reportError(error)
         #if DEBUG
-        return DefaultCodable(wrappedValue: P.defaultValue, outcome: .recoveredFrom(error, wasReported: true))
+        let decoder = try? superDecoder(forKey: key)
+        decoder?.reportError(error)
+        return DefaultCodable(wrappedValue: P.defaultValue, outcome: .recoveredFrom(error, wasReported: decoder != nil))
         #else
         return DefaultCodable(wrappedValue: P.defaultValue)
         #endif
@@ -204,10 +239,13 @@ extension KeyedDecodingContainer {
         return DefaultCodable(wrappedValue: bool)
       } else {
         // Type mismatch - report error
-        let decoder = try superDecoder(forKey: key)
-        decoder.reportError(decodingError)
         #if DEBUG
-        return DefaultCodable(wrappedValue: P.defaultValue, outcome: .recoveredFrom(decodingError, wasReported: true))
+        let decoder = try? superDecoder(forKey: key)
+        decoder?.reportError(decodingError)
+        return DefaultCodable(
+          wrappedValue: P.defaultValue,
+          outcome: .recoveredFrom(decodingError, wasReported: decoder != nil)
+        )
         #else
         return DefaultCodable(wrappedValue: P.defaultValue)
         #endif
@@ -226,7 +264,11 @@ extension KeyedDecodingContainer {
     // Check if key exists
     if !contains(key) {
       #if DEBUG
-      return DefaultCodable(wrappedValue: P.defaultValue, outcome: .keyNotFound)
+      let context = DecodingError.Context(codingPath: codingPath + [key], debugDescription: "Key not found")
+      let error = DecodingError.keyNotFound(key, context)
+      let decoder = try? superDecoder(forKey: key)
+      decoder?.reportError(error)
+      return DefaultCodable(wrappedValue: P.defaultValue, outcome: .recoveredFrom(error, wasReported: decoder != nil))
       #else
       return DefaultCodable(wrappedValue: P.defaultValue)
       #endif
@@ -235,7 +277,11 @@ extension KeyedDecodingContainer {
     // Check for nil
     if (try? decodeNil(forKey: key)) == true {
       #if DEBUG
-      return DefaultCodable(wrappedValue: P.defaultValue, outcome: .valueWasNil)
+      let context = DecodingError.Context(codingPath: codingPath + [key], debugDescription: "Value was nil")
+      let error = DecodingError.valueNotFound(P.self, context)
+      let decoder = try? superDecoder(forKey: key)
+      decoder?.reportError(error)
+      return DefaultCodable(wrappedValue: P.defaultValue, outcome: .recoveredFrom(error, wasReported: decoder != nil))
       #else
       return DefaultCodable(wrappedValue: P.defaultValue)
       #endif
@@ -249,7 +295,8 @@ extension KeyedDecodingContainer {
       if let value = P.DefaultValue(rawValue: rawValue) {
         return DefaultCodable(wrappedValue: value)
       } else {
-        // Unknown raw value
+        #if DEBUG
+        /// Unknown raw value
         let error = Self.createUnknownRawValueError(
           for: P.DefaultValue.self,
           rawValue: rawValue,
@@ -257,22 +304,19 @@ extension KeyedDecodingContainer {
           isFrozen: P.isFrozen
         )
 
-        let decoder = try superDecoder(forKey: key)
-        decoder.reportError(error)
-
-        #if DEBUG
-        return DefaultCodable(wrappedValue: P.defaultValue, outcome: .recoveredFrom(error, wasReported: true))
+        let decoder = try? superDecoder(forKey: key)
+        decoder?.reportError(error)
+        return DefaultCodable(wrappedValue: P.defaultValue, outcome: .recoveredFrom(error, wasReported: decoder != nil))
         #else
         return DefaultCodable(wrappedValue: P.defaultValue)
         #endif
       }
     } catch {
-      // Decoding the raw value failed (e.g., type mismatch)
-      let decoder = try superDecoder(forKey: key)
-      decoder.reportError(error)
-
       #if DEBUG
-      return DefaultCodable(wrappedValue: P.defaultValue, outcome: .recoveredFrom(error, wasReported: true))
+      /// Decoding the raw value failed (e.g., type mismatch)
+      let decoder = try? superDecoder(forKey: key)
+      decoder?.reportError(error)
+      return DefaultCodable(wrappedValue: P.defaultValue, outcome: .recoveredFrom(error, wasReported: decoder != nil))
       #else
       return DefaultCodable(wrappedValue: P.defaultValue)
       #endif
