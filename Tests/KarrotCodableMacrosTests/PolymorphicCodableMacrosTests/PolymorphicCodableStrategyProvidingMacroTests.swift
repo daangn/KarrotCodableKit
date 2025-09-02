@@ -45,11 +45,24 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
       """,
       // when
       expandedSource: """
-
         public protocol Notice: Codable {
           var type: String { get }
           var title: String? { get }
           var description: String { get }
+
+          typealias Polymorphic = PolymorphicValue<NoticeCodableStrategy>
+
+          typealias OptionalPolymorphic = OptionalPolymorphicValue<NoticeCodableStrategy>
+
+          typealias LossyOptionalPolymorphic = LossyOptionalPolymorphicValue<NoticeCodableStrategy>
+
+          typealias PolymorphicArray = PolymorphicArrayValue<NoticeCodableStrategy>
+
+          typealias OptionalPolymorphicArray = OptionalPolymorphicArrayValue<NoticeCodableStrategy>
+
+          typealias PolymorphicLossyArray = PolymorphicLossyArrayValue<NoticeCodableStrategy>
+
+          typealias DefaultEmptyPolymorphicArray = DefaultEmptyPolymorphicArrayValue<NoticeCodableStrategy>
         }
 
         public struct NoticeCodableStrategy: PolymorphicCodableStrategy {
@@ -71,16 +84,6 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
               fallbackType: UndefinedCallout.self
             )
           }
-        }
-
-        extension Notice {
-          public typealias Polymorphic = PolymorphicValue<NoticeCodableStrategy>
-          public typealias OptionalPolymorphic = OptionalPolymorphicValue<NoticeCodableStrategy>
-          public typealias LossyOptionalPolymorphic = LossyOptionalPolymorphicValue<NoticeCodableStrategy>
-          public typealias PolymorphicArray = PolymorphicArrayValue<NoticeCodableStrategy>
-          public typealias OptionalPolymorphicArray = OptionalPolymorphicArrayValue<NoticeCodableStrategy>
-          public typealias PolymorphicLossyArray = PolymorphicLossyArrayValue<NoticeCodableStrategy>
-          public typealias DefaultEmptyPolymorphicArray = DefaultEmptyPolymorphicArrayValue<NoticeCodableStrategy>
         }
         """,
       macros: testMacros,
@@ -114,6 +117,20 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
           var type: String { get }
           var title: String? { get }
           var description: String { get }
+
+          typealias Polymorphic = PolymorphicValue<NoticeCodableStrategy>
+
+          typealias OptionalPolymorphic = OptionalPolymorphicValue<NoticeCodableStrategy>
+
+          typealias LossyOptionalPolymorphic = LossyOptionalPolymorphicValue<NoticeCodableStrategy>
+
+          typealias PolymorphicArray = PolymorphicArrayValue<NoticeCodableStrategy>
+
+          typealias OptionalPolymorphicArray = OptionalPolymorphicArrayValue<NoticeCodableStrategy>
+
+          typealias PolymorphicLossyArray = PolymorphicLossyArrayValue<NoticeCodableStrategy>
+
+          typealias DefaultEmptyPolymorphicArray = DefaultEmptyPolymorphicArrayValue<NoticeCodableStrategy>
         }
 
         public struct NoticeCodableStrategy: PolymorphicCodableStrategy {
@@ -135,16 +152,6 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
               fallbackType: nil
             )
           }
-        }
-
-        extension Notice {
-          public typealias Polymorphic = PolymorphicValue<NoticeCodableStrategy>
-          public typealias OptionalPolymorphic = OptionalPolymorphicValue<NoticeCodableStrategy>
-          public typealias LossyOptionalPolymorphic = LossyOptionalPolymorphicValue<NoticeCodableStrategy>
-          public typealias PolymorphicArray = PolymorphicArrayValue<NoticeCodableStrategy>
-          public typealias OptionalPolymorphicArray = OptionalPolymorphicArrayValue<NoticeCodableStrategy>
-          public typealias PolymorphicLossyArray = PolymorphicLossyArrayValue<NoticeCodableStrategy>
-          public typealias DefaultEmptyPolymorphicArray = DefaultEmptyPolymorphicArrayValue<NoticeCodableStrategy>
         }
         """,
       macros: testMacros,
@@ -216,15 +223,19 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
           var type: String
           var title: String?
           var description: String
-        }
 
-        extension Notice {
           typealias Polymorphic = PolymorphicValue<NoticeCodableStrategy>
+
           typealias OptionalPolymorphic = OptionalPolymorphicValue<NoticeCodableStrategy>
+
           typealias LossyOptionalPolymorphic = LossyOptionalPolymorphicValue<NoticeCodableStrategy>
+
           typealias PolymorphicArray = PolymorphicArrayValue<NoticeCodableStrategy>
+
           typealias OptionalPolymorphicArray = OptionalPolymorphicArrayValue<NoticeCodableStrategy>
+
           typealias PolymorphicLossyArray = PolymorphicLossyArrayValue<NoticeCodableStrategy>
+
           typealias DefaultEmptyPolymorphicArray = DefaultEmptyPolymorphicArrayValue<NoticeCodableStrategy>
         }
         """,

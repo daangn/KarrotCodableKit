@@ -25,7 +25,7 @@ import Foundation
                    when no matching type is found. The default value for this property is `nil`.
  */
 @attached(peer, names: suffixed(CodableStrategy))
-@attached(extension, names: arbitrary)
+@attached(member, names: arbitrary)
 public macro PolymorphicCodableStrategyProviding(
   identifierCodingKey: String = "type",
   matchingTypes: [PolymorphicDecodableType.Type],
