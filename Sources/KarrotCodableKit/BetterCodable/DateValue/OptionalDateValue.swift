@@ -58,9 +58,15 @@ extension OptionalDateValue: Decodable where Formatter.RawValue: Decodable {
         #endif
         throw error
       }
+
+    } catch DecodingError.keyNotFound {
+      self.wrappedValue = nil
+      self.outcome = .keyNotFound
+
     } catch DecodingError.valueNotFound(let rawType, _) where rawType == Formatter.RawValue.self {
       self.wrappedValue = nil
       self.outcome = .valueWasNil
+
     } catch {
       #if DEBUG
       decoder.reportError(error)
@@ -96,20 +102,38 @@ extension KeyedDecodingContainer {
     _ type: OptionalDateValue<T>.Type,
     forKey key: Self.Key
   ) throws -> OptionalDateValue<T> where T.RawValue: Decodable {
-    try decodeIfPresent(type, forKey: key) ?? OptionalDateValue<T>(wrappedValue: nil)
+    // Check if the key exists
+    guard contains(key) else {
+      return OptionalDateValue<T>(wrappedValue: nil, outcome: .keyNotFound)
+    }
+
+    // Check if the value is null
+    if try decodeNil(forKey: key) {
+      return OptionalDateValue<T>(wrappedValue: nil, outcome: .valueWasNil)
+    }
+
+    // Try to decode using the generic approach
+    let value = try decodeIfPresent(type, forKey: key)
+    return value ?? OptionalDateValue<T>(wrappedValue: nil, outcome: .keyNotFound)
   }
 
   public func decodeIfPresent<T>(
     _ type: OptionalDateValue<T>.Type,
-    forKey key: Self.Key
-  ) throws -> OptionalDateValue<T> where T.RawValue == String {
-    let stringOptionalValue = try decodeIfPresent(String.self, forKey: key)
-
-    guard let stringValue = stringOptionalValue else {
-      return .init(wrappedValue: nil)
+    forKey key: Self.Key,
+  ) throws -> OptionalDateValue<T>? where T.RawValue == String {
+    // Check if the key exists
+    guard contains(key) else {
+      return nil
     }
 
+    // Check if the value is null
+    if try decodeNil(forKey: key) {
+      return OptionalDateValue<T>(wrappedValue: nil, outcome: .valueWasNil)
+    }
+
+    // Try to decode the string value
+    let stringValue = try decode(String.self, forKey: key)
     let dateValue = try T.decode(stringValue)
-    return .init(wrappedValue: dateValue)
+    return OptionalDateValue<T>(wrappedValue: dateValue, outcome: .decodedSuccessfully)
   }
 }

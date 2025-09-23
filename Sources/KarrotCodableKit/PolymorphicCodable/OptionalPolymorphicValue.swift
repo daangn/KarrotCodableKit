@@ -8,14 +8,15 @@
 
 import Foundation
 
-/// A property wrapper for decoding an optional polymorphic object that throws errors on decoding failure.
+/// A property wrapper for decoding an optional polymorphic object with selective error handling.
 ///
 /// This wrapper attempts to decode a single polymorphic value using the provided `PolymorphicType` strategy.
-/// Unlike `@LossyOptionalPolymorphicValue`, if the `PolymorphicType.decode(from:)` method throws *any* error during decoding
-/// (e.g., missing identifier key, unknown identifier value, invalid data for the concrete type, or even a missing key for the value itself),
-/// this wrapper **re-throws the error** instead of providing a default value.
+/// Unlike `@LossyOptionalPolymorphicValue`, this wrapper handles only specific decoding failures gracefully:
+/// - `DecodingError.keyNotFound`: Sets `wrappedValue` to `nil` with outcome `.keyNotFound`
+/// - `DecodingError.valueNotFound` (when the expected type matches): Sets `wrappedValue` to `nil` with outcome `.valueWasNil`
+/// - All other errors (e.g. unknown identifier value, invalid data for the concrete type): **Re-throws the error**
 ///
-/// **Note:** If you need error-tolerant decoding that assigns `nil` on failure, use `@LossyOptionalPolymorphicValue` instead.
+/// **Note:** If you need fully error-tolerant decoding that always assigns `nil` on any failure, use `@LossyOptionalPolymorphicValue` instead.
 ///
 /// Encoding behavior:
 /// - If `wrappedValue` is `nil`, it encodes nothing (or `null` if used in an unkeyed container context where nulls are explicit).
@@ -61,6 +62,15 @@ extension OptionalPolymorphicValue: Decodable {
     do {
       self.wrappedValue = try PolymorphicType.decode(from: decoder)
       self.outcome = .decodedSuccessfully
+
+    } catch DecodingError.keyNotFound {
+      self.wrappedValue = nil
+      self.outcome = .keyNotFound
+
+    } catch DecodingError.valueNotFound(let rawType, _) where rawType == PolymorphicType.ExpectedType.self {
+      self.wrappedValue = nil
+      self.outcome = .valueWasNil
+
     } catch {
       // OptionalPolymorphicValue throws errors instead of recovering
       throw error
