@@ -116,8 +116,8 @@ struct DefaultEmptyPolymorphicArrayValueResilientTests {
     // then
     #expect(result.notices.isEmpty)
     #if DEBUG
-    // missing key should error for non-optional property
-    #expect(result.$notices.error != nil)
+    #expect(result.$notices.outcome == .keyNotFound)
+    #expect(result.$notices.error == nil)
     #endif
   }
 
@@ -137,8 +137,8 @@ struct DefaultEmptyPolymorphicArrayValueResilientTests {
     // then
     #expect(result.notices.isEmpty)
     #if DEBUG
-    // null value should error for non-optional property
-    #expect(result.$notices.error != nil)
+    #expect(result.$notices.outcome == .valueWasNil)
+    #expect(result.$notices.error == nil)
     #endif
   }
 
