@@ -64,6 +64,15 @@ extension LossyOptionalPolymorphicValue: Decodable {
     do {
       self.wrappedValue = try PolymorphicType.decode(from: decoder)
       self.outcome = .decodedSuccessfully
+
+    } catch DecodingError.keyNotFound {
+      self.wrappedValue = nil
+      self.outcome = .keyNotFound
+
+    } catch DecodingError.valueNotFound(let rawType, _) where rawType == PolymorphicType.ExpectedType.self {
+      self.wrappedValue = nil
+      self.outcome = .valueWasNil
+
     } catch {
       #if DEBUG
       // Report error to resilient decoding error reporter
