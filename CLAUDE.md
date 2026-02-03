@@ -40,6 +40,12 @@ The project heavily uses Swift macros for code generation:
 - Factory classes in `Supports/Factory/` generate syntax nodes
 - `PropertyAnalyzer` and `SyntaxHelper` provide macro development utilities
 
+### PolymorphicEnumCodable Macro Architecture
+Polymorphic Codable support for enum types:
+- **PolymorphicEnumCodableMacro/Decodable/Encodable**: Auto-generates Codable conformance for enums
+- **PolymorphicEnumCodableFactory**: Generates CodingKey and init/encode methods
+- Each case must have exactly one associated value (conforming to `PolymorphicIdentifiable`)
+
 ### UnnestedPolymorphic Macro Architecture
 The UnnestedPolymorphic macros use a Template Method pattern with shared components:
 - **BaseUnnestedPolymorphicMacro**: Protocol extension providing common functionality
