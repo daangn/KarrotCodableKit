@@ -35,12 +35,14 @@ KarrotCodableKit is a Swift package that extends Swift's Codable protocol with e
   - Accessible via `outcome` property on all BetterCodable and PolymorphicCodable property wrappers
 
 ### Macro System
+
 The project heavily uses Swift macros for code generation:
 - Macros are implemented in `KarrotCodableKitMacros` target
 - Factory classes in `Supports/Factory/` generate syntax nodes
 - `PropertyAnalyzer` and `SyntaxHelper` provide macro development utilities
 
 ### PolymorphicEnumCodable Macro Architecture
+
 Polymorphic Codable support for enum types:
 - **PolymorphicEnumCodableMacro/Decodable/Encodable**: Auto-generates Codable conformance for enums
 - **PolymorphicEnumCodableFactory**: Generates CodingKey and init/encode methods
