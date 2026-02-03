@@ -27,11 +27,11 @@ KarrotCodableKit is a Swift package that extends Swift's Codable protocol with e
 - **BetterCodable/**: Property wrappers for common Codable patterns
   - **DateValue/OptionalDateValue**: Date formatting strategies (ISO8601, RFC3339, Timestamp, etc.)
   - **LosslessValue**: Lossless type conversion (preserves original type, restores on encoding)
-  - **LossyValue**: Lossy decoding (filters out failed array/dictionary elements)
+  - **LossyArray/LossyDictionary/LossyOptional**: Lossy decoding (filters out failed array/dictionary elements)
   - **Defaults**: Default value handling (DefaultCodable, DefaultEmptyArray, etc.)
 - **Resilient/**: DEBUG mode decoding error tracking and reporting system
   - `ResilientDecodingOutcome`: Decoding result states (decodedSuccessfully, keyNotFound, valueWasNil, recoveredFrom)
-  - `ErrorReporting`: Error collection and hierarchical storage by coding path
+  - `ResilientDecodingErrorReporter`: Error collection and hierarchical storage by coding path
   - Accessible via `outcome` property on all BetterCodable and PolymorphicCodable property wrappers
 
 ### Macro System
