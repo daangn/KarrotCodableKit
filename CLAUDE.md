@@ -20,14 +20,33 @@ KarrotCodableKit is a Swift package that extends Swift's Codable protocol with e
 ### Key Components
 - **CustomCodable/**: Macro system for automated Codable implementations with CodingKey generation
 - **PolymorphicCodable/**: Runtime polymorphic type resolution system with strategy-based decoding
+  - **Value Wrappers**: `PolymorphicValue`, `OptionalPolymorphicValue`, `LossyOptionalPolymorphicValue`
+  - **Array Wrappers**: `PolymorphicArrayValue`, `OptionalPolymorphicArrayValue`, `DefaultEmptyPolymorphicArrayValue`, `PolymorphicLossyArrayValue`
+  - Optional handles only keyNotFound/valueWasNil as nil, Lossy recovers from all errors
 - **AnyCodable/**: Type erasure wrappers (AnyCodable, AnyEncodable, AnyDecodable)
-- **BetterCodable/**: Property wrappers for common Codable patterns (dates, defaults, lossy values)
+- **BetterCodable/**: Property wrappers for common Codable patterns
+  - **DateValue/OptionalDateValue**: Date formatting strategies (ISO8601, RFC3339, Timestamp, etc.)
+  - **LosslessValue**: Lossless type conversion (preserves original type, restores on encoding)
+  - **LossyArray/LossyDictionary/LossyOptional**: Lossy decoding (filters out failed array/dictionary elements)
+  - **Defaults**: Default value handling (DefaultCodable, DefaultEmptyArray, etc.)
+- **Resilient/**: DEBUG mode decoding error tracking and reporting system
+  - `ResilientDecodingOutcome`: Decoding result states (decodedSuccessfully, keyNotFound, valueWasNil, recoveredFrom)
+  - `ResilientDecodingErrorReporter`: Error collection and hierarchical storage by coding path
+  - Accessible via `outcome` property on all BetterCodable and PolymorphicCodable property wrappers
 
 ### Macro System
+
 The project heavily uses Swift macros for code generation:
 - Macros are implemented in `KarrotCodableKitMacros` target
 - Factory classes in `Supports/Factory/` generate syntax nodes
 - `PropertyAnalyzer` and `SyntaxHelper` provide macro development utilities
+
+### PolymorphicEnumCodable Macro Architecture
+
+Polymorphic Codable support for enum types:
+- **PolymorphicEnumCodableMacro/Decodable/Encodable**: Auto-generates Codable conformance for enums
+- **PolymorphicEnumCodableFactory**: Generates CodingKey and init/encode methods
+- Each case must have exactly one associated value (conforming to `PolymorphicIdentifiable`)
 
 ### UnnestedPolymorphic Macro Architecture
 The UnnestedPolymorphic macros use a Template Method pattern with shared components:
