@@ -21,7 +21,11 @@ KarrotCodableKit is a Swift package that extends Swift's Codable protocol with e
 - **CustomCodable/**: Macro system for automated Codable implementations with CodingKey generation
 - **PolymorphicCodable/**: Runtime polymorphic type resolution system with strategy-based decoding
 - **AnyCodable/**: Type erasure wrappers (AnyCodable, AnyEncodable, AnyDecodable)
-- **BetterCodable/**: Property wrappers for common Codable patterns (dates, defaults, lossy values)
+- **BetterCodable/**: Property wrappers for common Codable patterns
+  - **DateValue/OptionalDateValue**: Date formatting strategies (ISO8601, RFC3339, Timestamp, etc.)
+  - **LosslessValue**: Lossless type conversion (preserves original type, restores on encoding)
+  - **LossyValue**: Lossy decoding (filters out failed array/dictionary elements)
+  - **Defaults**: Default value handling (DefaultCodable, DefaultEmptyArray, etc.)
 - **Resilient/**: DEBUG mode decoding error tracking and reporting system
   - `ResilientDecodingOutcome`: Decoding result states (decodedSuccessfully, keyNotFound, valueWasNil, recoveredFrom)
   - `ErrorReporting`: Error collection and hierarchical storage by coding path
