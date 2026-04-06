@@ -34,6 +34,7 @@ extension PolymorphicCodableStrategyProvidingMacro: MemberMacro {
       DeclSyntax("typealias PolymorphicArray = PolymorphicArrayValue<\(raw: strategyStructName)>"),
       DeclSyntax("typealias OptionalPolymorphicArray = OptionalPolymorphicArrayValue<\(raw: strategyStructName)>"),
       DeclSyntax("typealias PolymorphicLossyArray = PolymorphicLossyArrayValue<\(raw: strategyStructName)>"),
+      DeclSyntax("typealias OptionalPolymorphicLossyArray = OptionalPolymorphicLossyArrayValue<\(raw: strategyStructName)>"),
       DeclSyntax("typealias DefaultEmptyPolymorphicArray = DefaultEmptyPolymorphicArrayValue<\(raw: strategyStructName)>"),
     ]
   }
