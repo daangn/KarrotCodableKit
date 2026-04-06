@@ -83,6 +83,14 @@ extension OptionalPolymorphicLossyArrayValue: Decodable {
   private struct AnyDecodableValue: Decodable {}
 
   public init(from decoder: Decoder) throws {
+    // First check if the value is nil
+    let singleValueContainer = try decoder.singleValueContainer()
+    if singleValueContainer.decodeNil() {
+      self.init(wrappedValue: nil, outcome: .valueWasNil)
+      return
+    }
+
+    // Decode as an array with lossy behavior
     var container = try decoder.unkeyedContainer()
 
     var elements = [PolymorphicType.ExpectedType]()
@@ -106,10 +114,10 @@ extension OptionalPolymorphicLossyArrayValue: Decodable {
       }
     }
 
-    wrappedValue = elements
-    outcome = .decodedSuccessfully
     #if DEBUG
-      self.results = results
+      self.init(wrappedValue: elements, outcome: .decodedSuccessfully, results: results)
+    #else
+      self.init(wrappedValue: elements, outcome: .decodedSuccessfully)
     #endif
   }
 }
