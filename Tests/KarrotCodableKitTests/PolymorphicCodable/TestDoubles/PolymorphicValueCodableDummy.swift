@@ -83,6 +83,16 @@ struct OptionalPolymorphicArrayDummyResponse {
   var notices2: [any DummyNotice]?
 }
 
+@CustomCodable(codingKeyStyle: .snakeCase)
+struct OptionalPolymorphicLossyArrayDummyResponse {
+
+  @DummyNotice.OptionalPolymorphicLossyArray
+  var notices1: [any DummyNotice]?
+
+  @DummyNotice.OptionalPolymorphicLossyArray
+  var notices2: [any DummyNotice]?
+}
+
 // MARK: - PolymorphicCodable
 
 @PolymorphicCodableStrategyProviding(

@@ -166,6 +166,9 @@ struct APIResponse {
 
   @ViewItem.PolymorphicLossyArray
   var lossyViewItems: [ViewItem]
+
+  @ViewItem.OptionalPolymorphicLossyArray
+  var optionalLossyViewItems: [ViewItem]?
 }
 
 // MARK: - protocol

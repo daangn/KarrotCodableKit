@@ -62,6 +62,8 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
 
           typealias PolymorphicLossyArray = PolymorphicLossyArrayValue<NoticeCodableStrategy>
 
+          typealias OptionalPolymorphicLossyArray = OptionalPolymorphicLossyArrayValue<NoticeCodableStrategy>
+
           typealias DefaultEmptyPolymorphicArray = DefaultEmptyPolymorphicArrayValue<NoticeCodableStrategy>
         }
 
@@ -129,6 +131,8 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
           typealias OptionalPolymorphicArray = OptionalPolymorphicArrayValue<NoticeCodableStrategy>
 
           typealias PolymorphicLossyArray = PolymorphicLossyArrayValue<NoticeCodableStrategy>
+
+          typealias OptionalPolymorphicLossyArray = OptionalPolymorphicLossyArrayValue<NoticeCodableStrategy>
 
           typealias DefaultEmptyPolymorphicArray = DefaultEmptyPolymorphicArrayValue<NoticeCodableStrategy>
         }
@@ -235,6 +239,8 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
           typealias OptionalPolymorphicArray = OptionalPolymorphicArrayValue<NoticeCodableStrategy>
 
           typealias PolymorphicLossyArray = PolymorphicLossyArrayValue<NoticeCodableStrategy>
+
+          typealias OptionalPolymorphicLossyArray = OptionalPolymorphicLossyArrayValue<NoticeCodableStrategy>
 
           typealias DefaultEmptyPolymorphicArray = DefaultEmptyPolymorphicArrayValue<NoticeCodableStrategy>
         }
