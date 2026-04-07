@@ -18,7 +18,7 @@ import Foundation
 /// - Parameters:
 ///  - identifierCodingKey: The key name in the JSON used to store the type identifier.
 ///     The default value for this property is `"type"`. This key is used to identify the specific
-///     case of the enum during
+///     case of the enum during decoding.
 ///  - fallbackCaseName: The name of the `case` to use when the type identifier is not found.
 ///     The default value for this property is `nil`. If this property is not provided, the macro will
 ///     throw an error if the type identifier is not found.

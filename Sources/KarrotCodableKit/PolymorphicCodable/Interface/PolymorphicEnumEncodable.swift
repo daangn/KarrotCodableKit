@@ -18,8 +18,8 @@ import Foundation
 /// - Parameters:
 ///  - identifierCodingKey: The key name in the JSON used to store the type identifier.
 ///     The default value for this property is `"type"`. This key is used to identify the specific
-///     case of the enum during
-@attached(member, names: named(PolymorphicMetaCodingKey), named(encode))
+///     case of the enum during encoding.
+@attached(member, names: named(encode))
 @attached(extension, conformances: Encodable)
 public macro PolymorphicEnumEncodable(
   identifierCodingKey: String = "type"
