@@ -10,38 +10,44 @@ import SwiftDiagnostics
 import SwiftSyntax
 import SwiftSyntaxMacros
 
-public struct PolymorphicEnumEncodableMacro: ExtensionMacro {
+public struct PolymorphicEnumEncodableMacro: MemberMacro {
   public static func expansion(
     of node: AttributeSyntax,
-    attachedTo declaration: some DeclGroupSyntax,
-    providingExtensionsOf type: some TypeSyntaxProtocol,
-    conformingTo protocols: [TypeSyntax],
-    in context: some MacroExpansionContext
-  ) throws -> [ExtensionDeclSyntax] {
-    // Ensure the declaration is an enum and extract case information
+    providingMembersOf declaration: some DeclGroupSyntax,
+    in _: some MacroExpansionContext,
+  ) throws -> [DeclSyntax] {
     guard let enumDecl = declaration.as(EnumDeclSyntax.self) else {
       throw CodableKitError.message("`@PolymorphicEnumEncodable` can only be attached to enums")
     }
 
-    // Validate identifierCodingKey
     try PolymorphicEnumCodableFactory.validateIdentifierCodingKey(in: node)
 
-    // Extract case information from the enum
     let caseInfos = try PolymorphicEnumCodableFactory.extractCaseInfos(from: enumDecl)
-
     let accessLevel = AccessLevelModifier.stringValue(from: declaration)
 
     let encodeToEncoderSyntax = PolymorphicEnumCodableFactory.makeEncodeToEncoder(
       with: caseInfos,
-      accessLevel: accessLevel
+      accessLevel: accessLevel,
     )
 
     return [
-      try ExtensionDeclSyntax("extension \(raw: enumDecl.name.text): Encodable") {
-        """
-        \(raw: encodeToEncoderSyntax)
-        """
-      },
+      "\(raw: encodeToEncoderSyntax)"
     ]
+  }
+}
+
+extension PolymorphicEnumEncodableMacro: ExtensionMacro {
+  public static func expansion(
+    of _: AttributeSyntax,
+    attachedTo declaration: some DeclGroupSyntax,
+    providingExtensionsOf type: some TypeSyntaxProtocol,
+    conformingTo _: [TypeSyntax],
+    in _: some MacroExpansionContext,
+  ) throws -> [ExtensionDeclSyntax] {
+    guard declaration.is(EnumDeclSyntax.self) else {
+      return []
+    }
+
+    return try [ExtensionDeclSyntax("extension \(type.trimmed): Encodable {}")]
   }
 }
