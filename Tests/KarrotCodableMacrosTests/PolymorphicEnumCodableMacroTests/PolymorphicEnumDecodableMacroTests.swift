@@ -15,10 +15,9 @@ import KarrotCodableKitMacros
 #endif
 
 final class PolymorphicEnumDecodableMacroTests: XCTestCase {
-
   #if canImport(KarrotCodableKitMacros)
   let testMacros: [String: Macro.Type] = [
-    "PolymorphicEnumDecodable": PolymorphicEnumDecodableMacro.self,
+    "PolymorphicEnumDecodable": PolymorphicEnumDecodableMacro.self
   ]
   #endif
 
@@ -41,9 +40,7 @@ final class PolymorphicEnumDecodableMacroTests: XCTestCase {
           case callout(DummyCallout)
           case actionableCallout(DummyActionableCallout)
           case dismissibleCallout(value: DummyDismissibleCallout)
-        }
 
-        extension CalloutBadge: Decodable {
           enum PolymorphicMetaCodingKey: CodingKey {
             case `type`
           }
@@ -64,9 +61,12 @@ final class PolymorphicEnumDecodableMacroTests: XCTestCase {
             }
           }
         }
+
+        extension CalloutBadge: Decodable {
+        }
         """,
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")
@@ -92,9 +92,7 @@ final class PolymorphicEnumDecodableMacroTests: XCTestCase {
           case callout(DummyCallout)
           case actionableCallout(DummyActionableCallout)
           case dismissibleCallout(value: DummyDismissibleCallout)
-        }
 
-        extension CalloutBadge: Decodable {
           enum PolymorphicMetaCodingKey: CodingKey {
             case `type`
           }
@@ -115,9 +113,12 @@ final class PolymorphicEnumDecodableMacroTests: XCTestCase {
             }
           }
         }
+
+        extension CalloutBadge: Decodable {
+        }
         """,
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")
@@ -148,11 +149,16 @@ final class PolymorphicEnumDecodableMacroTests: XCTestCase {
         DiagnosticSpec(
           message: "`@PolymorphicEnumDecodable` can only be attached to enums",
           line: 1,
-          column: 1
+          column: 1,
+        ),
+        DiagnosticSpec(
+          message: "`@PolymorphicEnumDecodable` can only be attached to enums",
+          line: 1,
+          column: 1,
         ),
       ],
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")
@@ -183,11 +189,16 @@ final class PolymorphicEnumDecodableMacroTests: XCTestCase {
         DiagnosticSpec(
           message: "Invalid polymorphic identifier: expected a non-empty string.",
           line: 1,
-          column: 1
+          column: 1,
+        ),
+        DiagnosticSpec(
+          message: "Invalid polymorphic identifier: expected a non-empty string.",
+          line: 1,
+          column: 1,
         ),
       ],
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")
@@ -218,11 +229,16 @@ final class PolymorphicEnumDecodableMacroTests: XCTestCase {
         DiagnosticSpec(
           message: "Polymorphic Enum cases can only have one associated value",
           line: 1,
-          column: 1
+          column: 1,
+        ),
+        DiagnosticSpec(
+          message: "Polymorphic Enum cases can only have one associated value",
+          line: 1,
+          column: 1,
         ),
       ],
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")
@@ -253,11 +269,71 @@ final class PolymorphicEnumDecodableMacroTests: XCTestCase {
         DiagnosticSpec(
           message: "Polymorphic Enum cases should have one associated value",
           line: 1,
-          column: 1
+          column: 1,
+        ),
+        DiagnosticSpec(
+          message: "Polymorphic Enum cases should have one associated value",
+          line: 1,
+          column: 1,
         ),
       ],
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
+    )
+    #else
+    throw XCTSkip("macros are only supported when running tests for the host platform")
+    #endif
+  }
+}
+
+// MARK: - Nested Type
+
+extension PolymorphicEnumDecodableMacroTests {
+  func testPolymorphicEnumDecodableMacroInsideNestedType() throws {
+    #if canImport(KarrotCodableKitMacros)
+    // given
+    assertMacroExpansion(
+      """
+      enum SomeEnum {
+        @PolymorphicEnumDecodable(identifierCodingKey: "type")
+        public enum CalloutBadge {
+          case callout(DummyCallout)
+          case actionableCallout(DummyActionableCallout)
+        }
+      }
+      """,
+      // when
+      expandedSource: """
+        enum SomeEnum {
+          public enum CalloutBadge {
+            case callout(DummyCallout)
+            case actionableCallout(DummyActionableCallout)
+
+            enum PolymorphicMetaCodingKey: CodingKey {
+              case `type`
+            }
+
+            public init(from decoder: any Decoder) throws {
+              let container = try decoder.container(keyedBy: PolymorphicMetaCodingKey.self)
+              let type = try container.decode(String.self, forKey: PolymorphicMetaCodingKey.type)
+
+              switch type {
+              case DummyCallout.polymorphicIdentifier:
+                self = .callout(try DummyCallout(from: decoder))
+               case DummyActionableCallout.polymorphicIdentifier:
+                self = .actionableCallout(try DummyActionableCallout(from: decoder))
+              default:
+                throw PolymorphicCodableError.unableToFindPolymorphicType(type)
+              }
+            }
+          }
+        }
+
+        extension SomeEnum.CalloutBadge: Decodable {
+        }
+        """,
+      macros: testMacros,
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")
@@ -289,9 +365,7 @@ extension PolymorphicEnumDecodableMacroTests {
           case actionableCallout(DummyActionableCallout)
           case dismissibleCallout(value: DummyDismissibleCallout)
           case undefinedCallout(DummyUndefinedCallout)
-        }
 
-        extension CalloutBadge: Decodable {
           enum PolymorphicMetaCodingKey: CodingKey {
             case `type`
           }
@@ -314,9 +388,12 @@ extension PolymorphicEnumDecodableMacroTests {
             }
           }
         }
+
+        extension CalloutBadge: Decodable {
+        }
         """,
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")
@@ -347,11 +424,16 @@ extension PolymorphicEnumDecodableMacroTests {
         DiagnosticSpec(
           message: "Missing fallback case: should be defined as `case undefinedCallout",
           line: 1,
-          column: 1
+          column: 1,
+        ),
+        DiagnosticSpec(
+          message: "Missing fallback case: should be defined as `case undefinedCallout",
+          line: 1,
+          column: 1,
         ),
       ],
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")
@@ -382,11 +464,16 @@ extension PolymorphicEnumDecodableMacroTests {
         DiagnosticSpec(
           message: "Invalid fallback case name: expected a non-empty string.",
           line: 1,
-          column: 1
+          column: 1,
+        ),
+        DiagnosticSpec(
+          message: "Invalid fallback case name: expected a non-empty string.",
+          line: 1,
+          column: 1,
         ),
       ],
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")

@@ -15,10 +15,9 @@ import KarrotCodableKitMacros
 #endif
 
 final class PolymorphicEnumEncodableMacroTests: XCTestCase {
-
   #if canImport(KarrotCodableKitMacros)
   let testMacros: [String: Macro.Type] = [
-    "PolymorphicEnumEncodable": PolymorphicEnumEncodableMacro.self,
+    "PolymorphicEnumEncodable": PolymorphicEnumEncodableMacro.self
   ]
   #endif
 
@@ -41,9 +40,7 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
           case callout(DummyCallout)
           case actionableCallout(DummyActionableCallout)
           case dismissibleCallout(value: DummyDismissibleCallout)
-        }
 
-        extension CalloutBadge: Encodable {
           public func encode(to encoder: any Encoder) throws {
             switch self {
             case .callout(let value):
@@ -55,9 +52,12 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
             }
           }
         }
+
+        extension CalloutBadge: Encodable {
+        }
         """,
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")
@@ -83,9 +83,7 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
           case callout(DummyCallout)
           case actionableCallout(DummyActionableCallout)
           case dismissibleCallout(value: DummyDismissibleCallout)
-        }
 
-        extension CalloutBadge: Encodable {
           public func encode(to encoder: any Encoder) throws {
             switch self {
             case .callout(let value):
@@ -97,9 +95,54 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
             }
           }
         }
+
+        extension CalloutBadge: Encodable {
+        }
         """,
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
+    )
+    #else
+    throw XCTSkip("macros are only supported when running tests for the host platform")
+    #endif
+  }
+
+  func testPolymorphicEnumEncodableMacroInsideNestedType() throws {
+    #if canImport(KarrotCodableKitMacros)
+    // given
+    assertMacroExpansion(
+      """
+      enum SomeEnum {
+        @PolymorphicEnumEncodable(identifierCodingKey: "type")
+        public enum CalloutBadge {
+          case callout(DummyCallout)
+          case actionableCallout(DummyActionableCallout)
+        }
+      }
+      """,
+      // when
+      expandedSource: """
+        enum SomeEnum {
+          public enum CalloutBadge {
+            case callout(DummyCallout)
+            case actionableCallout(DummyActionableCallout)
+
+            public func encode(to encoder: any Encoder) throws {
+              switch self {
+              case .callout(let value):
+                try value.encode(to: encoder)
+               case .actionableCallout(let value):
+                try value.encode(to: encoder)
+              }
+            }
+          }
+        }
+
+        extension SomeEnum.CalloutBadge: Encodable {
+        }
+        """,
+      macros: testMacros,
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")
@@ -130,11 +173,16 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
         DiagnosticSpec(
           message: "`@PolymorphicEnumEncodable` can only be attached to enums",
           line: 1,
-          column: 1
+          column: 1,
+        ),
+        DiagnosticSpec(
+          message: "`@PolymorphicEnumEncodable` can only be attached to enums",
+          line: 1,
+          column: 1,
         ),
       ],
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")
@@ -165,11 +213,16 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
         DiagnosticSpec(
           message: "Invalid polymorphic identifier: expected a non-empty string.",
           line: 1,
-          column: 1
+          column: 1,
+        ),
+        DiagnosticSpec(
+          message: "Invalid polymorphic identifier: expected a non-empty string.",
+          line: 1,
+          column: 1,
         ),
       ],
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")
@@ -200,11 +253,16 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
         DiagnosticSpec(
           message: "Polymorphic Enum cases can only have one associated value",
           line: 1,
-          column: 1
+          column: 1,
+        ),
+        DiagnosticSpec(
+          message: "Polymorphic Enum cases can only have one associated value",
+          line: 1,
+          column: 1,
         ),
       ],
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")
@@ -235,11 +293,16 @@ final class PolymorphicEnumEncodableMacroTests: XCTestCase {
         DiagnosticSpec(
           message: "Polymorphic Enum cases should have one associated value",
           line: 1,
-          column: 1
+          column: 1,
+        ),
+        DiagnosticSpec(
+          message: "Polymorphic Enum cases should have one associated value",
+          line: 1,
+          column: 1,
         ),
       ],
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")

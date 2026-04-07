@@ -6,35 +6,25 @@
 //  Copyright © 2025 Danggeun Market Inc. All rights reserved.
 //
 
-import Foundation
-
 import SwiftDiagnostics
 import SwiftSyntax
 import SwiftSyntaxMacros
 
-public struct PolymorphicEnumDecodableMacro: ExtensionMacro {
+public struct PolymorphicEnumDecodableMacro: MemberMacro {
   public static func expansion(
     of node: AttributeSyntax,
-    attachedTo declaration: some DeclGroupSyntax,
-    providingExtensionsOf type: some TypeSyntaxProtocol,
-    conformingTo protocols: [TypeSyntax],
-    in context: some MacroExpansionContext
-  ) throws -> [ExtensionDeclSyntax] {
-    // Ensure the declaration is an enum and extract case information
+    providingMembersOf declaration: some DeclGroupSyntax,
+    in _: some MacroExpansionContext,
+  ) throws -> [DeclSyntax] {
     guard let enumDecl = declaration.as(EnumDeclSyntax.self) else {
       throw CodableKitError.message("`@PolymorphicEnumDecodable` can only be attached to enums")
     }
 
-    // Validate and extract identifierCodingKey
     let identifierCodingKey = try PolymorphicEnumCodableFactory.validateIdentifierCodingKey(in: node)
-
-    // Extract case information from the enum
     let caseInfos = try PolymorphicEnumCodableFactory.extractCaseInfos(from: enumDecl)
-
-    // Validate and extract fallbackCaseName if provided
     let fallbackCaseName = try PolymorphicEnumCodableFactory.validateFallbackCaseName(
       in: node,
-      caseInfos: caseInfos
+      caseInfos: caseInfos,
     )
 
     let polymorphicMetaCodingKeySyntax = PolymorphicEnumCodableFactory.makePolymorphicMetaCodingKey(
@@ -47,17 +37,32 @@ public struct PolymorphicEnumDecodableMacro: ExtensionMacro {
       with: caseInfos,
       identifierCodingKey: identifierCodingKey,
       accessLevel: accessLevel,
-      fallbackCaseName: fallbackCaseName
+      fallbackCaseName: fallbackCaseName,
     )
 
     return [
-      try ExtensionDeclSyntax("extension \(raw: enumDecl.name.text): Decodable") {
-        """
-        \(raw: polymorphicMetaCodingKeySyntax)
-
-        \(raw: initFromDecoderSyntax)
-        """
-      },
+      "\(raw: polymorphicMetaCodingKeySyntax)",
+      "\(raw: initFromDecoderSyntax)",
     ]
+  }
+}
+
+extension PolymorphicEnumDecodableMacro: ExtensionMacro {
+  public static func expansion(
+    of node: AttributeSyntax,
+    attachedTo declaration: some DeclGroupSyntax,
+    providingExtensionsOf type: some TypeSyntaxProtocol,
+    conformingTo _: [TypeSyntax],
+    in _: some MacroExpansionContext,
+  ) throws -> [ExtensionDeclSyntax] {
+    guard let enumDecl = declaration.as(EnumDeclSyntax.self) else {
+      throw CodableKitError.message("`@PolymorphicEnumDecodable` can only be attached to enums")
+    }
+
+    try PolymorphicEnumCodableFactory.validateIdentifierCodingKey(in: node)
+    let caseInfos = try PolymorphicEnumCodableFactory.extractCaseInfos(from: enumDecl)
+    try PolymorphicEnumCodableFactory.validateFallbackCaseName(in: node, caseInfos: caseInfos)
+
+    return try [ExtensionDeclSyntax("extension \(type.trimmed): Decodable {}")]
   }
 }
