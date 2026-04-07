@@ -38,15 +38,18 @@ public struct PolymorphicEnumEncodableMacro: MemberMacro {
 
 extension PolymorphicEnumEncodableMacro: ExtensionMacro {
   public static func expansion(
-    of _: AttributeSyntax,
+    of node: AttributeSyntax,
     attachedTo declaration: some DeclGroupSyntax,
     providingExtensionsOf type: some TypeSyntaxProtocol,
     conformingTo _: [TypeSyntax],
     in _: some MacroExpansionContext,
   ) throws -> [ExtensionDeclSyntax] {
-    guard declaration.is(EnumDeclSyntax.self) else {
-      return []
+    guard let enumDecl = declaration.as(EnumDeclSyntax.self) else {
+      throw CodableKitError.message("`@PolymorphicEnumEncodable` can only be attached to enums")
     }
+
+    try PolymorphicEnumCodableFactory.validateIdentifierCodingKey(in: node)
+    _ = try PolymorphicEnumCodableFactory.extractCaseInfos(from: enumDecl)
 
     return try [ExtensionDeclSyntax("extension \(type.trimmed): Encodable {}")]
   }
