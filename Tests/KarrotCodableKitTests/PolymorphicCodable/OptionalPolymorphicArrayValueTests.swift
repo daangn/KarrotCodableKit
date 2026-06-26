@@ -225,4 +225,25 @@ struct OptionalPolymorphicArrayValueTests {
     #expect(decoded.notices1?.isEmpty == true)
     #expect(decoded.notices2 == nil)
   }
+
+  @Test
+  func encodingNilInUnkeyedContextProducesNull() throws {
+    // given - in an unkeyed container (array element) there is no key to omit,
+    // so a nil wrapper is encoded as an explicit null (matching Apple's `[T?]` behavior)
+    let elements: [DummyNotice.OptionalPolymorphicArray] = [
+      DummyNotice.OptionalPolymorphicArray(wrappedValue: nil)
+    ]
+
+    // when
+    let data = try JSONEncoder().encode(elements)
+
+    // then - the nil element is encoded as null, not omitted
+    let jsonString = try #require(String(bytes: data, encoding: .utf8))
+    #expect(jsonString == "[null]")
+
+    // round-trip - [null] decodes back to a single nil-wrapped element
+    let decoded = try JSONDecoder().decode([DummyNotice.OptionalPolymorphicArray].self, from: data)
+    #expect(decoded.count == 1)
+    #expect(decoded[0].wrappedValue == nil)
+  }
 }
