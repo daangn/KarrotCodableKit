@@ -8,7 +8,8 @@
 
 import Foundation
 
-/// A property wrapper that decodes an optional array of polymorphic objects with lossy behavior for individual elements.
+/// A property wrapper that decodes an optional array of polymorphic objects with lossy behavior
+/// for individual elements.
 ///
 /// This wrapper combines the optionality handling of ``OptionalPolymorphicArrayValue`` with
 /// the lossy element decoding of ``PolymorphicLossyArrayValue``.
@@ -20,7 +21,8 @@ import Foundation
 /// Comparison with similar wrappers:
 /// - ``PolymorphicLossyArrayValue``: For required arrays that default to `[]` when missing or null
 /// - ``OptionalPolymorphicArrayValue``: For optional arrays that throw on invalid elements
-/// - ``DefaultEmptyPolymorphicArrayValue``: For required arrays that default to `[]` when missing or null, strict on elements
+/// - ``DefaultEmptyPolymorphicArrayValue``: For required arrays that default to `[]` when missing or null,
+///   strict on elements
 ///
 /// Decoding behavior:
 /// - If the key is missing or the value is `null`, `wrappedValue` is set to `nil`
@@ -29,7 +31,7 @@ import Foundation
 /// - Empty arrays are decoded as empty arrays, not `nil`
 ///
 /// Encoding behavior:
-/// - If `wrappedValue` is `nil`, encodes as `null`
+/// - If `wrappedValue` is `nil`, the key is omitted (a `null` is only produced inside an unkeyed container)
 /// - If `wrappedValue` contains an array, each element is encoded using the `PolymorphicType` strategy
 ///
 @propertyWrapper
@@ -42,40 +44,40 @@ public struct OptionalPolymorphicLossyArrayValue<PolymorphicType: PolymorphicCod
   public let outcome: ResilientDecodingOutcome
 
   #if DEBUG
-    /// Results of decoding each element in the array (DEBUG only)
-    let results: [Result<PolymorphicType.ExpectedType, Error>]
+  /// Results of decoding each element in the array (DEBUG only)
+  let results: [Result<PolymorphicType.ExpectedType, Error>]
   #endif
 
   public init(wrappedValue: [PolymorphicType.ExpectedType]?) {
     self.wrappedValue = wrappedValue
     outcome = .decodedSuccessfully
     #if DEBUG
-      results = []
+    results = []
     #endif
   }
 
   #if DEBUG
-    init(
-      wrappedValue: [PolymorphicType.ExpectedType]?,
-      outcome: ResilientDecodingOutcome,
-      results: [Result<PolymorphicType.ExpectedType, Error>] = []
-    ) {
-      self.wrappedValue = wrappedValue
-      self.outcome = outcome
-      self.results = results
-    }
+  init(
+    wrappedValue: [PolymorphicType.ExpectedType]?,
+    outcome: ResilientDecodingOutcome,
+    results: [Result<PolymorphicType.ExpectedType, Error>] = []
+  ) {
+    self.wrappedValue = wrappedValue
+    self.outcome = outcome
+    self.results = results
+  }
   #else
-    init(wrappedValue: [PolymorphicType.ExpectedType]?, outcome: ResilientDecodingOutcome) {
-      self.wrappedValue = wrappedValue
-      self.outcome = outcome
-    }
+  init(wrappedValue: [PolymorphicType.ExpectedType]?, outcome: ResilientDecodingOutcome) {
+    self.wrappedValue = wrappedValue
+    self.outcome = outcome
+  }
   #endif
 
   #if DEBUG
-    /// The projected value providing access to decoding outcome
-    public var projectedValue: PolymorphicLossyArrayProjectedValue<PolymorphicType.ExpectedType> {
-      PolymorphicLossyArrayProjectedValue(outcome: outcome, results: results)
-    }
+  /// The projected value providing access to decoding outcome
+  public var projectedValue: PolymorphicLossyArrayProjectedValue<PolymorphicType.ExpectedType> {
+    PolymorphicLossyArrayProjectedValue(outcome: outcome, results: results)
+  }
   #endif
 }
 
@@ -95,7 +97,7 @@ extension OptionalPolymorphicLossyArrayValue: Decodable {
 
     var elements = [PolymorphicType.ExpectedType]()
     #if DEBUG
-      var results = [Result<PolymorphicType.ExpectedType, Error>]()
+    var results = [Result<PolymorphicType.ExpectedType, Error>]()
     #endif
 
     while !container.isAtEnd {
@@ -103,21 +105,21 @@ extension OptionalPolymorphicLossyArrayValue: Decodable {
         let value = try container.decode(PolymorphicValue<PolymorphicType>.self).wrappedValue
         elements.append(value)
         #if DEBUG
-          results.append(.success(value))
+        results.append(.success(value))
         #endif
       } catch {
         // Decoding processing to prevent infinite loops if decoding fails.
         _ = try? container.decode(AnyDecodableValue.self)
         #if DEBUG
-          results.append(.failure(error))
+        results.append(.failure(error))
         #endif
       }
     }
 
     #if DEBUG
-      self.init(wrappedValue: elements, outcome: .decodedSuccessfully, results: results)
+    self.init(wrappedValue: elements, outcome: .decodedSuccessfully, results: results)
     #else
-      self.init(wrappedValue: elements, outcome: .decodedSuccessfully)
+    self.init(wrappedValue: elements, outcome: .decodedSuccessfully)
     #endif
   }
 }
