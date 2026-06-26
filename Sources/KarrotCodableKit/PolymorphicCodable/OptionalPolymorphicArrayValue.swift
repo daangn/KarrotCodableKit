@@ -30,7 +30,7 @@ import Foundation
 /// - Empty arrays are decoded as empty arrays, not `nil`
 ///
 /// Encoding behavior:
-/// - If `wrappedValue` is `nil`, encodes as `null`
+/// - If `wrappedValue` is `nil`, the key is omitted (a `null` is only produced inside an unkeyed container)
 /// - If `wrappedValue` contains an array, each element is encoded using the `PolymorphicType` strategy
 ///
 @propertyWrapper
