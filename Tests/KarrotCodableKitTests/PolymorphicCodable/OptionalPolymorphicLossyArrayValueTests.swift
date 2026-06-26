@@ -196,7 +196,7 @@ struct OptionalPolymorphicLossyArrayValueTests {
           title: nil,
           description: "test",
           icon: "test_icon"
-        ),
+        )
       ],
       notices2: nil
     )
@@ -209,8 +209,7 @@ struct OptionalPolymorphicLossyArrayValueTests {
           "icon" : "test_icon",
           "type" : "callout"
         }
-      ],
-      "notices2" : null
+      ]
     }
     """#
 
@@ -219,8 +218,8 @@ struct OptionalPolymorphicLossyArrayValueTests {
     encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
     let data = try encoder.encode(response)
 
-    // then
-    let jsonString = String(decoding: data, as: UTF8.self)
+    // then - notices2 (nil) is omitted, matching Apple's default Codable behavior
+    let jsonString = try #require(String(bytes: data, encoding: .utf8))
     #expect(jsonString == expectResult)
   }
 
@@ -237,6 +236,10 @@ struct OptionalPolymorphicLossyArrayValueTests {
     encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
     let data = try encoder.encode(response)
 
+    // then - all nil values are omitted, producing an empty object
+    let jsonString = try #require(String(bytes: data, encoding: .utf8))
+    #expect(jsonString == "{\n\n}")
+
     // when - decode back
     let decodedResponse = try JSONDecoder().decode(
       OptionalPolymorphicLossyArrayDummyResponse.self,
@@ -246,5 +249,25 @@ struct OptionalPolymorphicLossyArrayValueTests {
     // then
     #expect(decodedResponse.notices1 == nil)
     #expect(decodedResponse.notices2 == nil)
+  }
+
+  @Test
+  func encodingEmptyArrayIsKeptNotOmitted() throws {
+    // given - an empty array ([]) is non-nil and must be kept, not omitted like nil
+    let response = OptionalPolymorphicLossyArrayDummyResponse(notices1: [], notices2: nil)
+
+    // when
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = .sortedKeys
+    let data = try encoder.encode(response)
+
+    // then - notices1 stays as [], only notices2 (nil) is omitted
+    let jsonString = try #require(String(bytes: data, encoding: .utf8))
+    #expect(jsonString == #"{"notices1":[]}"#)
+
+    // round-trip - [] preserved, nil restored
+    let decoded = try JSONDecoder().decode(OptionalPolymorphicLossyArrayDummyResponse.self, from: data)
+    #expect(decoded.notices1?.isEmpty == true)
+    #expect(decoded.notices2 == nil)
   }
 }

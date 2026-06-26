@@ -29,8 +29,7 @@ final class LossyOptionalPolymorphicValueTests: XCTestCase {
         "description" : "test",
         "icon" : "test_icon",
         "type" : "callout"
-      },
-      "notice2" : null
+      }
     }
     """#
 
@@ -39,8 +38,8 @@ final class LossyOptionalPolymorphicValueTests: XCTestCase {
     encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
     let data = try encoder.encode(response)
 
-    // then
-    let jsonString = String(decoding: data, as: UTF8.self)
+    // then - notice2 (nil) is omitted, matching Apple's default Codable behavior
+    let jsonString = try XCTUnwrap(String(bytes: data, encoding: .utf8))
     XCTAssertEqual(jsonString, expectResult)
   }
 
@@ -85,14 +84,9 @@ final class LossyOptionalPolymorphicValueTests: XCTestCase {
     encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
     let data = try encoder.encode(result)
 
-    // then
-    let expectResult = #"""
-    {
-      "notice1" : null,
-      "notice2" : null
-    }
-    """#
-    let jsonString = String(decoding: data, as: UTF8.self)
+    // then - all nil values are omitted, producing an empty object
+    let expectResult = "{\n\n}"
+    let jsonString = try XCTUnwrap(String(bytes: data, encoding: .utf8))
     XCTAssertEqual(jsonString, expectResult)
   }
 }
