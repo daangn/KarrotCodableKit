@@ -68,4 +68,60 @@ struct OptionalPolymorphicValueTests {
       _ = try JSONDecoder().decode(OptionalDummyResponse.self, from: Data(jsonData.utf8))
     }
   }
+
+  @Test
+  func encodingOptionalPolymorphicValueOmitsNilFields() throws {
+    // given
+    let response = OptionalDummyResponse(
+      notice1: DummyCallout(
+        type: .callout,
+        title: nil,
+        description: "test",
+        icon: "test_icon"
+      ),
+      notice2: nil,
+      notice3: nil
+    )
+
+    // when
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+    let data = try encoder.encode(response)
+
+    // then - nil fields (notice2, notice3) are omitted, matching Apple's default Codable behavior
+    let expectResult = #"""
+    {
+      "notice1" : {
+        "description" : "test",
+        "icon" : "test_icon",
+        "type" : "callout"
+      }
+    }
+    """#
+    let jsonString = try #require(String(bytes: data, encoding: .utf8))
+    #expect(jsonString == expectResult)
+  }
+
+  @Test
+  func encodingDecodingOptionalPolymorphicValueRoundTrip() throws {
+    // given
+    let response = OptionalDummyResponse(notice1: nil, notice2: nil, notice3: nil)
+
+    // when - encode (all nil -> empty object, no explicit null)
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+    let data = try encoder.encode(response)
+
+    // then - empty object
+    let jsonString = try #require(String(bytes: data, encoding: .utf8))
+    #expect(jsonString == "{\n\n}")
+
+    // when - decode back
+    let decoded = try JSONDecoder().decode(OptionalDummyResponse.self, from: data)
+
+    // then - nil values are restored (round-trip)
+    #expect(decoded.notice1 == nil)
+    #expect(decoded.notice2 == nil)
+    #expect(decoded.notice3 == nil)
+  }
 }
