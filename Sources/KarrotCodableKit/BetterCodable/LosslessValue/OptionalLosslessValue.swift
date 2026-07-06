@@ -120,7 +120,8 @@ extension OptionalLosslessValueCodable: Hashable where Strategy.Value: Hashable 
   }
 }
 
-extension OptionalLosslessValueCodable: Sendable where Strategy.Value: Sendable {}
+// `type` is an immutable metatype (no shared mutable state); the where-clause keeps `wrappedValue` safe.
+extension OptionalLosslessValueCodable: @unchecked Sendable where Strategy.Value: Sendable {}
 
 /// Decodes Optional Codable values into their respective preferred types.
 ///
