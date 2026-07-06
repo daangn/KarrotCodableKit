@@ -24,30 +24,29 @@ extension KeyedDecodingContainer {
     _ type: LossyOptionalPolymorphicValue<T>.Type,
     forKey key: Self.Key
   ) throws -> LossyOptionalPolymorphicValue<T>? where T: PolymorphicCodableStrategy {
-    // Check if key exists
-    guard contains(key) else {
+    switch try polymorphicKeyPresence(forKey: key) {
+    case .missing:
       return nil
-    }
 
-    // Check if value is null
-    if try decodeNil(forKey: key) {
+    case .null:
       return LossyOptionalPolymorphicValue(wrappedValue: nil, outcome: .valueWasNil)
-    }
 
-    // Try to decode the polymorphic value
-    do {
-      let decoder = try superDecoder(forKey: key)
-      let value = try T.decode(from: decoder)
-      return LossyOptionalPolymorphicValue(wrappedValue: value, outcome: .decodedSuccessfully)
-    } catch {
-      #if DEBUG
-      /// Report error to resilient decoding error reporter
-      let decoder = try? superDecoder(forKey: key)
-      decoder?.reportError(error)
-      return LossyOptionalPolymorphicValue(wrappedValue: nil, outcome: .recoveredFrom(error, wasReported: true))
-      #else
-      return LossyOptionalPolymorphicValue(wrappedValue: nil, outcome: .recoveredFrom(error, wasReported: false))
-      #endif
+    case .present:
+      // Try to decode the polymorphic value
+      do {
+        let decoder = try superDecoder(forKey: key)
+        let value = try T.decode(from: decoder)
+        return LossyOptionalPolymorphicValue(wrappedValue: value, outcome: .decodedSuccessfully)
+      } catch {
+        #if DEBUG
+        /// Report error to resilient decoding error reporter
+        let decoder = try? superDecoder(forKey: key)
+        decoder?.reportError(error)
+        return LossyOptionalPolymorphicValue(wrappedValue: nil, outcome: .recoveredFrom(error, wasReported: true))
+        #else
+        return LossyOptionalPolymorphicValue(wrappedValue: nil, outcome: .recoveredFrom(error, wasReported: false))
+        #endif
+      }
     }
   }
 }

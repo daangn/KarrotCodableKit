@@ -24,35 +24,34 @@ extension KeyedDecodingContainer {
     _ type: OptionalPolymorphicArrayValue<T>.Type,
     forKey key: Self.Key
   ) throws -> OptionalPolymorphicArrayValue<T>? where T: PolymorphicCodableStrategy {
-    // Check if the key exists
-    guard contains(key) else {
+    switch try polymorphicKeyPresence(forKey: key) {
+    case .missing:
       return nil
-    }
 
-    // Check if the value is null
-    if try decodeNil(forKey: key) {
+    case .null:
       return OptionalPolymorphicArrayValue(wrappedValue: nil, outcome: .valueWasNil)
-    }
 
-    // Try to decode the array
-    do {
-      var container = try nestedUnkeyedContainer(forKey: key)
-      var elements = [T.ExpectedType]()
+    case .present:
+      // Try to decode the array
+      do {
+        var container = try nestedUnkeyedContainer(forKey: key)
+        var elements = [T.ExpectedType]()
 
-      while !container.isAtEnd {
-        // Use PolymorphicValue for decoding each element
-        let value = try container.decode(PolymorphicValue<T>.self)
-        elements.append(value.wrappedValue)
+        while !container.isAtEnd {
+          // Use PolymorphicValue for decoding each element
+          let value = try container.decode(PolymorphicValue<T>.self)
+          elements.append(value.wrappedValue)
+        }
+
+        return OptionalPolymorphicArrayValue(wrappedValue: elements, outcome: .decodedSuccessfully)
+      } catch {
+        #if DEBUG
+        // Report the error through superDecoder
+        let decoder = try superDecoder(forKey: key)
+        decoder.reportError(error)
+        #endif
+        throw error
       }
-
-      return OptionalPolymorphicArrayValue(wrappedValue: elements, outcome: .decodedSuccessfully)
-    } catch {
-      #if DEBUG
-      // Report the error through superDecoder
-      let decoder = try superDecoder(forKey: key)
-      decoder.reportError(error)
-      #endif
-      throw error
     }
   }
 }

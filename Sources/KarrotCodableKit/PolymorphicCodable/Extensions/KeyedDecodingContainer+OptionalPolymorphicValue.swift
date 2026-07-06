@@ -24,24 +24,17 @@ extension KeyedDecodingContainer {
     _ type: OptionalPolymorphicValue<T>.Type,
     forKey key: Self.Key
   ) throws -> OptionalPolymorphicValue<T>? where T: PolymorphicCodableStrategy {
-    // Check if key exists
-    guard contains(key) else {
+    switch try polymorphicKeyPresence(forKey: key) {
+    case .missing:
       return nil
-    }
 
-    // Check if value is null
-    if try decodeNil(forKey: key) {
+    case .null:
       return OptionalPolymorphicValue(wrappedValue: nil, outcome: .valueWasNil)
-    }
 
-    // Try to decode the polymorphic value
-    do {
-      let decoder = try superDecoder(forKey: key)
-      let value = try T.decode(from: decoder)
-      return OptionalPolymorphicValue(wrappedValue: value, outcome: .decodedSuccessfully)
-    } catch {
+    case .present:
       // OptionalPolymorphicValue throws errors instead of recovering
-      throw error
+      let value = try T.decode(from: superDecoder(forKey: key))
+      return OptionalPolymorphicValue(wrappedValue: value, outcome: .decodedSuccessfully)
     }
   }
 }
