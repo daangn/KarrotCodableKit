@@ -6,13 +6,14 @@
 //  Copyright © 2025 Danggeun Market Inc. All rights reserved.
 //
 
-import XCTest
+import Testing
+import Foundation
 
 import KarrotCodableKit
 
-class PolymorphicValueTests: XCTestCase {
+struct PolymorphicValueTests {
 
-  func testEncodingPolymorphicValue() throws {
+  @Test func testEncodingPolymorphicValue() throws {
     // given
     let response = DummyResponse(
       notice: DummyCallout(type: .callout, title: nil, description: "test", icon: "test_icon"),
@@ -62,10 +63,10 @@ class PolymorphicValueTests: XCTestCase {
 
     // then
     let jsonString = String(decoding: data, as: UTF8.self)
-    XCTAssertEqual(jsonString, expectResult)
+    #expect(jsonString == expectResult)
   }
 
-  func testDecodingPolymorphicValue() throws {
+  @Test func testDecodingPolymorphicValue() throws {
     // given
     let jsonData = #"""
     {
@@ -99,14 +100,14 @@ class PolymorphicValueTests: XCTestCase {
     let result = try JSONDecoder().decode(DummyResponse.self, from: Data(jsonData.utf8))
 
     // then
-    XCTAssertEqual(result.notice.type, .callout)
-    XCTAssertEqual(result.notices.count, 3)
-    XCTAssertEqual(result.notices[0].type, .actionableCallout)
-    XCTAssertEqual(result.notices[1].type, .dismissibleCallout)
-    XCTAssertEqual(result.notices[2].type, .undefinedCallout)
+    #expect(result.notice.type == .callout)
+    #expect(result.notices.count == 3)
+    #expect(result.notices[0].type == .actionableCallout)
+    #expect(result.notices[1].type == .dismissibleCallout)
+    #expect(result.notices[2].type == .undefinedCallout)
   }
 
-  func testDecodingUndefinedPolymorphicValue() throws {
+  @Test func testDecodingUndefinedPolymorphicValue() throws {
     // given
     let jsonData = #"""
     {
@@ -128,14 +129,14 @@ class PolymorphicValueTests: XCTestCase {
     let result = try JSONDecoder().decode(DummyResponse.self, from: Data(jsonData.utf8))
 
     // then
-    XCTAssertEqual(result.notice.type, .undefinedCallout)
-    XCTAssertEqual(result.notices.count, 1)
-    XCTAssertEqual(result.notices[0].type, .undefinedCallout)
+    #expect(result.notice.type == .undefinedCallout)
+    #expect(result.notices.count == 1)
+    #expect(result.notices[0].type == .undefinedCallout)
   }
 }
 
 extension PolymorphicValueTests {
-  func testDecodingOnlyValue() throws {
+  @Test func testDecodingOnlyValue() throws {
     // given
     let jsonData = #"""
     {
@@ -169,10 +170,10 @@ extension PolymorphicValueTests {
     let result = try JSONDecoder().decode(DummyDecodableResponse.self, from: Data(jsonData.utf8))
 
     // then
-    XCTAssertEqual(result.notice.type, .callout)
-    XCTAssertEqual(result.notices.count, 3)
-    XCTAssertEqual(result.notices[0].type, .actionableCallout)
-    XCTAssertEqual(result.notices[1].type, .dismissibleCallout)
-    XCTAssertEqual(result.notices[2].type, .undefinedCallout)
+    #expect(result.notice.type == .callout)
+    #expect(result.notices.count == 3)
+    #expect(result.notices[0].type == .actionableCallout)
+    #expect(result.notices[1].type == .dismissibleCallout)
+    #expect(result.notices[2].type == .undefinedCallout)
   }
 }

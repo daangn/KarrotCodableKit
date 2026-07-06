@@ -5,11 +5,12 @@
 //  Created by Elon on 2023/04/25.
 //
 
-import XCTest
+import Testing
+import Foundation
 
 import KarrotCodableKit
 
-final class LosslessValueTests: XCTestCase {
+struct LosslessValueTests {
   struct Fixture: Equatable, Codable {
     @LosslessValue var bool: Bool
     @LosslessValue var string: String
@@ -17,7 +18,7 @@ final class LosslessValueTests: XCTestCase {
     @LosslessValue var double: Double
   }
 
-  func testDecodingMisalignedTypesFromJSONTraversesCorrectType() throws {
+  @Test func testDecodingMisalignedTypesFromJSONTraversesCorrectType() throws {
     // given
     let jsonData = #"{ "bool": "true", "string": 42, "int": "1", "double": "7.1" }"#.data(using: .utf8)!
 
@@ -25,13 +26,13 @@ final class LosslessValueTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
 
     // then
-    XCTAssertEqual(fixture.bool, true)
-    XCTAssertEqual(fixture.string, "42")
-    XCTAssertEqual(fixture.int, 1)
-    XCTAssertEqual(fixture.double, 7.1)
+    #expect(fixture.bool == true)
+    #expect(fixture.string == "42")
+    #expect(fixture.int == 1)
+    #expect(fixture.double == 7.1)
   }
 
-  func testDecodingEncodedMisalignedTypesFromJSONDecodesCorrectTypes() throws {
+  @Test func testDecodingEncodedMisalignedTypesFromJSONDecodesCorrectTypes() throws {
     // given
     let jsonData = #"{ "bool": "true", "string": 42, "int": "7", "double": "7.1" }"#.data(using: .utf8)!
 
@@ -47,13 +48,13 @@ final class LosslessValueTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: fixtureData)
 
     // then
-    XCTAssertEqual(fixture.bool, false)
-    XCTAssertEqual(fixture.string, "42")
-    XCTAssertEqual(fixture.int, 7)
-    XCTAssertEqual(fixture.double, 3.14)
+    #expect(fixture.bool == false)
+    #expect(fixture.string == "42")
+    #expect(fixture.int == 7)
+    #expect(fixture.double == 3.14)
   }
 
-  func testEncodingAndDecodedExpectedTypes() throws {
+  @Test func testEncodingAndDecodedExpectedTypes() throws {
     // given
     let jsonData = #"{ "bool": true, "string": "42", "int": 7, "double": 7.1 }"#.data(using: .utf8)!
 
@@ -65,13 +66,13 @@ final class LosslessValueTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: fixtureData)
 
     // then
-    XCTAssertEqual(fixture.bool, true)
-    XCTAssertEqual(fixture.string, "42")
-    XCTAssertEqual(fixture.int, 7)
-    XCTAssertEqual(fixture.double, 7.1)
+    #expect(fixture.bool == true)
+    #expect(fixture.string == "42")
+    #expect(fixture.int == 7)
+    #expect(fixture.double == 7.1)
   }
 
-  func testDecodingBoolIntValueFromJSONDecodesCorrectly() throws {
+  @Test func testDecodingBoolIntValueFromJSONDecodesCorrectly() throws {
     struct FixtureWithBooleanAsInteger: Equatable, Codable {
       @LosslessBoolValue var bool: Bool
       @LosslessValue var string: String
@@ -90,13 +91,13 @@ final class LosslessValueTests: XCTestCase {
     let fixture = try JSONDecoder().decode(FixtureWithBooleanAsInteger.self, from: fixtureData)
 
     // then
-    XCTAssertEqual(fixture.bool, true)
-    XCTAssertEqual(fixture.string, "42")
-    XCTAssertEqual(fixture.int, 7)
-    XCTAssertEqual(fixture.double, 7.1)
+    #expect(fixture.bool == true)
+    #expect(fixture.string == "42")
+    #expect(fixture.int == 7)
+    #expect(fixture.double == 7.1)
   }
 
-  func testBoolAsIntegerShouldNotConflictWithDefaultStrategy() throws {
+  @Test func testBoolAsIntegerShouldNotConflictWithDefaultStrategy() throws {
     struct Response: Codable {
       @LosslessValue var id: String
       @LosslessBoolValue var bool: Bool
@@ -109,11 +110,11 @@ final class LosslessValueTests: XCTestCase {
     let result = try JSONDecoder().decode(Response.self, from: json)
 
     // then
-    XCTAssertEqual(result.id, "1")
-    XCTAssertEqual(result.bool, true)
+    #expect(result.id == "1")
+    #expect(result.bool == true)
   }
 
-  func testDecodingBoolAsLogicalString() throws {
+  @Test func testDecodingBoolAsLogicalString() throws {
     struct Response: Codable {
       @LosslessBoolValue var a: Bool
       @LosslessBoolValue var b: Bool
@@ -132,13 +133,13 @@ final class LosslessValueTests: XCTestCase {
     let result = try JSONDecoder().decode(Response.self, from: json)
 
     // then
-    XCTAssertEqual(result.a, true)
-    XCTAssertEqual(result.b, true)
-    XCTAssertEqual(result.c, true)
-    XCTAssertEqual(result.d, true)
-    XCTAssertEqual(result.e, true)
-    XCTAssertEqual(result.f, true)
-    XCTAssertEqual(result.g, true)
+    #expect(result.a == true)
+    #expect(result.b == true)
+    #expect(result.c == true)
+    #expect(result.d == true)
+    #expect(result.e == true)
+    #expect(result.f == true)
+    #expect(result.g == true)
 
     // given
     let json2 = #"{ "a": "FALSE", "b": "no", "c": "0", "d": "n", "e": "f","f":"-11", "g":-11  }"#
@@ -148,12 +149,12 @@ final class LosslessValueTests: XCTestCase {
     let result2 = try JSONDecoder().decode(Response.self, from: json2)
 
     // then
-    XCTAssertEqual(result2.a, false)
-    XCTAssertEqual(result2.b, false)
-    XCTAssertEqual(result2.c, false)
-    XCTAssertEqual(result2.d, false)
-    XCTAssertEqual(result2.e, false)
-    XCTAssertEqual(result2.f, false)
-    XCTAssertEqual(result2.g, false)
+    #expect(result2.a == false)
+    #expect(result2.b == false)
+    #expect(result2.c == false)
+    #expect(result2.d == false)
+    #expect(result2.e == false)
+    #expect(result2.f == false)
+    #expect(result2.g == false)
   }
 }

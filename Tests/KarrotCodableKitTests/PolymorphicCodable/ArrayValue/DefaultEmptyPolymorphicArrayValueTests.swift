@@ -6,13 +6,14 @@
 //  Copyright © 2025 Danggeun Market Inc. All rights reserved.
 //
 
-import XCTest
+import Testing
+import Foundation
 
 import KarrotCodableKit
 
-class DefaultEmptyPolymorphicArrayValueTests: XCTestCase {
+struct DefaultEmptyPolymorphicArrayValueTests {
 
-  func testEncodingDefaultEmptyPolymorphicArrayValue() throws {
+  @Test func testEncodingDefaultEmptyPolymorphicArrayValue() throws {
     // given
     let response = OptionalArrayDummyResponse(
       notices1: [
@@ -48,10 +49,10 @@ class DefaultEmptyPolymorphicArrayValueTests: XCTestCase {
 
     // then
     let jsonString = String(decoding: data, as: UTF8.self)
-    XCTAssertEqual(jsonString, expectResult)
+    #expect(jsonString == expectResult)
   }
 
-  func testDecodingDefaultEmptyPolymorphicArrayValue() throws {
+  @Test func testDecodingDefaultEmptyPolymorphicArrayValue() throws {
     // given
     let jsonData = #"""
     {
@@ -69,12 +70,12 @@ class DefaultEmptyPolymorphicArrayValueTests: XCTestCase {
     let result = try JSONDecoder().decode(OptionalArrayDummyResponse.self, from: Data(jsonData.utf8))
 
     // then
-    XCTAssertEqual(result.notices1.count, 1)
-    XCTAssertEqual(result.notices1.first?.type, .callout)
-    XCTAssertTrue(result.notices2.isEmpty)
+    #expect(result.notices1.count == 1)
+    #expect(result.notices1.first?.type == .callout)
+    #expect(result.notices2.isEmpty)
   }
 
-  func testDecodingEncodingDefaultEmptyPolymorphicArrayValue() throws {
+  @Test func testDecodingEncodingDefaultEmptyPolymorphicArrayValue() throws {
     // given
     let json = #"""
     {
@@ -87,8 +88,8 @@ class DefaultEmptyPolymorphicArrayValueTests: XCTestCase {
     let result = try JSONDecoder().decode(OptionalArrayDummyResponse.self, from: Data(json.utf8))
 
     // then
-    XCTAssertTrue(result.notices1.isEmpty)
-    XCTAssertTrue(result.notices2.isEmpty)
+    #expect(result.notices1.isEmpty)
+    #expect(result.notices2.isEmpty)
 
     // when
     let encoder = JSONEncoder()
@@ -107,12 +108,12 @@ class DefaultEmptyPolymorphicArrayValueTests: XCTestCase {
     }
     """#
     let jsonString = String(decoding: data, as: UTF8.self)
-    XCTAssertEqual(jsonString, expectResult)
+    #expect(jsonString == expectResult)
   }
 }
 
 extension DefaultEmptyPolymorphicArrayValueTests {
-  func testDecodingFailElementInDefaultEmptyPolymorphicArrayValue() throws {
+  @Test func testDecodingFailElementInDefaultEmptyPolymorphicArrayValue() throws {
     // given
     let jsonData = #"""
     {
@@ -134,12 +135,12 @@ extension DefaultEmptyPolymorphicArrayValueTests {
     let result = try JSONDecoder().decode(OptionalArrayDummyResponse.self, from: Data(jsonData.utf8))
 
     // then
-    XCTAssertTrue(result.notices1.isEmpty)
+    #expect(result.notices1.isEmpty)
   }
 }
 
 extension DefaultEmptyPolymorphicArrayValueTests {
-  func testDecodingOnlyValue() throws {
+  @Test func testDecodingOnlyValue() throws {
     // given
     let jsonData = #"""
     {
@@ -161,8 +162,8 @@ extension DefaultEmptyPolymorphicArrayValueTests {
     )
 
     // then
-    XCTAssertTrue(result.notices1.isEmpty)
-    XCTAssertEqual(result.notices2.first?.type, .callout)
-    XCTAssertTrue(result.notices3.isEmpty)
+    #expect(result.notices1.isEmpty)
+    #expect(result.notices2.first?.type == .callout)
+    #expect(result.notices3.isEmpty)
   }
 }

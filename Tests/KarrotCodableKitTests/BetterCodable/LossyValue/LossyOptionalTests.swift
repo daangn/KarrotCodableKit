@@ -5,15 +5,16 @@
 //  Created by Elon on 2023/04/25.
 //
 
-import XCTest
+import Testing
+import Foundation
 
 import KarrotCodableKit
 
-final class DefaultNilTests: XCTestCase {
+struct DefaultNilTests {
   /// This test demonstrates the problem that `@LossyOptional` solves. When decoding
   /// optional types, it often the case that we end up with an error instead of
   /// defaulting back to `nil`.
-  func testDecodingBadUrlAsOptionalWithoutDefaultNil() {
+  @Test func testDecodingBadUrlAsOptionalWithoutDefaultNil() {
     // given
     struct Fixture: Codable {
       var a: URL?
@@ -21,10 +22,10 @@ final class DefaultNilTests: XCTestCase {
     let jsonData = #"{"a":"https://example .com"}"#.data(using: .utf8)!
 
     // when/then
-    XCTAssertThrowsError(try JSONDecoder().decode(Fixture.self, from: jsonData))
+    #expect(throws: (any Error).self) { try JSONDecoder().decode(Fixture.self, from: jsonData) }
   }
 
-  func testDecodingWithUrlConversions() throws {
+  @Test func testDecodingWithUrlConversions() throws {
     // given
     struct Fixture: Codable {
       @LossyOptional var a: URL?
@@ -38,11 +39,11 @@ final class DefaultNilTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
 
     // then
-    XCTAssertNil(fixture.a)
-    XCTAssertEqual(fixture.b, URL(string: goodUrlString))
+    #expect(fixture.a == nil)
+    #expect(fixture.b == URL(string: goodUrlString))
   }
 
-  func testDecodingWithIntegerConversions() throws {
+  @Test func testDecodingWithIntegerConversions() throws {
     // given
     struct Fixture: Codable {
       @LossyOptional var a: Int?
@@ -56,11 +57,11 @@ final class DefaultNilTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: fixtureData)
 
     // then
-    XCTAssertNil(fixture.a)
-    XCTAssertEqual(fixture.b, 3)
+    #expect(fixture.a == nil)
+    #expect(fixture.b == 3)
   }
 
-  func testDecodingWithNullValue() throws {
+  @Test func testDecodingWithNullValue() throws {
     // given
     struct Fixture: Codable {
       @LossyOptional var a: String?
@@ -71,10 +72,10 @@ final class DefaultNilTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
 
     // then
-    XCTAssertNil(fixture.a)
+    #expect(fixture.a == nil)
   }
 
-  func testDecodingWithMissingKey() throws {
+  @Test func testDecodingWithMissingKey() throws {
     // given
     struct Fixture: Codable {
       @LossyOptional var a: String?
@@ -87,6 +88,6 @@ final class DefaultNilTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: fixtureData)
 
     // then
-    XCTAssertNil(fixture.a)
+    #expect(fixture.a == nil)
   }
 }

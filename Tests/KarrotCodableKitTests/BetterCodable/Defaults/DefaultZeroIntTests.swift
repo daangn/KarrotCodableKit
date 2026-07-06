@@ -5,16 +5,17 @@
 //  Created by Elon on 2023/04/27.
 //
 
-import XCTest
+import Testing
+import Foundation
 
 import KarrotCodableKit
 
-final class DefaultZeroIntTests: XCTestCase {
+struct DefaultZeroIntTests {
   struct Fixture: Equatable, Codable {
     @DefaultZeroInt var intValue: Int
   }
 
-  func testDecodingFailableIntDefaultZeroInt() throws {
+  @Test func testDecodingFailableIntDefaultZeroInt() throws {
     // given
     let jsonData = #"{ "intValue": null }"#.data(using: .utf8)!
 
@@ -22,10 +23,10 @@ final class DefaultZeroIntTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
 
     // then
-    XCTAssertEqual(fixture.intValue, 0)
+    #expect(fixture.intValue == 0)
   }
 
-  func testDecodingKeyNotPresentDefaultZeroInt() throws {
+  @Test func testDecodingKeyNotPresentDefaultZeroInt() throws {
     // given
     let jsonData = #"{}"#.data(using: .utf8)!
 
@@ -33,10 +34,10 @@ final class DefaultZeroIntTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
 
     // then
-    XCTAssertEqual(fixture.intValue, 0)
+    #expect(fixture.intValue == 0)
   }
 
-  func testDecodinSuccessDefaultZeroInt() throws {
+  @Test func testDecodinSuccessDefaultZeroInt() throws {
     // given
     let jsonData = #"{ "intValue": 999 }"#.data(using: .utf8)!
 
@@ -44,6 +45,6 @@ final class DefaultZeroIntTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
 
     // then
-    XCTAssertEqual(fixture.intValue, 999)
+    #expect(fixture.intValue == 999)
   }
 }

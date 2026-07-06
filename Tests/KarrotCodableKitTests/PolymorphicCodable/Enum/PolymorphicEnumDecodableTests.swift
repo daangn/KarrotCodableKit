@@ -6,13 +6,14 @@
 //  Copyright © 2025 Danggeun Market Inc. All rights reserved.
 //
 
-import XCTest
+import Testing
+import Foundation
 
 import KarrotCodableKit
 
-class PolymorphicEnumDecodableTests: XCTestCase {
+struct PolymorphicEnumDecodableTests {
 
-  func testPolymorphicEnumValue() throws {
+  @Test func testPolymorphicEnumValue() throws {
     // given
     let json = #"""
     {
@@ -28,13 +29,13 @@ class PolymorphicEnumDecodableTests: XCTestCase {
     // then
     switch result {
     case .callout(let value):
-      XCTAssertEqual(value.type, .callout)
+      #expect(value.type == .callout)
     default:
-      XCTFail("Invalid type")
+      Issue.record("Invalid type")
     }
   }
 
-  func testPolymorphicEnumDecodableArrayValue() throws {
+  @Test func testPolymorphicEnumDecodableArrayValue() throws {
     // given
     let json = #"""
     [
@@ -60,15 +61,15 @@ class PolymorphicEnumDecodableTests: XCTestCase {
 
     // then
     if case .callout(let value) = result[0] {
-      XCTAssertEqual(value.type, .callout)
+      #expect(value.type == .callout)
     }
     if case .dismissibleCallout(let value) = result[1] {
-      XCTAssertEqual(value.type, .dismissibleCallout)
-      XCTAssertEqual(value.key, "hi")
+      #expect(value.type == .dismissibleCallout)
+      #expect(value.key == "hi")
     }
     if case .undefinedCallout(let value) = result[2] {
-      XCTAssertEqual(value.type, .undefinedCallout)
-      XCTAssertEqual(value.description, "test")
+      #expect(value.type == .undefinedCallout)
+      #expect(value.description == "test")
     }
   }
 }

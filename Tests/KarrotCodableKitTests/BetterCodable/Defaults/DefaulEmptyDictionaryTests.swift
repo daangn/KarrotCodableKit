@@ -5,16 +5,17 @@
 //  Created by Elon on 2023/04/25.
 //
 
-import XCTest
+import Testing
+import Foundation
 
 import KarrotCodableKit
 
-final class DefaultEmptyDictionaryTests: XCTestCase {
+struct DefaultEmptyDictionaryTests {
   struct Fixture: Equatable, Codable {
     @DefaultEmptyDictionary var stringToInt: [String: Int]
   }
 
-  func testDecodingFailableDictionaryDefaultsToEmptyDictionary() throws {
+  @Test func testDecodingFailableDictionaryDefaultsToEmptyDictionary() throws {
     // given
     let jsonData = #"{ "stringToInt": null }"#.data(using: .utf8)!
 
@@ -22,10 +23,10 @@ final class DefaultEmptyDictionaryTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
 
     // then
-    XCTAssertEqual(fixture.stringToInt, [:])
+    #expect(fixture.stringToInt == [:])
   }
 
-  func testDecodingKeyNotPresentDefaultsToEmptyDictionary() throws {
+  @Test func testDecodingKeyNotPresentDefaultsToEmptyDictionary() throws {
     // given
     let jsonData = #"{}"#.data(using: .utf8)!
 
@@ -33,10 +34,10 @@ final class DefaultEmptyDictionaryTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
 
     // then
-    XCTAssertEqual(fixture.stringToInt, [:])
+    #expect(fixture.stringToInt == [:])
   }
 
-  func testEncodingDecodedFailableDictionaryDefaultsToEmptyDictionary() throws {
+  @Test func testEncodingDecodedFailableDictionaryDefaultsToEmptyDictionary() throws {
     // given
     let jsonData = #"{ "stringToInt": null }"#.data(using: .utf8)!
     var _fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
@@ -47,10 +48,10 @@ final class DefaultEmptyDictionaryTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: fixtureData)
 
     // then
-    XCTAssertEqual(fixture.stringToInt, ["one": 1])
+    #expect(fixture.stringToInt == ["one": 1])
   }
 
-  func testEncodingDecodedFulfillableDictionaryRetainsContents() throws {
+  @Test func testEncodingDecodedFulfillableDictionaryRetainsContents() throws {
     // given
     let jsonData = #"{ "stringToInt": {"one": 1, "two": 2} }"#.data(using: .utf8)!
     let _fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
@@ -60,6 +61,6 @@ final class DefaultEmptyDictionaryTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: fixtureData)
 
     // then
-    XCTAssertEqual(fixture.stringToInt, ["one": 1, "two": 2])
+    #expect(fixture.stringToInt == ["one": 1, "two": 2])
   }
 }

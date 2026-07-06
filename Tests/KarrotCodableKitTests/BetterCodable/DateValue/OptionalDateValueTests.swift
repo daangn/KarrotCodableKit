@@ -6,13 +6,14 @@
 //  Copyright © 2024 Danggeun Market Inc. All rights reserved.
 //
 
-import XCTest
+import Testing
+import Foundation
 
 import KarrotCodableKit
 
-final class OptionalDateValueTests: XCTestCase {
+struct OptionalDateValueTests {
 
-  func testDecodingAndEncodingISO8601DateString() throws {
+  @Test func testDecodingAndEncodingISO8601DateString() throws {
     struct Fixture: Codable {
       @OptionalDateValue<ISO8601Strategy> var iso8601: Date?
     }
@@ -24,10 +25,10 @@ final class OptionalDateValueTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
 
     // then
-    XCTAssertEqual(fixture.iso8601, Date(timeIntervalSince1970: 851042397))
+    #expect(fixture.iso8601 == Date(timeIntervalSince1970: 851042397))
   }
 
-  func testDecodingAndEncodingOptionalISO8601DateString() throws {
+  @Test func testDecodingAndEncodingOptionalISO8601DateString() throws {
     struct Fixture: Codable {
       @OptionalDateValue<ISO8601Strategy> var iso8601: Date?
     }
@@ -39,10 +40,10 @@ final class OptionalDateValueTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
 
     // then
-    XCTAssertNil(fixture.iso8601)
+    #expect(fixture.iso8601 == nil)
   }
 
-  func testDecodingAndEncodingNotPresentISO8601DateString() throws {
+  @Test func testDecodingAndEncodingNotPresentISO8601DateString() throws {
     struct Fixture: Codable {
       @OptionalDateValue<ISO8601Strategy> var iso8601: Date?
     }
@@ -54,10 +55,10 @@ final class OptionalDateValueTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
 
     // then
-    XCTAssertNil(fixture.iso8601)
+    #expect(fixture.iso8601 == nil)
   }
 
-  func testDecodingAndEncodingISO8601DateStringWithFractionalSeconds() throws {
+  @Test func testDecodingAndEncodingISO8601DateStringWithFractionalSeconds() throws {
     struct Fixture: Codable {
       @OptionalDateValue<ISO8601WithFractionalSecondsStrategy> var iso8601: Date?
       @OptionalDateValue<ISO8601WithFractionalSecondsStrategy> var iso8601Short: Date?
@@ -75,11 +76,11 @@ final class OptionalDateValueTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
 
     // then
-    XCTAssertEqual(fixture.iso8601Short, Date(timeIntervalSince1970: 851013597.0))
-    XCTAssertEqual(fixture.iso8601, Date(timeIntervalSince1970: 851013597.123))
+    #expect(fixture.iso8601Short == Date(timeIntervalSince1970: 851013597.0))
+    #expect(fixture.iso8601 == Date(timeIntervalSince1970: 851013597.123))
   }
 
-  func testDecodingAndEncodingRFC3339DateString() throws {
+  @Test func testDecodingAndEncodingRFC3339DateString() throws {
     struct Fixture: Codable {
       @OptionalDateValue<RFC3339Strategy> var rfc3339Date: Date?
     }
@@ -91,10 +92,10 @@ final class OptionalDateValueTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
 
     // then
-    XCTAssertEqual(fixture.rfc3339Date, Date(timeIntervalSince1970: 851042397))
+    #expect(fixture.rfc3339Date == Date(timeIntervalSince1970: 851042397))
   }
 
-  func testDecodingAndEncodingOptionalRFC3339DateString() throws {
+  @Test func testDecodingAndEncodingOptionalRFC3339DateString() throws {
     struct Fixture: Codable {
       @OptionalDateValue<RFC3339Strategy> var rfc3339Date: Date?
     }
@@ -106,10 +107,10 @@ final class OptionalDateValueTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
 
     // then
-    XCTAssertNil(fixture.rfc3339Date)
+    #expect(fixture.rfc3339Date == nil)
   }
 
-  func testDecodingAndEncodingNotPresentRFC3339DateString() throws {
+  @Test func testDecodingAndEncodingNotPresentRFC3339DateString() throws {
     struct Fixture: Codable {
       @OptionalDateValue<RFC3339Strategy> var rfc3339Date: Date?
     }
@@ -121,10 +122,10 @@ final class OptionalDateValueTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
 
     // then
-    XCTAssertNil(fixture.rfc3339Date)
+    #expect(fixture.rfc3339Date == nil)
   }
 
-  func testDecodingRFC3339NanoDateString() throws {
+  @Test func testDecodingRFC3339NanoDateString() throws {
     struct Fixture: Codable {
       @OptionalDateValue<RFC3339NanoStrategy> var rfc3339Date1: Date?
       @OptionalDateValue<RFC3339NanoStrategy> var rfc3339Date2: Date?
@@ -150,15 +151,15 @@ final class OptionalDateValueTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
 
     // then
-    XCTAssertEqual(fixture.rfc3339Date1, Date(timeIntervalSince1970: 851042397.0))
-    XCTAssertEqual(fixture.rfc3339Date2, Date(timeIntervalSince1970: 851042397.0))
-    XCTAssertEqual(fixture.rfc3339Date3, Date(timeIntervalSince1970: 1720617749.481))
-    XCTAssertEqual(fixture.rfc3339Date4, Date(timeIntervalSince1970: 1720588949.481))
-    XCTAssertEqual(fixture.rfc3339Date5, Date(timeIntervalSince1970: 1715082540.000))
-    XCTAssertEqual(fixture.rfc3339Date6, Date(timeIntervalSince1970: 1715082540.000))
+    #expect(fixture.rfc3339Date1 == Date(timeIntervalSince1970: 851042397.0))
+    #expect(fixture.rfc3339Date2 == Date(timeIntervalSince1970: 851042397.0))
+    #expect(fixture.rfc3339Date3 == Date(timeIntervalSince1970: 1720617749.481))
+    #expect(fixture.rfc3339Date4 == Date(timeIntervalSince1970: 1720588949.481))
+    #expect(fixture.rfc3339Date5 == Date(timeIntervalSince1970: 1715082540.000))
+    #expect(fixture.rfc3339Date6 == Date(timeIntervalSince1970: 1715082540.000))
   }
 
-  func testDecodingAndEncodingUTCTimestamp() throws {
+  @Test func testDecodingAndEncodingUTCTimestamp() throws {
     struct Fixture: Codable {
       @OptionalDateValue<TimestampStrategy> var timestamp: Date?
     }
@@ -170,10 +171,10 @@ final class OptionalDateValueTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
 
     // then
-    XCTAssertEqual(fixture.timestamp, Date(timeIntervalSince1970: 851042397))
+    #expect(fixture.timestamp == Date(timeIntervalSince1970: 851042397))
   }
 
-  func testDecodingAndEncodingOptionalUTCTimestamp() throws {
+  @Test func testDecodingAndEncodingOptionalUTCTimestamp() throws {
     struct Fixture: Codable {
       @OptionalDateValue<TimestampStrategy> var timestamp: Date?
     }
@@ -185,10 +186,10 @@ final class OptionalDateValueTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
 
     // then
-    XCTAssertNil(fixture.timestamp)
+    #expect(fixture.timestamp == nil)
   }
 
-  func testDecodingAndEncodingWithCustomStrategies() throws {
+  @Test func testDecodingAndEncodingWithCustomStrategies() throws {
     struct Fixture: Codable {
       @OptionalDateValue<TimestampStrategy> var timeStamp: Date?
     }
@@ -203,7 +204,7 @@ final class OptionalDateValueTests: XCTestCase {
     let fixture = try decoder.decode(Fixture.self, from: jsonData)
 
     // then
-    XCTAssertEqual(fixture.timeStamp, Date(timeIntervalSince1970: 851042397))
+    #expect(fixture.timeStamp == Date(timeIntervalSince1970: 851042397))
 
     // when
     let encoder = JSONEncoder()
@@ -213,6 +214,6 @@ final class OptionalDateValueTests: XCTestCase {
     let fixture2 = try decoder.decode(Fixture.self, from: data)
 
     // then
-    XCTAssertEqual(fixture2.timeStamp, Date(timeIntervalSince1970: 851042397))
+    #expect(fixture2.timeStamp == Date(timeIntervalSince1970: 851042397))
   }
 }

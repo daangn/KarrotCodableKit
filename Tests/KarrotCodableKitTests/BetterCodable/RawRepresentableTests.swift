@@ -6,13 +6,14 @@
 //  Copyright © 2023 Danggeun Market Inc. All rights reserved.
 //
 
-import XCTest
+import Testing
+import Foundation
 
 @testable import KarrotCodableKit
 
-class RawRepresentableTests: XCTestCase {
+struct RawRepresentableTests {
 
-  func testEnumDecodingWithDefaultValue() throws {
+  @Test func testEnumDecodingWithDefaultValue() throws {
     // given
     enum VehicleType: String, Codable, DefaultCodableStrategy {
       case car
@@ -36,6 +37,6 @@ class RawRepresentableTests: XCTestCase {
     let car = try JSONDecoder().decode(Vehicle.self, from: json)
 
     // then
-    XCTAssertEqual(car.vehicleType, .unknown)
+    #expect(car.vehicleType == .unknown)
   }
 }

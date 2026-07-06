@@ -5,7 +5,8 @@
 //  Created by Elon on 2023/04/25.
 //
 
-import XCTest
+import Testing
+import Foundation
 
 import KarrotCodableKit
 
@@ -22,7 +23,7 @@ struct MyLosslessStrategy<Value: LosslessStringCodable>: LosslessDecodingStrateg
 
 typealias MyLosslessType<T> = LosslessValueCodable<MyLosslessStrategy<T>> where T: LosslessStringCodable
 
-final class LosslessCustomValueTests: XCTestCase {
+struct LosslessCustomValueTests {
   struct Fixture: Equatable, Codable {
     @MyLosslessType var int: Int
     @MyLosslessType var string: String
@@ -30,7 +31,7 @@ final class LosslessCustomValueTests: XCTestCase {
     @MyLosslessType var bool: Bool
   }
 
-  func testDecodingCustomLosslessStrategyDecodesCorrectly() throws {
+  @Test func testDecodingCustomLosslessStrategyDecodesCorrectly() throws {
     // given
     let jsonData = #"{ "string": 7, "int": "1", "fortytwo": null, "bool": true }"#.data(using: .utf8)!
 
@@ -38,17 +39,17 @@ final class LosslessCustomValueTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
 
     // then
-    XCTAssertEqual(fixture.string, "7")
-    XCTAssertEqual(fixture.int, 1)
-    XCTAssertEqual(fixture.fortytwo, 42)
-    XCTAssertEqual(fixture.bool, true)
+    #expect(fixture.string == "7")
+    #expect(fixture.int == 1)
+    #expect(fixture.fortytwo == 42)
+    #expect(fixture.bool == true)
   }
 
-  func testDecodingCustomLosslessStrategyWithBrokenFieldsThrowsError() throws {
+  @Test func testDecodingCustomLosslessStrategyWithBrokenFieldsThrowsError() throws {
     // given
     let jsonData = #"{ "string": 7, "int": "1", "fortytwo": null, "bool": 9 }"#.data(using: .utf8)!
 
     // when/then
-    XCTAssertThrowsError(try JSONDecoder().decode(Fixture.self, from: jsonData))
+    #expect(throws: (any Error).self) { try JSONDecoder().decode(Fixture.self, from: jsonData) }
   }
 }

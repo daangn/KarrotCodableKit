@@ -5,11 +5,12 @@
 //  Created by Elon on 2023/04/25.
 //
 
-import XCTest
+import Testing
+import Foundation
 
 import KarrotCodableKit
 
-final class LossyArrayTests: XCTestCase {
+struct LossyArrayTests {
   struct Fixture: Equatable, Codable {
     struct NestedFixture: Equatable, Codable {
       var one: String
@@ -20,7 +21,7 @@ final class LossyArrayTests: XCTestCase {
     @LossyArray var nonPrimitiveValues: [NestedFixture]
   }
 
-  func testDecodingLossyArrayIgnoresFailableElements() throws {
+  @Test func testDecodingLossyArrayIgnoresFailableElements() throws {
     // given
     let jsonData = #"{ "values": [1, null, 3, 4], "nonPrimitiveValues": [null] }"#.data(using: .utf8)!
 
@@ -28,11 +29,11 @@ final class LossyArrayTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
 
     // then
-    XCTAssertEqual(fixture.values, [1, 3, 4])
-    XCTAssertEqual(fixture.nonPrimitiveValues, [])
+    #expect(fixture.values == [1, 3, 4])
+    #expect(fixture.nonPrimitiveValues == [])
   }
 
-  func testDecodingLossyArrayIgnoresLossyElements() throws {
+  @Test func testDecodingLossyArrayIgnoresLossyElements() throws {
     // given
     let jsonData = #"{ "values": [1, null, "3", false, 4], "nonPrimitiveValues": [null] }"#.data(using: .utf8)!
 
@@ -40,11 +41,11 @@ final class LossyArrayTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
 
     // then
-    XCTAssertEqual(fixture.values, [1, 4])
-    XCTAssertEqual(fixture.nonPrimitiveValues, [])
+    #expect(fixture.values == [1, 4])
+    #expect(fixture.nonPrimitiveValues == [])
   }
 
-  func testEncodingDecodedLossyArrayIgnoresFailableElements() throws {
+  @Test func testEncodingDecodedLossyArrayIgnoresFailableElements() throws {
     // given
     let jsonData = #"{ "values": [null, 2, null, 4], "nonPrimitiveValues": [null] }"#.data(using: .utf8)!
     var _fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
@@ -56,11 +57,11 @@ final class LossyArrayTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: fixtureData)
 
     // then
-    XCTAssertEqual(fixture.values, [2, 4, 5])
-    XCTAssertEqual(fixture.nonPrimitiveValues, [Fixture.NestedFixture(one: "1", two: ["x": ["y"]])])
+    #expect(fixture.values == [2, 4, 5])
+    #expect(fixture.nonPrimitiveValues == [Fixture.NestedFixture(one: "1", two: ["x": ["y"]])])
   }
 
-  func testEncodingDecodedLossyArrayRetainsContents() throws {
+  @Test func testEncodingDecodedLossyArrayRetainsContents() throws {
     // given
     let jsonData = #"{ "values": [1, 2], "nonPrimitiveValues": [{ "one": "one", "two": {"key": ["value"]}}] }"#
       .data(using: .utf8)!
@@ -71,11 +72,11 @@ final class LossyArrayTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: fixtureData)
 
     // then
-    XCTAssertEqual(fixture.values, [1, 2])
-    XCTAssertEqual(fixture.nonPrimitiveValues, [Fixture.NestedFixture(one: "one", two: ["key": ["value"]])])
+    #expect(fixture.values == [1, 2])
+    #expect(fixture.nonPrimitiveValues == [Fixture.NestedFixture(one: "one", two: ["key": ["value"]])])
   }
 
-  func testEncodingDecodingLossyArrayWorksWithCustomStrategies() throws {
+  @Test func testEncodingDecodingLossyArrayWorksWithCustomStrategies() throws {
     // given
     struct Fixture: Equatable, Codable {
       @LossyArray var theValues: [Date]
@@ -89,7 +90,7 @@ final class LossyArrayTests: XCTestCase {
     let fixture = try decoder.decode(Fixture.self, from: jsonData)
 
     // then
-    XCTAssertEqual(fixture.theValues, [Date(timeIntervalSince1970: 123)])
+    #expect(fixture.theValues == [Date(timeIntervalSince1970: 123)])
 
     // given
     let encoder = JSONEncoder()
@@ -101,6 +102,6 @@ final class LossyArrayTests: XCTestCase {
     let fixture2 = try decoder.decode(Fixture.self, from: data)
 
     // then
-    XCTAssertEqual(fixture2.theValues, [Date(timeIntervalSince1970: 123)])
+    #expect(fixture2.theValues == [Date(timeIntervalSince1970: 123)])
   }
 }

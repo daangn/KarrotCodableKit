@@ -6,13 +6,14 @@
 //  Copyright © 2025 Danggeun Market Inc. All rights reserved.
 //
 
-import XCTest
+import Testing
+import Foundation
 
 import KarrotCodableKit
 
-final class LossyOptionalPolymorphicValueTests: XCTestCase {
+struct LossyOptionalPolymorphicValueTests {
 
-  func testEncodingLossyOptionalPolymorphicValue() throws {
+  @Test func testEncodingLossyOptionalPolymorphicValue() throws {
     // given
     let response = LossyOptionalDummyResponse(
       notice1: DummyCallout(
@@ -39,11 +40,11 @@ final class LossyOptionalPolymorphicValueTests: XCTestCase {
     let data = try encoder.encode(response)
 
     // then - notice2 (nil) is omitted, matching Apple's default Codable behavior
-    let jsonString = try XCTUnwrap(String(bytes: data, encoding: .utf8))
-    XCTAssertEqual(jsonString, expectResult)
+    let jsonString = try #require(String(bytes: data, encoding: .utf8))
+    #expect(jsonString == expectResult)
   }
 
-  func testDecodingLossyOptionalPolymorphicValue() throws {
+  @Test func testDecodingLossyOptionalPolymorphicValue() throws {
     // given
     let jsonData = #"""
     {
@@ -59,11 +60,11 @@ final class LossyOptionalPolymorphicValueTests: XCTestCase {
     let result = try JSONDecoder().decode(LossyOptionalDummyResponse.self, from: Data(jsonData.utf8))
 
     // then
-    XCTAssertNil(result.notice1)
-    XCTAssertEqual(result.notice2?.type, .callout)
+    #expect(result.notice1 == nil)
+    #expect(result.notice2?.type == .callout)
   }
 
-  func testDecodingEncodingLossyOptionalPolymorphicValue() throws {
+  @Test func testDecodingEncodingLossyOptionalPolymorphicValue() throws {
     // given
     let json = #"""
     {
@@ -76,8 +77,8 @@ final class LossyOptionalPolymorphicValueTests: XCTestCase {
     let result = try JSONDecoder().decode(LossyOptionalDummyResponse.self, from: Data(json.utf8))
 
     // then
-    XCTAssertNil(result.notice1)
-    XCTAssertNil(result.notice2)
+    #expect(result.notice1 == nil)
+    #expect(result.notice2 == nil)
 
     // when
     let encoder = JSONEncoder()
@@ -86,13 +87,13 @@ final class LossyOptionalPolymorphicValueTests: XCTestCase {
 
     // then - all nil values are omitted, producing an empty object
     let expectResult = "{\n\n}"
-    let jsonString = try XCTUnwrap(String(bytes: data, encoding: .utf8))
-    XCTAssertEqual(jsonString, expectResult)
+    let jsonString = try #require(String(bytes: data, encoding: .utf8))
+    #expect(jsonString == expectResult)
   }
 }
 
 extension LossyOptionalPolymorphicValueTests {
-  func testDecodingOnlyValue() throws {
+  @Test func testDecodingOnlyValue() throws {
     // given
     let jsonData = #"""
     {
@@ -112,8 +113,8 @@ extension LossyOptionalPolymorphicValueTests {
     )
 
     // then
-    XCTAssertNil(result.notice1)
-    XCTAssertEqual(result.notice2?.type, .callout)
-    XCTAssertNil(result.notice3)
+    #expect(result.notice1 == nil)
+    #expect(result.notice2?.type == .callout)
+    #expect(result.notice3 == nil)
   }
 }
