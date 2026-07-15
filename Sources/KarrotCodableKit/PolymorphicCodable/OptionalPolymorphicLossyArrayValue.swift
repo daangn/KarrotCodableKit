@@ -11,23 +11,29 @@ import Foundation
 /// A property wrapper that decodes an optional array of polymorphic objects with lossy behavior
 /// for individual elements.
 ///
-/// This wrapper combines the optionality handling of ``OptionalPolymorphicArrayValue`` with
-/// the lossy element decoding of ``PolymorphicLossyArrayValue``.
+/// This is the optional variant of ``PolymorphicLossyArrayValue`` and follows the exact same
+/// policy; the only difference is that a missing key or an explicit `null` is represented
+/// as `nil` instead of `[]`.
 ///
 /// Key behaviors:
 /// - The array itself is optional (`[Element]?`), returning `nil` when the key is missing or the value is `null`
 /// - Invalid elements within a present array are silently skipped rather than causing decoding failure
+/// - A present value that is not a valid JSON array recovers to an empty array `[]` instead of
+///   throwing; `nil` stays reserved for a missing key or an explicit `null`
 ///
 /// Comparison with similar wrappers:
-/// - ``PolymorphicLossyArrayValue``: For required arrays that default to `[]` when missing or null
+/// - ``PolymorphicLossyArrayValue``: For required arrays that default to `[]` when missing, null,
+///   or not a valid JSON array
 /// - ``OptionalPolymorphicArrayValue``: For optional arrays that throw on invalid elements
 /// - ``DefaultEmptyPolymorphicArrayValue``: For required arrays that default to `[]` when missing or null,
-///   strict on elements
+///   and fall back to `[]` entirely when any element is invalid
 ///
 /// Decoding behavior:
 /// - If the key is missing or the value is `null`, `wrappedValue` is set to `nil`
 /// - If the value is a valid array, each element is decoded using `PolymorphicValue<PolymorphicType>`
-/// - If an element fails to decode, the error is caught and the element is **skipped**
+/// - If an element fails to decode, the error is caught and the element is **skipped**;
+///   the failure is recorded in the decoding `outcome` as an `ArrayDecodingError`
+/// - If the value is not a valid JSON array, the error is recovered and `wrappedValue` is set to `[]`
 /// - Empty arrays are decoded as empty arrays, not `nil`
 ///
 /// Encoding behavior:
@@ -60,7 +66,7 @@ public struct OptionalPolymorphicLossyArrayValue<PolymorphicType: PolymorphicCod
   init(
     wrappedValue: [PolymorphicType.ExpectedType]?,
     outcome: ResilientDecodingOutcome,
-    results: [Result<PolymorphicType.ExpectedType, Error>] = []
+    results: [Result<PolymorphicType.ExpectedType, Error>] = [],
   ) {
     self.wrappedValue = wrappedValue
     self.outcome = outcome
@@ -82,45 +88,41 @@ public struct OptionalPolymorphicLossyArrayValue<PolymorphicType: PolymorphicCod
 }
 
 extension OptionalPolymorphicLossyArrayValue: Decodable {
-  private struct AnyDecodableValue: Decodable {}
-
   public init(from decoder: Decoder) throws {
     // First check if the value is nil
-    let singleValueContainer = try decoder.singleValueContainer()
-    if singleValueContainer.decodeNil() {
+    if let singleValueContainer = try? decoder.singleValueContainer(), singleValueContainer.decodeNil() {
       self.init(wrappedValue: nil, outcome: .valueWasNil)
       return
     }
 
-    // Decode as an array with lossy behavior
-    var container = try decoder.unkeyedContainer()
+    do {
+      var container = try decoder.unkeyedContainer()
+      let decoded = try container.decodeLossyPolymorphicElements(of: PolymorphicType.self)
 
-    var elements = [PolymorphicType.ExpectedType]()
-    #if DEBUG
-    var results = [Result<PolymorphicType.ExpectedType, Error>]()
-    #endif
-
-    while !container.isAtEnd {
-      do {
-        let value = try container.decode(PolymorphicValue<PolymorphicType>.self).wrappedValue
-        elements.append(value)
-        #if DEBUG
-        results.append(.success(value))
-        #endif
-      } catch {
-        // Decoding processing to prevent infinite loops if decoding fails.
-        _ = try? container.decode(AnyDecodableValue.self)
-        #if DEBUG
-        results.append(.failure(error))
-        #endif
+      #if DEBUG
+      if decoded.results.contains(where: \.isFailure) {
+        let error = ResilientDecodingOutcome.ArrayDecodingError(results: decoded.results)
+        self.init(
+          wrappedValue: decoded.elements,
+          outcome: .recoveredFrom(error, wasReported: false),
+          results: decoded.results,
+        )
+      } else {
+        self.init(wrappedValue: decoded.elements, outcome: .decodedSuccessfully, results: decoded.results)
       }
+      #else
+      self.init(wrappedValue: decoded.elements, outcome: .decodedSuccessfully)
+      #endif
+    } catch {
+      // Same policy as `PolymorphicLossyArrayValue`: an invalid array-level value recovers to `[]`.
+      // `nil` stays reserved for a missing key or an explicit `null`.
+      #if DEBUG
+      decoder.reportError(error)
+      self.init(wrappedValue: [], outcome: .recoveredFrom(error, wasReported: true), results: [])
+      #else
+      self.init(wrappedValue: [], outcome: .recoveredFrom(error, wasReported: false))
+      #endif
     }
-
-    #if DEBUG
-    self.init(wrappedValue: elements, outcome: .decodedSuccessfully, results: results)
-    #else
-    self.init(wrappedValue: elements, outcome: .decodedSuccessfully)
-    #endif
   }
 }
 
