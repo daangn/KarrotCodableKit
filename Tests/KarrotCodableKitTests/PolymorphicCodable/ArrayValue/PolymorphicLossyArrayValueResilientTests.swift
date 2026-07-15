@@ -12,10 +12,10 @@ struct PolymorphicLossyArrayValueResilientTests {
   func emptyArray() throws {
     // given
     let json = """
-      {
-        "notices": []
-      }
-      """
+    {
+      "notices": []
+    }
+    """
 
     // when
     let data = try #require(json.data(using: .utf8))
@@ -34,23 +34,23 @@ struct PolymorphicLossyArrayValueResilientTests {
   func successfulArrayDecoding() throws {
     // given
     let json = """
-      {
-        "notices": [
-          {
-            "type": "callout",
-            "title": "First",
-            "description": "First callout",
-            "icon": "icon1.png"
-          },
-          {
-            "type": "actionable-callout",
-            "title": "Second",
-            "description": "Second callout",
-            "action": "https://example.com"
-          }
-        ]
-      }
-      """
+    {
+      "notices": [
+        {
+          "type": "callout",
+          "title": "First",
+          "description": "First callout",
+          "icon": "icon1.png"
+        },
+        {
+          "type": "actionable-callout",
+          "title": "Second",
+          "description": "Second callout",
+          "action": "https://example.com"
+        }
+      ]
+    }
+    """
 
     // when
     let data = try #require(json.data(using: .utf8))
@@ -73,29 +73,29 @@ struct PolymorphicLossyArrayValueResilientTests {
   func arrayWithInvalidElements() throws {
     // given
     let json = """
-      {
-        "notices": [
-          {
-            "type": "callout",
-            "title": "Valid",
-            "description": "Valid callout",
-            "icon": "icon.png"
-          },
-          {
-            "type": "invalid-type"
-          },
-          {
-            "type": "dismissible-callout",
-            "title": "Also Valid",
-            "description": "Another valid callout",
-            "key": "dismiss-key"
-          },
-          "not-an-object",
-          null,
-          123
-        ]
-      }
-      """
+    {
+      "notices": [
+        {
+          "type": "callout",
+          "title": "Valid",
+          "description": "Valid callout",
+          "icon": "icon.png"
+        },
+        {
+          "type": "invalid-type"
+        },
+        {
+          "type": "dismissible-callout",
+          "title": "Also Valid",
+          "description": "Another valid callout",
+          "key": "dismiss-key"
+        },
+        "not-an-object",
+        null,
+        123
+      ]
+    }
+    """
 
     // when
     let data = try #require(json.data(using: .utf8))
@@ -107,7 +107,8 @@ struct PolymorphicLossyArrayValueResilientTests {
     #expect(result.notices[1] is DummyDismissibleCallout)
 
     #if DEBUG
-    #expect(result.$notices.outcome == .decodedSuccessfully)
+    // Element failures surface through the outcome as an ArrayDecodingError, matching @LossyArray.
+    #expect(result.$notices.error is ResilientDecodingOutcome.ArrayDecodingError<any DummyNotice>)
     #expect(result.$notices.results.count == 6)
 
     // Only first and third elements succeed
@@ -124,8 +125,8 @@ struct PolymorphicLossyArrayValueResilientTests {
   func missingKey() throws {
     // given
     let json = """
-      {}
-      """
+    {}
+    """
 
     // when
     let data = try #require(json.data(using: .utf8))
@@ -144,10 +145,10 @@ struct PolymorphicLossyArrayValueResilientTests {
   func invalidType() throws {
     // given
     let json = """
-      {
-        "notices": "not an array"
-      }
-      """
+    {
+      "notices": "not an array"
+    }
+    """
 
     // when
     let data = try #require(json.data(using: .utf8))
@@ -170,20 +171,20 @@ struct PolymorphicLossyArrayValueResilientTests {
   func partialErrorReporting() throws {
     /// given
     let json = """
-      {
-        "notices": [
-          {
-            "type": "callout",
-            "title": "Valid",
-            "description": "Valid callout",
-            "icon": "icon.png"
-          },
-          {
-            "type": "invalid-type"
-          }
-        ]
-      }
-      """
+    {
+      "notices": [
+        {
+          "type": "callout",
+          "title": "Valid",
+          "description": "Valid callout",
+          "icon": "icon.png"
+        },
+        {
+          "type": "invalid-type"
+        }
+      ]
+    }
+    """
 
     // when
     let data = try #require(json.data(using: .utf8))

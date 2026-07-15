@@ -12,32 +12,42 @@ import Foundation
 public typealias DefaultEmptyPolymorphicLossyArrayValue<PolymorphicType: PolymorphicCodableStrategy> =
   PolymorphicLossyArrayValue<PolymorphicType>
 
-/// A property wrapper that decodes an array of polymorphic objects with lossy behavior for individual elements,
-/// and defaults to an empty array `[]` if the array key is missing, the value is `null`, or not a valid JSON array.
+/// A property wrapper that decodes an array of polymorphic objects with lossy behavior for individual
+/// elements, and defaults to an empty array `[]` if the array key is missing, the value is `null`,
+/// or not a valid JSON array.
 ///
 /// Decoding Behavior:
 /// - Attempts to decode an unkeyed container (JSON array).
 /// - If the container is successfully obtained, it iterates through the elements:
 ///   - For each element, it attempts to decode using `PolymorphicValue<PolymorphicType>`.
 ///   - If an element's decoding succeeds, the resulting value is kept.
-///   - If an element's decoding fails (due to any error caught by the `PolymorphicType` strategy or `PolymorphicValue`), the error is caught, logged using `print`, and the element is **skipped**.
-///   - To prevent infinite loops on invalid data, it attempts to decode the failing element as `AnyDecodableValue` to advance the container's position.
+///   - If an element's decoding fails (due to any error caught by the `PolymorphicType` strategy or
+///     `PolymorphicValue`), the error is caught and the element is **skipped**. The failure is recorded
+///     in the decoding `outcome` as an `ArrayDecodingError` and, in DEBUG builds, reported to the
+///     resilient decoding error reporter — matching `@LossyArray` in BetterCodable.
 /// - After iterating, `wrappedValue` contains an array of only the successfully decoded elements.
-/// - If the initial step of obtaining the unkeyed container fails (e.g., missing key, `null` value, wrong type), it catches the error, assigns `[]` to `wrappedValue`, and logs the error.
+/// - If the value is `null` or not a valid JSON array, the error is recovered inside `init(from:)` and
+///   `wrappedValue` is set to `[]`, so the recovery also applies when the wrapper is decoded directly
+///   (e.g., nested in other collections). A missing key is handled by the `KeyedDecodingContainer`
+///   overloads and likewise yields `[]`.
 ///
 /// Encoding Behavior:
-/// - Encodes the `wrappedValue` array. Each valid element is wrapped using `PolymorphicValue<PolymorphicType>` before being added to the encoded array.
+/// - Encodes the `wrappedValue` array. Each valid element is wrapped using
+///   `PolymorphicValue<PolymorphicType>` before being added to the encoded array.
 ///
-/// This wrapper is ideal for handling arrays where some elements might be malformed, represent unknown types,
-/// or are otherwise invalid, allowing the application to process the remaining valid elements without failure.
+/// This wrapper is ideal for handling arrays where some elements might be malformed, represent unknown
+/// types, or are otherwise invalid, allowing the application to process the remaining valid elements
+/// without failure.
 ///
-/// **Important:** When decoding, invalid or malformed elements in the JSON array are simply omitted from the resulting array
-/// rather than causing the entire decoding process to fail. This allows you to successfully process JSON arrays
-/// even when they contain elements that don't conform to your expected structure or type.
+/// **Important:** When decoding, invalid or malformed elements in the JSON array are simply omitted from
+/// the resulting array rather than causing the entire decoding process to fail. This allows you to
+/// successfully process JSON arrays even when they contain elements that don't conform to your expected
+/// structure or type.
 ///
 @propertyWrapper
 public struct PolymorphicLossyArrayValue<PolymorphicType: PolymorphicCodableStrategy> {
-  /// The decoded array containing only the successfully decoded polymorphic elements. Defaults to an empty array `[]` if the array key is missing or the value is not an array.
+  /// The decoded array containing only the successfully decoded polymorphic elements.
+  /// Defaults to an empty array `[]` if the array key is missing or the value is not an array.
   public var wrappedValue: [PolymorphicType.ExpectedType]
 
   /// Tracks the outcome of the decoding process for resilient decoding
@@ -82,38 +92,49 @@ public struct PolymorphicLossyArrayValue<PolymorphicType: PolymorphicCodableStra
 }
 
 extension PolymorphicLossyArrayValue: Decodable {
-  private struct AnyDecodableValue: Decodable {}
-
   public init(from decoder: Decoder) throws {
-    var container = try decoder.unkeyedContainer()
-
-    var elements = [PolymorphicType.ExpectedType]()
-    #if DEBUG
-    var results = [Result<PolymorphicType.ExpectedType, Error>]()
-    #endif
-
-    while !container.isAtEnd {
-      do {
-        let value = try container.decode(PolymorphicValue<PolymorphicType>.self).wrappedValue
-        elements.append(value)
-        #if DEBUG
-        results.append(.success(value))
-        #endif
-      } catch {
-        // Decoding processing to prevent infinite loops if decoding fails.
-        _ = try? container.decode(AnyDecodableValue.self)
-        #if DEBUG
-        results.append(.failure(error))
-        #endif
-      }
+    // Check for null first
+    if let singleValueContainer = try? decoder.singleValueContainer(), singleValueContainer.decodeNil() {
+      #if DEBUG
+      let context = DecodingError.Context(
+        codingPath: decoder.codingPath,
+        debugDescription: "Value was nil but property is non-optional"
+      )
+      let error = DecodingError.valueNotFound([PolymorphicType.ExpectedType].self, context)
+      decoder.reportError(error)
+      self.init(wrappedValue: [], outcome: .recoveredFrom(error, wasReported: true), results: [])
+      #else
+      self.init(wrappedValue: [], outcome: .valueWasNil)
+      #endif
+      return
     }
 
-    self.wrappedValue = elements
-    self.outcome = .decodedSuccessfully
-    #if DEBUG
-    self.results = results
-    #endif
+    do {
+      var container = try decoder.unkeyedContainer()
+      let results = try container.decodeLossyPolymorphicElementResults(of: PolymorphicType.self)
+      let elements = results.compactMap(\.success)
+
+      #if DEBUG
+      if results.contains(where: \.isFailure) {
+        let error = ResilientDecodingOutcome.ArrayDecodingError(results: results)
+        self.init(wrappedValue: elements, outcome: .recoveredFrom(error, wasReported: false), results: results)
+      } else {
+        self.init(wrappedValue: elements, outcome: .decodedSuccessfully, results: results)
+      }
+      #else
+      self.init(wrappedValue: elements)
+      #endif
+    } catch {
+      // An invalid array-level value (e.g., not an array) recovers to an empty array.
+      #if DEBUG
+      decoder.reportError(error)
+      self.init(wrappedValue: [], outcome: .recoveredFrom(error, wasReported: true), results: [])
+      #else
+      self.init(wrappedValue: [], outcome: .recoveredFrom(error, wasReported: false))
+      #endif
+    }
   }
+
 }
 
 extension PolymorphicLossyArrayValue: Encodable {

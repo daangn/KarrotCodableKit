@@ -33,42 +33,8 @@ extension KeyedDecodingContainer {
       #endif
     }
 
-    // Check if value is null
-    if try decodeNil(forKey: key) {
-      #if DEBUG
-      let context = DecodingError.Context(
-        codingPath: codingPath + [key],
-        debugDescription: "Value was nil but property is non-optional"
-      )
-      let error = DecodingError.valueNotFound([Any].self, context)
-      let decoder = try superDecoder(forKey: key)
-      decoder.reportError(error)
-      return PolymorphicLossyArrayValue(
-        wrappedValue: [],
-        outcome: .recoveredFrom(error, wasReported: true),
-        results: []
-      )
-      #else
-      return PolymorphicLossyArrayValue(wrappedValue: [], outcome: .valueWasNil)
-      #endif
-    }
-
-    // Try to decode the array
-    do {
-      let decoder = try superDecoder(forKey: key)
-      return try PolymorphicLossyArrayValue(from: decoder)
-    } catch {
-      // If decoding fails (e.g., not an array), return empty array
-      #if DEBUG
-      return PolymorphicLossyArrayValue(
-        wrappedValue: [],
-        outcome: .recoveredFrom(error, wasReported: false),
-        results: []
-      )
-      #else
-      return PolymorphicLossyArrayValue(wrappedValue: [], outcome: .recoveredFrom(error, wasReported: false))
-      #endif
-    }
+    // Null, non-array values, and element failures are all recovered inside `init(from:)`.
+    return try PolymorphicLossyArrayValue(from: superDecoder(forKey: key))
   }
 
   public func decodeIfPresent<T>(
@@ -80,28 +46,7 @@ extension KeyedDecodingContainer {
       return nil
     }
 
-    // Check if value is null
-    if try decodeNil(forKey: key) {
-      #if DEBUG
-      let context = DecodingError.Context(
-        codingPath: codingPath + [key],
-        debugDescription: "Value was nil but property is non-optional"
-      )
-      let error = DecodingError.valueNotFound([Any].self, context)
-      let decoder = try superDecoder(forKey: key)
-      decoder.reportError(error)
-      return PolymorphicLossyArrayValue(
-        wrappedValue: [],
-        outcome: .recoveredFrom(error, wasReported: true),
-        results: []
-      )
-      #else
-      return PolymorphicLossyArrayValue(wrappedValue: [])
-      #endif
-    }
-
-    // Try to decode using PolymorphicLossyArrayValue's decoder
-    let decoder = try superDecoder(forKey: key)
-    return try PolymorphicLossyArrayValue(from: decoder)
+    // Null, non-array values, and element failures are all recovered inside `init(from:)`.
+    return try PolymorphicLossyArrayValue(from: superDecoder(forKey: key))
   }
 }

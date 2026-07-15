@@ -29,13 +29,7 @@ extension KeyedDecodingContainer {
       return nil
     }
 
-    // Check if value is null
-    if try decodeNil(forKey: key) {
-      return OptionalPolymorphicLossyArrayValue(wrappedValue: nil, outcome: .valueWasNil)
-    }
-
-    // Try to decode the array with lossy behavior
-    let decoder = try superDecoder(forKey: key)
-    return try OptionalPolymorphicLossyArrayValue(from: decoder)
+    // Null, non-array values, and element failures are all handled inside `init(from:)`.
+    return try OptionalPolymorphicLossyArrayValue(from: superDecoder(forKey: key))
   }
 }
