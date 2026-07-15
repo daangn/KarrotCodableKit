@@ -29,7 +29,7 @@ public struct PolymorphicValue<PolymorphicType: PolymorphicCodableStrategy> {
   /// Initializes the property wrapper with a pre-decoded value.
   public init(wrappedValue: PolymorphicType.ExpectedType) {
     self.wrappedValue = wrappedValue
-    self.outcome = .decodedSuccessfully
+    outcome = .decodedSuccessfully
   }
 
   init(wrappedValue: PolymorphicType.ExpectedType, outcome: ResilientDecodingOutcome) {
@@ -53,8 +53,8 @@ extension PolymorphicValue: Encodable {
 extension PolymorphicValue: Decodable {
   public init(from decoder: Decoder) throws {
     do {
-      self.wrappedValue = try PolymorphicType.decode(from: decoder)
-      self.outcome = .decodedSuccessfully
+      wrappedValue = try PolymorphicType.decode(from: decoder)
+      outcome = .decodedSuccessfully
     } catch {
       #if DEBUG
       decoder.reportError(error)

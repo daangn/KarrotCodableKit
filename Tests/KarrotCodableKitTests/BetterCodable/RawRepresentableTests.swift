@@ -6,14 +6,15 @@
 //  Copyright © 2023 Danggeun Market Inc. All rights reserved.
 //
 
-import Testing
 import Foundation
+import Testing
 
 @testable import KarrotCodableKit
 
 struct RawRepresentableTests {
 
-  @Test func testEnumDecodingWithDefaultValue() throws {
+  @Test
+  func `enum decoding with default value`() throws {
     // given
     enum VehicleType: String, Codable, DefaultCodableStrategy {
       case car

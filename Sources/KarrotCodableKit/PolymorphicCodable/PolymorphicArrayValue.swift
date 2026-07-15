@@ -26,7 +26,7 @@ public struct PolymorphicArrayValue<PolymorphicType: PolymorphicCodableStrategy>
   /// Initializes the property wrapper with a pre-decoded array of values.
   public init(wrappedValue: [PolymorphicType.ExpectedType]) {
     self.wrappedValue = wrappedValue
-    self.outcome = .decodedSuccessfully
+    outcome = .decodedSuccessfully
   }
 
   init(wrappedValue: [PolymorphicType.ExpectedType], outcome: ResilientDecodingOutcome) {
@@ -52,8 +52,8 @@ extension PolymorphicArrayValue: Decodable {
       elements.append(value)
     }
 
-    self.wrappedValue = elements
-    self.outcome = .decodedSuccessfully
+    wrappedValue = elements
+    outcome = .decodedSuccessfully
   }
 }
 

@@ -21,12 +21,12 @@ struct OptionalDateValueResilientTests {
 
   // MARK: - ISO8601Strategy Tests
 
-  @Test("ISO8601Strategy: missing key sets outcome to keyNotFound")
-  func iso8601MissingKeyOutcome() throws {
+  @Test
+  func `ISO8601Strategy: missing key sets outcome to keyNotFound`() throws {
     let json = "{}"
 
     let decoder = JSONDecoder()
-    let data = json.data(using: .utf8)!
+    let data = try #require(json.data(using: .utf8))
     let fixture = try decoder.decode(ISO8601Fixture.self, from: data)
 
     // Should decode successfully with nil value
@@ -39,8 +39,8 @@ struct OptionalDateValueResilientTests {
     #endif
   }
 
-  @Test("ISO8601Strategy: null value sets outcome to valueWasNil")
-  func iso8601NullValueOutcome() throws {
+  @Test
+  func `ISO8601Strategy: null value sets outcome to valueWasNil`() throws {
     let json = """
       {
         "dateValue": null
@@ -48,7 +48,7 @@ struct OptionalDateValueResilientTests {
       """
 
     let decoder = JSONDecoder()
-    let data = json.data(using: .utf8)!
+    let data = try #require(json.data(using: .utf8))
     let fixture = try decoder.decode(ISO8601Fixture.self, from: data)
 
     // Should decode successfully with nil value
@@ -61,8 +61,8 @@ struct OptionalDateValueResilientTests {
     #endif
   }
 
-  @Test("ISO8601Strategy: valid value sets outcome to decodedSuccessfully")
-  func iso8601ValidValueOutcome() throws {
+  @Test
+  func `ISO8601Strategy: valid value sets outcome to decodedSuccessfully`() throws {
     let json = """
       {
         "dateValue": "1996-12-19T16:39:57-08:00"
@@ -70,7 +70,7 @@ struct OptionalDateValueResilientTests {
       """
 
     let decoder = JSONDecoder()
-    let data = json.data(using: .utf8)!
+    let data = try #require(json.data(using: .utf8))
     let fixture = try decoder.decode(ISO8601Fixture.self, from: data)
 
     // Should decode successfully with expected date
@@ -84,8 +84,8 @@ struct OptionalDateValueResilientTests {
     #endif
   }
 
-  @Test("ISO8601Strategy: invalid format throws error")
-  func iso8601InvalidFormatThrows() throws {
+  @Test
+  func `ISO8601Strategy: invalid format throws error`() throws {
     let json = """
       {
         "dateValue": "invalid-date-format"
@@ -93,7 +93,7 @@ struct OptionalDateValueResilientTests {
       """
 
     let decoder = JSONDecoder()
-    let data = json.data(using: .utf8)!
+    let data = try #require(json.data(using: .utf8))
 
     // Should throw error for invalid format
     #expect(throws: DecodingError.self) {
@@ -101,8 +101,8 @@ struct OptionalDateValueResilientTests {
     }
   }
 
-  @Test("ISO8601Strategy: type mismatch throws error")
-  func iso8601TypeMismatchThrows() throws {
+  @Test
+  func `ISO8601Strategy: type mismatch throws error`() throws {
     let json = """
       {
         "dateValue": 123456789
@@ -110,7 +110,7 @@ struct OptionalDateValueResilientTests {
       """
 
     let decoder = JSONDecoder()
-    let data = json.data(using: .utf8)!
+    let data = try #require(json.data(using: .utf8))
 
     // Should throw error for type mismatch
     #expect(throws: DecodingError.self) {
@@ -120,12 +120,12 @@ struct OptionalDateValueResilientTests {
 
   // MARK: - TimestampStrategy Tests
 
-  @Test("TimestampStrategy: missing key sets outcome to keyNotFound")
-  func timestampMissingKeyOutcome() throws {
+  @Test
+  func `TimestampStrategy: missing key sets outcome to keyNotFound`() throws {
     let json = "{}"
 
     let decoder = JSONDecoder()
-    let data = json.data(using: .utf8)!
+    let data = try #require(json.data(using: .utf8))
     let fixture = try decoder.decode(TimestampFixture.self, from: data)
 
     // Should decode successfully with nil value
@@ -138,8 +138,8 @@ struct OptionalDateValueResilientTests {
     #endif
   }
 
-  @Test("TimestampStrategy: null value sets outcome to valueWasNil")
-  func timestampNullValueOutcome() throws {
+  @Test
+  func `TimestampStrategy: null value sets outcome to valueWasNil`() throws {
     let json = """
       {
         "dateValue": null
@@ -147,7 +147,7 @@ struct OptionalDateValueResilientTests {
       """
 
     let decoder = JSONDecoder()
-    let data = json.data(using: .utf8)!
+    let data = try #require(json.data(using: .utf8))
     let fixture = try decoder.decode(TimestampFixture.self, from: data)
 
     // Should decode successfully with nil value
@@ -160,8 +160,8 @@ struct OptionalDateValueResilientTests {
     #endif
   }
 
-  @Test("TimestampStrategy: valid value sets outcome to decodedSuccessfully")
-  func timestampValidValueOutcome() throws {
+  @Test
+  func `TimestampStrategy: valid value sets outcome to decodedSuccessfully`() throws {
     let json = """
       {
         "dateValue": 851042397.0
@@ -169,7 +169,7 @@ struct OptionalDateValueResilientTests {
       """
 
     let decoder = JSONDecoder()
-    let data = json.data(using: .utf8)!
+    let data = try #require(json.data(using: .utf8))
     let fixture = try decoder.decode(TimestampFixture.self, from: data)
 
     // Should decode successfully with expected date
@@ -183,8 +183,8 @@ struct OptionalDateValueResilientTests {
     #endif
   }
 
-  @Test("TimestampStrategy: integer timestamp works")
-  func timestampIntegerValueOutcome() throws {
+  @Test
+  func `TimestampStrategy: integer timestamp works`() throws {
     let json = """
       {
         "dateValue": 851042397
@@ -192,7 +192,7 @@ struct OptionalDateValueResilientTests {
       """
 
     let decoder = JSONDecoder()
-    let data = json.data(using: .utf8)!
+    let data = try #require(json.data(using: .utf8))
     let fixture = try decoder.decode(TimestampFixture.self, from: data)
 
     // Should decode successfully with expected date
@@ -206,8 +206,8 @@ struct OptionalDateValueResilientTests {
     #endif
   }
 
-  @Test("TimestampStrategy: type mismatch throws error")
-  func timestampTypeMismatchThrows() throws {
+  @Test
+  func `TimestampStrategy: type mismatch throws error`() throws {
     let json = """
       {
         "dateValue": "not-a-number"
@@ -215,7 +215,7 @@ struct OptionalDateValueResilientTests {
       """
 
     let decoder = JSONDecoder()
-    let data = json.data(using: .utf8)!
+    let data = try #require(json.data(using: .utf8))
 
     // Should throw error for type mismatch
     #expect(throws: DecodingError.self) {
@@ -225,12 +225,12 @@ struct OptionalDateValueResilientTests {
 
   // MARK: - Direct Decoder Tests (Resilient Behavior Works)
 
-  @Test("Direct single value decoding with nil works correctly")
-  func directSingleValueDecodingNil() throws {
+  @Test
+  func `Direct single value decoding with nil works correctly`() throws {
     // When decoding directly from a single value container, resilient behavior works
     let json = "null"
     let decoder = JSONDecoder()
-    let data = json.data(using: .utf8)!
+    let data = try #require(json.data(using: .utf8))
 
     let dateValue = try decoder.decode(OptionalDateValue<ISO8601Strategy>.self, from: data)
 
@@ -243,12 +243,12 @@ struct OptionalDateValueResilientTests {
     #endif
   }
 
-  @Test("Direct single value decoding with missing key throws error")
-  func directSingleValueDecodingMissingKey() throws {
+  @Test
+  func `Direct single value decoding with missing key throws error`() throws {
     // When a key is truly missing in single value context, it throws
     let json = "{}"
     let decoder = JSONDecoder()
-    let data = json.data(using: .utf8)!
+    let data = try #require(json.data(using: .utf8))
 
     #expect(throws: DecodingError.self) {
       _ = try decoder.decode(OptionalDateValue<ISO8601Strategy>.self, from: data)
@@ -257,8 +257,8 @@ struct OptionalDateValueResilientTests {
 
   // MARK: - Mixed Strategy Tests
 
-  @Test("Combined strategies work correctly in same fixture")
-  func combinedStrategiesOutcome() throws {
+  @Test
+  func `Combined strategies work correctly in same fixture`() throws {
     struct CombinedFixture: Decodable {
       @OptionalDateValue<ISO8601Strategy> var isoDate: Date?
       @OptionalDateValue<TimestampStrategy> var timestampDate: Date?
@@ -272,7 +272,7 @@ struct OptionalDateValueResilientTests {
       """
 
     let decoder = JSONDecoder()
-    let data = json.data(using: .utf8)!
+    let data = try #require(json.data(using: .utf8))
     let fixture = try decoder.decode(CombinedFixture.self, from: data)
 
     // Should decode ISO date successfully and timestamp as nil
@@ -290,8 +290,8 @@ struct OptionalDateValueResilientTests {
     #endif
   }
 
-  @Test("All missing keys scenario")
-  func allMissingKeysOutcome() throws {
+  @Test
+  func `All missing keys scenario`() throws {
     struct CombinedFixture: Decodable {
       @OptionalDateValue<ISO8601Strategy> var isoDate: Date?
       @OptionalDateValue<TimestampStrategy> var timestampDate: Date?
@@ -300,7 +300,7 @@ struct OptionalDateValueResilientTests {
     let json = "{}"
 
     let decoder = JSONDecoder()
-    let data = json.data(using: .utf8)!
+    let data = try #require(json.data(using: .utf8))
     let fixture = try decoder.decode(CombinedFixture.self, from: data)
 
     // Both should be nil

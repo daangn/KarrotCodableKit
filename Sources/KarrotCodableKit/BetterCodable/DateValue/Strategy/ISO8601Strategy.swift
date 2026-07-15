@@ -21,7 +21,7 @@ public struct ISO8601Strategy: DateValueCodableStrategy {
       throw DecodingError.dataCorrupted(
         DecodingError.Context(
           codingPath: [],
-          debugDescription: "\"\(value)\" is invalid date format!"
+          debugDescription: "\"\(value)\" is invalid date format!",
         )
       )
     }

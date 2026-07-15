@@ -18,7 +18,7 @@ struct DummyFeedResponse: Codable {
 @UnnestedPolymorphicCodable(
   identifier: "TITLE_VIEW_ITEM",
   forKey: "data",
-  codingKeyStyle: .snakeCase
+  codingKeyStyle: .snakeCase,
 )
 struct TitleViewItem: ViewItem {
   let id: String
@@ -28,13 +28,13 @@ struct TitleViewItem: ViewItem {
 @UnnestedPolymorphicCodable(
   identifier: "EMPTY_VIEW_ITEM",
   forKey: "data",
-  codingKeyStyle: .snakeCase
+  codingKeyStyle: .snakeCase,
 )
 struct EmptyViewItem: ViewItem {}
 
 @UnnestedPolymorphicCodable(
   identifier: "SUBTITLE_VIEW_ITEM",
-  forKey: "data"
+  forKey: "data",
 )
 struct SubtitleViewItem: ViewItem {
   let id: String
@@ -46,7 +46,7 @@ struct SubtitleViewItem: ViewItem {
 
 @UnnestedPolymorphicCodable(
   identifier: "OPTIONAL_VIEW_ITEM",
-  forKey: "data"
+  forKey: "data",
 )
 struct OptionalViewItem: ViewItem {
   let id: String
@@ -59,7 +59,7 @@ struct OptionalViewItem: ViewItem {
 
 @UnnestedPolymorphicCodable(
   identifier: "CONSTANT_PROPERTY_VIEW_ITEM",
-  forKey: "data"
+  forKey: "data",
 )
 struct ConstantPropertyViewItem: ViewItem {
   let id: String
@@ -70,7 +70,7 @@ struct ConstantPropertyViewItem: ViewItem {
 
 @UnnestedPolymorphicCodable(
   identifier: "COMPUTED_PROPERTY_VIEW_ITEM",
-  forKey: "data"
+  forKey: "data",
 )
 struct ComputedPropertyViewItem: ViewItem {
   let id: String
@@ -85,7 +85,7 @@ struct ComputedPropertyViewItem: ViewItem {
 
 @UnnestedPolymorphicCodable(
   identifier: "STATIC_PROPERTY_VIEW_ITEM",
-  forKey: "data"
+  forKey: "data",
 )
 struct StaticPropertyViewItem: ViewItem {
   let id: String
@@ -96,7 +96,7 @@ struct StaticPropertyViewItem: ViewItem {
 
 @UnnestedPolymorphicCodable(
   identifier: "FUNCTION_VIEW_ITEM",
-  forKey: "data"
+  forKey: "data",
 )
 struct FunctionViewItem: ViewItem {
   let id: String
@@ -113,7 +113,7 @@ struct FunctionViewItem: ViewItem {
 
 @UnnestedPolymorphicCodable(
   identifier: "COMPLEX_TYPE_VIEW_ITEM",
-  forKey: "data"
+  forKey: "data",
 )
 struct ComplexTypeViewItem: ViewItem {
   let id: String

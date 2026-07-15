@@ -5,8 +5,8 @@
 //  Created by Elon on 2023/04/25.
 //
 
-import Testing
 import Foundation
+import Testing
 
 import KarrotCodableKit
 
@@ -31,7 +31,8 @@ struct LosslessCustomValueTests {
     @MyLosslessType var bool: Bool
   }
 
-  @Test func testDecodingCustomLosslessStrategyDecodesCorrectly() throws {
+  @Test
+  func `decoding custom lossless strategy decodes correctly`() throws {
     // given
     let jsonData = #"{ "string": 7, "int": "1", "fortytwo": null, "bool": true }"#.data(using: .utf8)!
 
@@ -45,7 +46,8 @@ struct LosslessCustomValueTests {
     #expect(fixture.bool == true)
   }
 
-  @Test func testDecodingCustomLosslessStrategyWithBrokenFieldsThrowsError() throws {
+  @Test
+  func `decoding custom lossless strategy with broken fields throws error`() throws {
     // given
     let jsonData = #"{ "string": 7, "int": "1", "fortytwo": null, "bool": 9 }"#.data(using: .utf8)!
 

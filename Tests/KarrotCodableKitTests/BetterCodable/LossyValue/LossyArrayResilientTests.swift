@@ -22,8 +22,8 @@ struct LossyArrayResilientTests {
     @LossyArray var objects: [NestedObject]
   }
 
-  @Test("projected value provides error information in DEBUG")
-  func projectedValueProvidesErrorInfo() throws {
+  @Test
+  func `projected value provides error information in DEBUG`() throws {
     let json = """
       {
         "integers": [1, "invalid", 3, null, 5],
@@ -71,8 +71,8 @@ struct LossyArrayResilientTests {
     #endif
   }
 
-  @Test("error reporting with JSONDecoder")
-  func errorReporting() throws {
+  @Test
+  func `error reporting with JSONDecoder`() throws {
     let json = """
       {
         "integers": [1, "two", 3],
@@ -98,8 +98,8 @@ struct LossyArrayResilientTests {
     #endif
   }
 
-  @Test("decode with reportResilientDecodingErrors")
-  func decodeWithReportFlag() throws {
+  @Test
+  func `decode with reportResilientDecodingErrors`() throws {
     let json = """
       {
         "integers": [1, "invalid", 3],
@@ -114,7 +114,7 @@ struct LossyArrayResilientTests {
     let (fixture, errorDigest) = try decoder.decode(
       Fixture.self,
       from: data,
-      reportResilientDecodingErrors: true
+      reportResilientDecodingErrors: true,
     )
 
     #expect(fixture.integers == [1, 3])
@@ -127,8 +127,8 @@ struct LossyArrayResilientTests {
     #endif
   }
 
-  @Test("empty array on complete failure")
-  func emptyArrayOnCompleteFailure() throws {
+  @Test
+  func `empty array on complete failure`() throws {
     let json = """
       {
         "integers": "not an array",

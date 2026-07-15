@@ -37,7 +37,7 @@ public enum UnnestedPolymorphicCodeGenerator {
     from declaration: some DeclGroupSyntax,
     structName: String,
     codingKeyStyle: String?,
-    macroType: MacroType = .codable
+    macroType: MacroType = .codable,
   ) throws -> DeclSyntax {
     guard !declaration.is(EnumDeclSyntax.self) else {
       throw CodableKitError.cannotApplyToEnum

@@ -18,7 +18,7 @@ struct OptionalLosslessValueOmitNilTests {
   }
 
   @Test
-  func encodingNilOmitsKey() throws {
+  func `encoding nil omits key`() throws {
     // given
     let fixture = Fixture(optionalString: nil, optionalInt: nil)
 
@@ -33,7 +33,7 @@ struct OptionalLosslessValueOmitNilTests {
   }
 
   @Test
-  func encodingPartialNilOmitsOnlyNilKeys() throws {
+  func `encoding partial nil omits only nil keys`() throws {
     // given
     let fixture = Fixture(optionalString: "hello", optionalInt: nil)
 
@@ -44,16 +44,16 @@ struct OptionalLosslessValueOmitNilTests {
 
     // then - only optionalInt (nil) is omitted
     let expectResult = #"""
-    {
-      "optionalString" : "hello"
-    }
-    """#
+      {
+        "optionalString" : "hello"
+      }
+      """#
     let jsonString = try #require(String(bytes: data, encoding: .utf8))
     #expect(jsonString == expectResult)
   }
 
   @Test
-  func encodingDecodingNilRoundTrip() throws {
+  func `encoding decoding nil round trip`() throws {
     // given
     let fixture = Fixture(optionalString: nil, optionalInt: nil)
 

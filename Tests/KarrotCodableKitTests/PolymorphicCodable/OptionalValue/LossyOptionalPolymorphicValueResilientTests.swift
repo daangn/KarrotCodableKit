@@ -8,8 +8,8 @@ struct LossyOptionalPolymorphicValueResilientTests {
     @DummyNotice.LossyOptionalPolymorphic var notice: (any DummyNotice)?
   }
 
-  @Test("Outcome should be valueWasNil when decoding nil value")
-  func nilValue() throws {
+  @Test
+  func `Outcome should be valueWasNil when decoding nil value`() throws {
     // given
     let json = """
       {
@@ -29,8 +29,8 @@ struct LossyOptionalPolymorphicValueResilientTests {
     #endif
   }
 
-  @Test("Outcome should be keyNotFound when key is missing")
-  func missingKey() throws {
+  @Test
+  func `Outcome should be keyNotFound when key is missing`() throws {
     // given
     let json = """
       {}
@@ -48,8 +48,8 @@ struct LossyOptionalPolymorphicValueResilientTests {
     #endif
   }
 
-  @Test("Outcome should be decodedSuccessfully for successful decoding")
-  func successfulDecoding() throws {
+  @Test
+  func `Outcome should be decodedSuccessfully for successful decoding`() throws {
     // given
     let json = """
       {
@@ -79,8 +79,8 @@ struct LossyOptionalPolymorphicValueResilientTests {
     #endif
   }
 
-  @Test("Should return nil and record error for unknown type")
-  func unknownTypeReturnsNil() throws {
+  @Test
+  func `Should return nil and record error for unknown type`() throws {
     // given
     let json = """
       {
@@ -107,8 +107,8 @@ struct LossyOptionalPolymorphicValueResilientTests {
     #endif
   }
 
-  @Test("Should return nil and record error for invalid JSON format")
-  func invalidJSONReturnsNil() throws {
+  @Test
+  func `Should return nil and record error for invalid JSON format`() throws {
     // given
     let json = """
       {
@@ -133,8 +133,8 @@ struct LossyOptionalPolymorphicValueResilientTests {
     #endif
   }
 
-  @Test("Error reporter should be called")
-  func errorReporterCalled() throws {
+  @Test
+  func `Error reporter should be called`() throws {
     /// given
     let json = """
       {

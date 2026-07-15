@@ -24,14 +24,14 @@ public struct OptionalLosslessValueCodable<Strategy: LosslessDecodingStrategy>: 
 
   public init(wrappedValue: Strategy.Value?) {
     self.wrappedValue = wrappedValue
-    self.type = wrappedValue.map { Swift.type(of: $0) }
-    self.outcome = wrappedValue == nil ? .valueWasNil : .decodedSuccessfully
+    type = wrappedValue.map { Swift.type(of: $0) }
+    outcome = wrappedValue == nil ? .valueWasNil : .decodedSuccessfully
   }
 
   init(
     wrappedValue: Strategy.Value?,
     outcome: ResilientDecodingOutcome,
-    type: LosslessStringCodable.Type?
+    type: LosslessStringCodable.Type?,
   ) {
     self.wrappedValue = wrappedValue
     self.outcome = outcome
@@ -48,29 +48,31 @@ public struct OptionalLosslessValueCodable<Strategy: LosslessDecodingStrategy>: 
     do {
       // First, try to decode the value normally
       let value = try Strategy.Value(from: decoder)
-      self.wrappedValue = value
-      self.type = Strategy.Value.self
-      self.outcome = .decodedSuccessfully
+      wrappedValue = value
+      type = Strategy.Value.self
+      outcome = .decodedSuccessfully
 
     } catch DecodingError.valueNotFound {
       // Handle null value
-      self.wrappedValue = nil
-      self.type = nil
-      self.outcome = .valueWasNil
+      wrappedValue = nil
+      type = nil
+      outcome = .valueWasNil
 
     } catch DecodingError.keyNotFound {
       // Handle missing key
-      self.wrappedValue = nil
-      self.type = nil
-      self.outcome = .keyNotFound
+      wrappedValue = nil
+      type = nil
+      outcome = .keyNotFound
 
     } catch {
       // Try to decode using the strategy's lossless decodable types
-      if let rawValue = Strategy.losslessDecodableTypes.lazy.compactMap({ $0(decoder) }).first,
-         let value = Strategy.Value("\(rawValue)") {
-        self.wrappedValue = value
-        self.type = Swift.type(of: rawValue)
-        self.outcome = .decodedSuccessfully
+      if
+        let rawValue = Strategy.losslessDecodableTypes.lazy.compactMap({ $0(decoder) }).first,
+        let value = Strategy.Value("\(rawValue)")
+      {
+        wrappedValue = value
+        type = Swift.type(of: rawValue)
+        outcome = .decodedSuccessfully
         return
       }
 
@@ -83,9 +85,9 @@ public struct OptionalLosslessValueCodable<Strategy: LosslessDecodingStrategy>: 
         throw error
       }
 
-      self.wrappedValue = nil
-      self.type = nil
-      self.outcome = .valueWasNil
+      wrappedValue = nil
+      type = nil
+      outcome = .valueWasNil
     }
   }
 
@@ -168,7 +170,7 @@ public typealias OptionalLosslessBoolValue<
 extension KeyedDecodingContainer {
   public func decode<T>(
     _ type: OptionalLosslessValueCodable<T>.Type,
-    forKey key: Self.Key
+    forKey key: Self.Key,
   ) throws -> OptionalLosslessValueCodable<T> where T.Value: Decodable {
     guard contains(key) else {
       return OptionalLosslessValueCodable<T>(wrappedValue: nil, outcome: .keyNotFound, type: nil)

@@ -6,8 +6,8 @@
 //  Copyright © 2023 Danggeun Market Inc. All rights reserved.
 //
 
-import Testing
 import Foundation
+import Testing
 
 import KarrotCodableKit
 
@@ -16,7 +16,8 @@ struct DefaultZeroDoubleTests {
     @DefaultZeroDouble var doubleValue: Double
   }
 
-  @Test func testDecodingFailableDoubleDefaultZeroDouble() throws {
+  @Test
+  func `decoding failable double default zero double`() throws {
     // given
     let jsonData = #"{ "doubleValue": null }"#.data(using: .utf8)!
 
@@ -27,7 +28,8 @@ struct DefaultZeroDoubleTests {
     #expect(fixture.doubleValue == 0.0)
   }
 
-  @Test func testDecodingKeyNotPresentDefaultZeroDouble() throws {
+  @Test
+  func `decoding key not present default zero double`() throws {
     // given
     let jsonData = #"{}"#.data(using: .utf8)!
 
@@ -38,7 +40,8 @@ struct DefaultZeroDoubleTests {
     #expect(fixture.doubleValue == 0.0)
   }
 
-  @Test func testDecodinSuccessDefaultZeroDouble() throws {
+  @Test
+  func `decodin success default zero double`() throws {
     // given
     let jsonData = #"{ "doubleValue": 0.001 }"#.data(using: .utf8)!
 

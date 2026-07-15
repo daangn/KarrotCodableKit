@@ -30,7 +30,7 @@ public struct OptionalDateValue<Formatter: OptionalDateValueCodableStrategy> {
 
   public init(wrappedValue: Date?) {
     self.wrappedValue = wrappedValue
-    self.outcome = .decodedSuccessfully
+    outcome = .decodedSuccessfully
   }
 
   init(wrappedValue: Date?, outcome: ResilientDecodingOutcome) {
@@ -50,8 +50,8 @@ extension OptionalDateValue: Decodable where Formatter.RawValue: Decodable {
     do {
       let value = try Formatter.RawValue(from: decoder)
       do {
-        self.wrappedValue = try Formatter.decode(value)
-        self.outcome = .decodedSuccessfully
+        wrappedValue = try Formatter.decode(value)
+        outcome = .decodedSuccessfully
       } catch {
         #if DEBUG
         decoder.reportError(error)
@@ -60,12 +60,12 @@ extension OptionalDateValue: Decodable where Formatter.RawValue: Decodable {
       }
 
     } catch DecodingError.keyNotFound {
-      self.wrappedValue = nil
-      self.outcome = .keyNotFound
+      wrappedValue = nil
+      outcome = .keyNotFound
 
     } catch DecodingError.valueNotFound(let rawType, _) where rawType == Formatter.RawValue.self {
-      self.wrappedValue = nil
-      self.outcome = .valueWasNil
+      wrappedValue = nil
+      outcome = .valueWasNil
 
     } catch {
       #if DEBUG
@@ -100,7 +100,7 @@ extension OptionalDateValue: Sendable where Formatter.RawValue: Sendable {}
 extension KeyedDecodingContainer {
   public func decode<T>(
     _ type: OptionalDateValue<T>.Type,
-    forKey key: Self.Key
+    forKey key: Self.Key,
   ) throws -> OptionalDateValue<T> where T.RawValue: Decodable {
     // Check if the key exists
     guard contains(key) else {

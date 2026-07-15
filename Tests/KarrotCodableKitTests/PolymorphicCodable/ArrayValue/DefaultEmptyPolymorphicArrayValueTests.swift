@@ -6,14 +6,15 @@
 //  Copyright © 2025 Danggeun Market Inc. All rights reserved.
 //
 
-import Testing
 import Foundation
+import Testing
 
 import KarrotCodableKit
 
 struct DefaultEmptyPolymorphicArrayValueTests {
 
-  @Test func testEncodingDefaultEmptyPolymorphicArrayValue() throws {
+  @Test
+  func `encoding default empty polymorphic array value`() throws {
     // given
     let response = OptionalArrayDummyResponse(
       notices1: [
@@ -21,26 +22,26 @@ struct DefaultEmptyPolymorphicArrayValueTests {
           type: .callout,
           title: nil,
           description: "test",
-          icon: "test_icon"
-        ),
+          icon: "test_icon",
+        )
       ],
-      notices2: []
+      notices2: [],
     )
 
     let expectResult = #"""
-    {
-      "notices1" : [
-        {
-          "description" : "test",
-          "icon" : "test_icon",
-          "type" : "callout"
-        }
-      ],
-      "notices2" : [
+      {
+        "notices1" : [
+          {
+            "description" : "test",
+            "icon" : "test_icon",
+            "type" : "callout"
+          }
+        ],
+        "notices2" : [
 
-      ]
-    }
-    """#
+        ]
+      }
+      """#
 
     // when
     let encoder = JSONEncoder()
@@ -52,19 +53,20 @@ struct DefaultEmptyPolymorphicArrayValueTests {
     #expect(jsonString == expectResult)
   }
 
-  @Test func testDecodingDefaultEmptyPolymorphicArrayValue() throws {
+  @Test
+  func `decoding default empty polymorphic array value`() throws {
     // given
     let jsonData = #"""
-    {
-      "notices1" : [
-        {
-          "description" : "test",
-          "icon" : "test_icon",
-          "type" : "callout"
-        }
-      ]
-    }
-    """#
+      {
+        "notices1" : [
+          {
+            "description" : "test",
+            "icon" : "test_icon",
+            "type" : "callout"
+          }
+        ]
+      }
+      """#
 
     // when
     let result = try JSONDecoder().decode(OptionalArrayDummyResponse.self, from: Data(jsonData.utf8))
@@ -75,14 +77,15 @@ struct DefaultEmptyPolymorphicArrayValueTests {
     #expect(result.notices2.isEmpty)
   }
 
-  @Test func testDecodingEncodingDefaultEmptyPolymorphicArrayValue() throws {
+  @Test
+  func `decoding encoding default empty polymorphic array value`() throws {
     // given
     let json = #"""
-    {
-      "notices1" : null,
-      "notices2" : null
-    }
-    """#
+      {
+        "notices1" : null,
+        "notices2" : null
+      }
+      """#
 
     // when
     let result = try JSONDecoder().decode(OptionalArrayDummyResponse.self, from: Data(json.utf8))
@@ -98,38 +101,39 @@ struct DefaultEmptyPolymorphicArrayValueTests {
 
     // then
     let expectResult = #"""
-    {
-      "notices1" : [
+      {
+        "notices1" : [
 
-      ],
-      "notices2" : [
+        ],
+        "notices2" : [
 
-      ]
-    }
-    """#
+        ]
+      }
+      """#
     let jsonString = String(decoding: data, as: UTF8.self)
     #expect(jsonString == expectResult)
   }
 }
 
 extension DefaultEmptyPolymorphicArrayValueTests {
-  @Test func testDecodingFailElementInDefaultEmptyPolymorphicArrayValue() throws {
+  @Test
+  func `decoding fail element in default empty polymorphic array value`() throws {
     // given
     let jsonData = #"""
-    {
-      "notices1" : [
-        {
-          "icon" : "test_icon",
-          "type" : "callout"
-        },
-        {
-          "description" : "test",
-          "icon" : "test_icon",
-          "type" : "callout"
-        }
-      ]
-    }
-    """#
+      {
+        "notices1" : [
+          {
+            "icon" : "test_icon",
+            "type" : "callout"
+          },
+          {
+            "description" : "test",
+            "icon" : "test_icon",
+            "type" : "callout"
+          }
+        ]
+      }
+      """#
 
     // when
     let result = try JSONDecoder().decode(OptionalArrayDummyResponse.self, from: Data(jsonData.utf8))
@@ -140,25 +144,26 @@ extension DefaultEmptyPolymorphicArrayValueTests {
 }
 
 extension DefaultEmptyPolymorphicArrayValueTests {
-  @Test func testDecodingOnlyValue() throws {
+  @Test
+  func `decoding only value`() throws {
     // given
     let jsonData = #"""
-    {
-      "notices2" : [
-        {
-          "description" : "test",
-          "icon" : "test_icon",
-          "type" : "callout"
-        }
-      ],
-      "notice3" : null
-    }
-    """#
+      {
+        "notices2" : [
+          {
+            "description" : "test",
+            "icon" : "test_icon",
+            "type" : "callout"
+          }
+        ],
+        "notice3" : null
+      }
+      """#
 
     // when
     let result = try JSONDecoder().decode(
       OptionalAarrayDummyDecodableResponse.self,
-      from: Data(jsonData.utf8)
+      from: Data(jsonData.utf8),
     )
 
     // then

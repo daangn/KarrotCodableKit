@@ -13,22 +13,22 @@ import KarrotCodableKit
 struct UnnestedPolymorphicDecodableTests {
 
   @Test
-  func decodingUnnestedPolymorphicCodable() async throws {
+  func `decoding unnested polymorphic codable`() throws {
     // given
     let jsonData = #"""
-    {
-      "items": [
-        {
-          "type": "IMAGE_VIEW_ITEM",
-          "default": {
-            "id": "1e243b34-b8a6-41c8-b08f-cba8d014021f",
-            "image_url": "https://karrotmarket.com",
-            "class": "1-A"
+      {
+        "items": [
+          {
+            "type": "IMAGE_VIEW_ITEM",
+            "default": {
+              "id": "1e243b34-b8a6-41c8-b08f-cba8d014021f",
+              "image_url": "https://karrotmarket.com",
+              "class": "1-A"
+            }
           }
-        }
-      ]
-    }
-    """#
+        ]
+      }
+      """#
 
     // when
     let result = try JSONDecoder().decode(DummyDecodingFeedResponse.self, from: Data(jsonData.utf8))
@@ -44,7 +44,7 @@ struct UnnestedPolymorphicDecodableTests {
   }
 
   @Test
-  func unnestedPolymorphicDecodableWithOptionalPropertiesMissingKeys() async throws {
+  func `unnested polymorphic decodable with optional properties missing keys`() throws {
     // given
     let json = """
       {
@@ -68,7 +68,7 @@ struct UnnestedPolymorphicDecodableTests {
   }
 
   @Test
-  func unnestedPolymorphicDecodableWithOptionalPropertiesPartialData() async throws {
+  func `unnested polymorphic decodable with optional properties partial data`() throws {
     // given
     let json = """
       {
@@ -94,7 +94,7 @@ struct UnnestedPolymorphicDecodableTests {
   }
 
   @Test
-  func unnestedPolymorphicDecodableWithRequiredPropertyMissing() async throws {
+  func `unnested polymorphic decodable with required property missing`() throws {
     // given
     let json = """
       {
@@ -116,7 +116,7 @@ struct UnnestedPolymorphicDecodableTests {
   }
 
   @Test
-  func unnestedPolymorphicDecodableWithMissingNestedDataKey() async throws {
+  func `unnested polymorphic decodable with missing nested data key`() throws {
     // given
     let json = """
       {
@@ -135,7 +135,7 @@ struct UnnestedPolymorphicDecodableTests {
   }
 
   @Test
-  func unnestedPolymorphicDecodableWithWrongDataType() async throws {
+  func `unnested polymorphic decodable with wrong data type`() throws {
     // given
     let json = """
       {

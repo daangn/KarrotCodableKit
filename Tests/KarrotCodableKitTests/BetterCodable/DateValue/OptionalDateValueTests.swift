@@ -6,14 +6,15 @@
 //  Copyright © 2024 Danggeun Market Inc. All rights reserved.
 //
 
-import Testing
 import Foundation
+import Testing
 
 import KarrotCodableKit
 
 struct OptionalDateValueTests {
 
-  @Test func testDecodingAndEncodingISO8601DateString() throws {
+  @Test
+  func `decoding and encoding ISO 8601 date string`() throws {
     struct Fixture: Codable {
       @OptionalDateValue<ISO8601Strategy> var iso8601: Date?
     }
@@ -28,7 +29,8 @@ struct OptionalDateValueTests {
     #expect(fixture.iso8601 == Date(timeIntervalSince1970: 851042397))
   }
 
-  @Test func testDecodingAndEncodingOptionalISO8601DateString() throws {
+  @Test
+  func `decoding and encoding optional ISO 8601 date string`() throws {
     struct Fixture: Codable {
       @OptionalDateValue<ISO8601Strategy> var iso8601: Date?
     }
@@ -43,7 +45,8 @@ struct OptionalDateValueTests {
     #expect(fixture.iso8601 == nil)
   }
 
-  @Test func testDecodingAndEncodingNotPresentISO8601DateString() throws {
+  @Test
+  func `decoding and encoding not present ISO 8601 date string`() throws {
     struct Fixture: Codable {
       @OptionalDateValue<ISO8601Strategy> var iso8601: Date?
     }
@@ -58,7 +61,8 @@ struct OptionalDateValueTests {
     #expect(fixture.iso8601 == nil)
   }
 
-  @Test func testDecodingAndEncodingISO8601DateStringWithFractionalSeconds() throws {
+  @Test
+  func `decoding and encoding ISO 8601 date string with fractional seconds`() throws {
     struct Fixture: Codable {
       @OptionalDateValue<ISO8601WithFractionalSecondsStrategy> var iso8601: Date?
       @OptionalDateValue<ISO8601WithFractionalSecondsStrategy> var iso8601Short: Date?
@@ -80,7 +84,8 @@ struct OptionalDateValueTests {
     #expect(fixture.iso8601 == Date(timeIntervalSince1970: 851013597.123))
   }
 
-  @Test func testDecodingAndEncodingRFC3339DateString() throws {
+  @Test
+  func `decoding and encoding RFC 3339 date string`() throws {
     struct Fixture: Codable {
       @OptionalDateValue<RFC3339Strategy> var rfc3339Date: Date?
     }
@@ -95,7 +100,8 @@ struct OptionalDateValueTests {
     #expect(fixture.rfc3339Date == Date(timeIntervalSince1970: 851042397))
   }
 
-  @Test func testDecodingAndEncodingOptionalRFC3339DateString() throws {
+  @Test
+  func `decoding and encoding optional RFC 3339 date string`() throws {
     struct Fixture: Codable {
       @OptionalDateValue<RFC3339Strategy> var rfc3339Date: Date?
     }
@@ -110,7 +116,8 @@ struct OptionalDateValueTests {
     #expect(fixture.rfc3339Date == nil)
   }
 
-  @Test func testDecodingAndEncodingNotPresentRFC3339DateString() throws {
+  @Test
+  func `decoding and encoding not present RFC 3339 date string`() throws {
     struct Fixture: Codable {
       @OptionalDateValue<RFC3339Strategy> var rfc3339Date: Date?
     }
@@ -125,7 +132,8 @@ struct OptionalDateValueTests {
     #expect(fixture.rfc3339Date == nil)
   }
 
-  @Test func testDecodingRFC3339NanoDateString() throws {
+  @Test
+  func `decoding RFC 3339 nano date string`() throws {
     struct Fixture: Codable {
       @OptionalDateValue<RFC3339NanoStrategy> var rfc3339Date1: Date?
       @OptionalDateValue<RFC3339NanoStrategy> var rfc3339Date2: Date?
@@ -159,7 +167,8 @@ struct OptionalDateValueTests {
     #expect(fixture.rfc3339Date6 == Date(timeIntervalSince1970: 1715082540.000))
   }
 
-  @Test func testDecodingAndEncodingUTCTimestamp() throws {
+  @Test
+  func `decoding and encoding UTC timestamp`() throws {
     struct Fixture: Codable {
       @OptionalDateValue<TimestampStrategy> var timestamp: Date?
     }
@@ -174,7 +183,8 @@ struct OptionalDateValueTests {
     #expect(fixture.timestamp == Date(timeIntervalSince1970: 851042397))
   }
 
-  @Test func testDecodingAndEncodingOptionalUTCTimestamp() throws {
+  @Test
+  func `decoding and encoding optional UTC timestamp`() throws {
     struct Fixture: Codable {
       @OptionalDateValue<TimestampStrategy> var timestamp: Date?
     }
@@ -189,7 +199,8 @@ struct OptionalDateValueTests {
     #expect(fixture.timestamp == nil)
   }
 
-  @Test func testDecodingAndEncodingWithCustomStrategies() throws {
+  @Test
+  func `decoding and encoding with custom strategies`() throws {
     struct Fixture: Codable {
       @OptionalDateValue<TimestampStrategy> var timeStamp: Date?
     }

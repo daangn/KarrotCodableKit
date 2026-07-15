@@ -16,7 +16,7 @@ extension KeyedEncodingContainer {
   /// counterpart to the `decode(_:forKey:)` overload that treats a missing key as `nil`.
   public mutating func encode<T>(
     _ value: OptionalDateValue<T>,
-    forKey key: Key
+    forKey key: Key,
   ) throws where T.RawValue: Encodable {
     guard value.wrappedValue != nil else { return }
     try value.encode(to: superEncoder(forKey: key))

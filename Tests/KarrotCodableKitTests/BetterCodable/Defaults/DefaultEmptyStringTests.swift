@@ -6,8 +6,8 @@
 //  Copyright © 2023 Danggeun Market Inc. All rights reserved.
 //
 
-import Testing
 import Foundation
+import Testing
 
 import KarrotCodableKit
 
@@ -16,7 +16,8 @@ struct DefaultEmptyStringTests {
     @DefaultEmptyString var string: String
   }
 
-  @Test func testDecodingFailableStringDefaultEmptyString() throws {
+  @Test
+  func `decoding failable string default empty string`() throws {
     // given
     let jsonData = #"{ "string": null }"#.data(using: .utf8)!
 
@@ -27,7 +28,8 @@ struct DefaultEmptyStringTests {
     #expect(fixture.string == "")
   }
 
-  @Test func testDecodingKeyNotPresentDefaultEmptyString() throws {
+  @Test
+  func `decoding key not present default empty string`() throws {
     // given
     let jsonData = #"{}"#.data(using: .utf8)!
 
@@ -38,7 +40,8 @@ struct DefaultEmptyStringTests {
     #expect(fixture.string == "")
   }
 
-  @Test func testDecodinSuccessDefaultEmptyString() throws {
+  @Test
+  func `decodin success default empty string`() throws {
     // given
     let jsonData = #"{ "string": "hi" }"#.data(using: .utf8)!
 

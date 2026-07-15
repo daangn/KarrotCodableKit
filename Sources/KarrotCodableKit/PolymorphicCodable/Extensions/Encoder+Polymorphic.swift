@@ -11,7 +11,7 @@ import Foundation
 extension Encoder {
   public func encode<ValueType, PolymorphicMetaCodingKey: CodingKey>(
     _ value: ValueType,
-    codingKey: PolymorphicMetaCodingKey
+    codingKey: PolymorphicMetaCodingKey,
   ) throws {
     guard let value = value as? PolymorphicEncodableType else {
       throw PolymorphicCodableError.unableToRepresentAsPolymorphicForEncoding("\(value)")
@@ -24,7 +24,7 @@ extension Encoder {
 
   public func encodeIfPresent<ValueType, PolymorphicMetaCodingKey: CodingKey>(
     _ value: ValueType?,
-    codingKey: PolymorphicMetaCodingKey
+    codingKey: PolymorphicMetaCodingKey,
   ) throws {
     guard let value else {
       var container = singleValueContainer()

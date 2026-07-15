@@ -36,8 +36,9 @@ enum AccessLevelModifier: String, Comparable, CaseIterable, Sendable {
   }
 
   static func < (lhs: AccessLevelModifier, rhs: AccessLevelModifier) -> Bool {
-    guard let lhs = Self.allCases.firstIndex(of: lhs),
-          let rhs = Self.allCases.firstIndex(of: rhs)
+    guard
+      let lhs = Self.allCases.firstIndex(of: lhs),
+      let rhs = Self.allCases.firstIndex(of: rhs)
     else {
       return false
     }
@@ -45,17 +46,18 @@ enum AccessLevelModifier: String, Comparable, CaseIterable, Sendable {
   }
 
   static func stringValue(from declaration: some DeclGroupSyntax) -> String {
-    let accessLevel = if let protocolDecl = declaration.as(ProtocolDeclSyntax.self) {
-      protocolDecl.accessLevel
-    } else if let classDecl = declaration.as(ClassDeclSyntax.self) {
-      classDecl.accessLevel
-    } else if let structDecl = declaration.as(StructDeclSyntax.self) {
-      structDecl.accessLevel
-    } else if let enumDecl = declaration.as(EnumDeclSyntax.self) {
-      enumDecl.accessLevel
-    } else {
-      AccessLevelModifier.internal
-    }
+    let accessLevel =
+      if let protocolDecl = declaration.as(ProtocolDeclSyntax.self) {
+        protocolDecl.accessLevel
+      } else if let classDecl = declaration.as(ClassDeclSyntax.self) {
+        classDecl.accessLevel
+      } else if let structDecl = declaration.as(StructDeclSyntax.self) {
+        structDecl.accessLevel
+      } else if let enumDecl = declaration.as(EnumDeclSyntax.self) {
+        enumDecl.accessLevel
+      } else {
+        AccessLevelModifier.internal
+      }
 
     guard accessLevel != .internal else { return "" }
 

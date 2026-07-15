@@ -17,7 +17,7 @@ struct OptionalDateValueOmitNilTests {
   }
 
   @Test
-  func encodingNilOmitsKey() throws {
+  func `encoding nil omits key`() throws {
     // given
     let fixture = Fixture(iso8601: nil)
 
@@ -32,7 +32,7 @@ struct OptionalDateValueOmitNilTests {
   }
 
   @Test
-  func encodingValuePreservesKey() throws {
+  func `encoding value preserves key`() throws {
     // given
     let fixture = Fixture(iso8601: Date(timeIntervalSince1970: 851042397))
 
@@ -43,16 +43,16 @@ struct OptionalDateValueOmitNilTests {
 
     // then - a present value is still encoded under its key
     let expectResult = #"""
-    {
-      "iso8601" : "1996-12-20T00:39:57Z"
-    }
-    """#
+      {
+        "iso8601" : "1996-12-20T00:39:57Z"
+      }
+      """#
     let jsonString = try #require(String(bytes: data, encoding: .utf8))
     #expect(jsonString == expectResult)
   }
 
   @Test
-  func encodingDecodingNilRoundTrip() throws {
+  func `encoding decoding nil round trip`() throws {
     // given
     let fixture = Fixture(iso8601: nil)
 

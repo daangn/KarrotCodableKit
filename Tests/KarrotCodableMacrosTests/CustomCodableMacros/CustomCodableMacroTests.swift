@@ -49,7 +49,7 @@ final class CustomCodableMacroTests: XCTestCase {
         }
         """,
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")
@@ -81,7 +81,7 @@ final class CustomCodableMacroTests: XCTestCase {
         }
         """,
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")
@@ -130,7 +130,7 @@ extension CustomCodableMacroTests {
         }
         """,
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")
@@ -179,7 +179,7 @@ extension CustomCodableMacroTests {
         }
         """,
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")
@@ -224,7 +224,7 @@ extension CustomCodableMacroTests {
         }
         """,
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")
@@ -269,7 +269,7 @@ extension CustomCodableMacroTests {
         }
         """,
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")
@@ -300,16 +300,16 @@ extension CustomCodableMacroTests {
         DiagnosticSpec(
           message: "`@CustomCodable`, `@CustomEncodable`, `@CustomDecodable` cannot be applied to enum",
           line: 1,
-          column: 1
+          column: 1,
         ),
         DiagnosticSpec(
           message: "`@CustomCodable`, `@CustomEncodable`, `@CustomDecodable` cannot be applied to enum",
           line: 1,
-          column: 1
+          column: 1,
         ),
       ],
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")

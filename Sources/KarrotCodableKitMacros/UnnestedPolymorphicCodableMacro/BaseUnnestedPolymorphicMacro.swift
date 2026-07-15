@@ -25,7 +25,7 @@ extension UnnestedPolymorphicMacroType {
     of node: AttributeSyntax,
     providingMembersOf declaration: some DeclGroupSyntax,
     in context: some MacroExpansionContext,
-    for macroType: (some UnnestedPolymorphicMacroType).Type
+    for macroType: (some UnnestedPolymorphicMacroType).Type,
   ) throws -> [DeclSyntax] {
     try UnnestedPolymorphicValidation.validateDeclarationIsNotEnum(declaration, macroName: macroType.macroName)
 
@@ -34,7 +34,7 @@ extension UnnestedPolymorphicMacroType {
 
     PropertyDiagnosticHelper.generateConstantWithInitializerDiagnostics(
       for: declaration,
-      in: context
+      in: context,
     )
 
     let codingKeyStyleArgument = arguments.codingKeyStyle.map { ".\($0)" }
@@ -45,7 +45,7 @@ extension UnnestedPolymorphicMacroType {
         from: declaration,
         structName: nestedDataStructName,
         codingKeyStyle: codingKeyStyleArgument,
-        macroType: macroType.macroType
+        macroType: macroType.macroType,
       ),
     ]
   }
@@ -56,7 +56,7 @@ extension UnnestedPolymorphicMacroType {
     providingExtensionsOf type: some TypeSyntaxProtocol,
     conformingTo protocols: [TypeSyntax],
     in context: some MacroExpansionContext,
-    for macroType: (some UnnestedPolymorphicMacroType).Type
+    for macroType: (some UnnestedPolymorphicMacroType).Type,
   ) throws -> [ExtensionDeclSyntax] {
     try UnnestedPolymorphicValidation.validateDeclarationIsNotEnum(declaration, macroName: macroType.macroName)
 
@@ -65,7 +65,7 @@ extension UnnestedPolymorphicMacroType {
       declaration: declaration,
       identifier: arguments.identifier,
       nestedKey: arguments.nestedKey,
-      macroName: macroType.macroName
+      macroName: macroType.macroName,
     )
 
     let accessLevel = AccessLevelModifier.stringValue(from: declaration)
@@ -74,19 +74,20 @@ extension UnnestedPolymorphicMacroType {
       from: declaration,
       nestedKey: arguments.nestedKey,
       accessLevel: accessLevel,
-      structName: nestedDataStructName
+      structName: nestedDataStructName,
     )
 
-    let encodeToEncoder: String? = if macroType.protocolType != .decodable {
-      UnnestedPolymorphicMethodGenerator.generateEncodeToEncoder(
-        from: declaration,
-        nestedKey: arguments.nestedKey,
-        accessLevel: accessLevel,
-        structName: nestedDataStructName
-      )
-    } else {
-      nil
-    }
+    let encodeToEncoder: String? =
+      if macroType.protocolType != .decodable {
+        UnnestedPolymorphicMethodGenerator.generateEncodeToEncoder(
+          from: declaration,
+          nestedKey: arguments.nestedKey,
+          accessLevel: accessLevel,
+          structName: nestedDataStructName,
+        )
+      } else {
+        nil
+      }
 
     return [
       try PolymorphicExtensionFactory.makeUnnestedPolymorphicExtension(
@@ -95,8 +96,8 @@ extension UnnestedPolymorphicMacroType {
         protocolType: macroType.protocolType,
         accessLevel: accessLevel,
         initFromDecoder: initFromDecoder,
-        encodeToEncoder: encodeToEncoder
-      ),
+        encodeToEncoder: encodeToEncoder,
+      )
     ]
   }
 }

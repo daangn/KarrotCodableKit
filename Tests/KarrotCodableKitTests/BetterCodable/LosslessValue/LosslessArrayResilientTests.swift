@@ -24,8 +24,8 @@ struct LosslessArrayResilientTests {
     @LosslessArray var objectArray: [String] // Objects cannot be converted to String
   }
 
-  @Test("projected value provides error information for each failed element")
-  func projectedValueProvidesErrorInfo() throws {
+  @Test
+  func `projected value provides error information for each failed element`() throws {
     let json = """
       {
         "stringArray": [1, "two", true, null, 5.5],
@@ -61,8 +61,8 @@ struct LosslessArrayResilientTests {
     #endif
   }
 
-  @Test("error reporting with JSONDecoder")
-  func errorReporting() throws {
+  @Test
+  func `error reporting with JSONDecoder`() throws {
     let json = """
       {
         "stringArray": [1, null, "three"],
@@ -91,8 +91,8 @@ struct LosslessArrayResilientTests {
     #endif
   }
 
-  @Test("complete failure results in empty array")
-  func completeFailure() async throws {
+  @Test
+  func `complete failure results in empty array`() async throws {
     let json = """
       {
         "stringArray": "not an array",
@@ -116,8 +116,8 @@ struct LosslessArrayResilientTests {
     }
   }
 
-  @Test("missing keys result in decoding error")
-  func missingKeys() async throws {
+  @Test
+  func `missing keys result in decoding error`() async throws {
     let json = "{}"
 
     let decoder = JSONDecoder()

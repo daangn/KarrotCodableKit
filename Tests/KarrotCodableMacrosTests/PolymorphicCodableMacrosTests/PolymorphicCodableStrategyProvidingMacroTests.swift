@@ -20,7 +20,7 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
 
   #if canImport(KarrotCodableKitMacros)
   let testMacros: [String: Macro.Type] = [
-    "PolymorphicCodableStrategyProviding": PolymorphicCodableStrategyProvidingMacro.self,
+    "PolymorphicCodableStrategyProviding": PolymorphicCodableStrategyProvidingMacro.self
   ]
   #endif
 
@@ -89,7 +89,7 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
         }
         """,
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")
@@ -159,7 +159,7 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
         }
         """,
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")
@@ -194,11 +194,11 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
         DiagnosticSpec(
           message: "Macro must be attached to a protocol.",
           line: 1,
-          column: 1
-        ),
+          column: 1,
+        )
       ],
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")
@@ -249,11 +249,11 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
         DiagnosticSpec(
           message: "Invalid identifierCodingKey: expected a non-empty string.",
           line: 1,
-          column: 1
-        ),
+          column: 1,
+        )
       ],
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")

@@ -18,8 +18,8 @@ struct LosslessValueResilientTests {
     @LosslessValue var doubleValue: Double
   }
 
-  @Test("projected value provides error information")
-  func projectedValueProvidesErrorInfo() throws {
+  @Test
+  func `projected value provides error information`() throws {
     let json = """
       {
         "stringValue": 123,
@@ -48,8 +48,8 @@ struct LosslessValueResilientTests {
     #endif
   }
 
-  @Test("null values handling")
-  func nullValues() async throws {
+  @Test
+  func `null values handling`() async throws {
     let json = """
       {
         "stringValue": null,
@@ -73,8 +73,8 @@ struct LosslessValueResilientTests {
     }
   }
 
-  @Test("unconvertible values")
-  func unconvertibleValues() async throws {
+  @Test
+  func `unconvertible values`() async throws {
     let json = """
       {
         "stringValue": {"key": "value"},
@@ -98,8 +98,8 @@ struct LosslessValueResilientTests {
     }
   }
 
-  @Test("error reporting with JSONDecoder")
-  func errorReporting() async throws {
+  @Test
+  func `error reporting with JSONDecoder`() async throws {
     let json = """
       {
         "stringValue": {"key": "value"},

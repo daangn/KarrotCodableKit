@@ -8,14 +8,14 @@ struct PolymorphicLossyArrayValueResilientTests {
     @DummyNotice.PolymorphicLossyArray var notices: [any DummyNotice]
   }
 
-  @Test("Empty array decoding should have decodedSuccessfully outcome")
-  func emptyArray() throws {
+  @Test
+  func `Empty array decoding should have decodedSuccessfully outcome`() throws {
     // given
     let json = """
-    {
-      "notices": []
-    }
-    """
+      {
+        "notices": []
+      }
+      """
 
     // when
     let data = try #require(json.data(using: .utf8))
@@ -30,27 +30,27 @@ struct PolymorphicLossyArrayValueResilientTests {
     #endif
   }
 
-  @Test("Successful array decoding should have all elements succeed")
-  func successfulArrayDecoding() throws {
+  @Test
+  func `Successful array decoding should have all elements succeed`() throws {
     // given
     let json = """
-    {
-      "notices": [
-        {
-          "type": "callout",
-          "title": "First",
-          "description": "First callout",
-          "icon": "icon1.png"
-        },
-        {
-          "type": "actionable-callout",
-          "title": "Second",
-          "description": "Second callout",
-          "action": "https://example.com"
-        }
-      ]
-    }
-    """
+      {
+        "notices": [
+          {
+            "type": "callout",
+            "title": "First",
+            "description": "First callout",
+            "icon": "icon1.png"
+          },
+          {
+            "type": "actionable-callout",
+            "title": "Second",
+            "description": "Second callout",
+            "action": "https://example.com"
+          }
+        ]
+      }
+      """
 
     // when
     let data = try #require(json.data(using: .utf8))
@@ -69,33 +69,33 @@ struct PolymorphicLossyArrayValueResilientTests {
     #endif
   }
 
-  @Test("Should decode only valid elements when array has invalid elements")
-  func arrayWithInvalidElements() throws {
+  @Test
+  func `Should decode only valid elements when array has invalid elements`() throws {
     // given
     let json = """
-    {
-      "notices": [
-        {
-          "type": "callout",
-          "title": "Valid",
-          "description": "Valid callout",
-          "icon": "icon.png"
-        },
-        {
-          "type": "invalid-type"
-        },
-        {
-          "type": "dismissible-callout",
-          "title": "Also Valid",
-          "description": "Another valid callout",
-          "key": "dismiss-key"
-        },
-        "not-an-object",
-        null,
-        123
-      ]
-    }
-    """
+      {
+        "notices": [
+          {
+            "type": "callout",
+            "title": "Valid",
+            "description": "Valid callout",
+            "icon": "icon.png"
+          },
+          {
+            "type": "invalid-type"
+          },
+          {
+            "type": "dismissible-callout",
+            "title": "Also Valid",
+            "description": "Another valid callout",
+            "key": "dismiss-key"
+          },
+          "not-an-object",
+          null,
+          123
+        ]
+      }
+      """
 
     // when
     let data = try #require(json.data(using: .utf8))
@@ -121,12 +121,12 @@ struct PolymorphicLossyArrayValueResilientTests {
     #endif
   }
 
-  @Test("Should return empty array when key is missing")
-  func missingKey() throws {
+  @Test
+  func `Should return empty array when key is missing`() throws {
     // given
     let json = """
-    {}
-    """
+      {}
+      """
 
     // when
     let data = try #require(json.data(using: .utf8))
@@ -141,14 +141,14 @@ struct PolymorphicLossyArrayValueResilientTests {
     #endif
   }
 
-  @Test("Should return empty array for invalid type")
-  func invalidType() throws {
+  @Test
+  func `Should return empty array for invalid type`() throws {
     // given
     let json = """
-    {
-      "notices": "not an array"
-    }
-    """
+      {
+        "notices": "not an array"
+      }
+      """
 
     // when
     let data = try #require(json.data(using: .utf8))
@@ -167,24 +167,24 @@ struct PolymorphicLossyArrayValueResilientTests {
     #endif
   }
 
-  @Test("Error reporter should be called partially")
-  func partialErrorReporting() throws {
+  @Test
+  func `Error reporter should be called partially`() throws {
     /// given
     let json = """
-    {
-      "notices": [
-        {
-          "type": "callout",
-          "title": "Valid",
-          "description": "Valid callout",
-          "icon": "icon.png"
-        },
-        {
-          "type": "invalid-type"
-        }
-      ]
-    }
-    """
+      {
+        "notices": [
+          {
+            "type": "callout",
+            "title": "Valid",
+            "description": "Valid callout",
+            "icon": "icon.png"
+          },
+          {
+            "type": "invalid-type"
+          }
+        ]
+      }
+      """
 
     // when
     let data = try #require(json.data(using: .utf8))

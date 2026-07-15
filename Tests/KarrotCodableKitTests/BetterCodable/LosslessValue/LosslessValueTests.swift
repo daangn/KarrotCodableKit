@@ -5,8 +5,8 @@
 //  Created by Elon on 2023/04/25.
 //
 
-import Testing
 import Foundation
+import Testing
 
 import KarrotCodableKit
 
@@ -18,7 +18,8 @@ struct LosslessValueTests {
     @LosslessValue var double: Double
   }
 
-  @Test func testDecodingMisalignedTypesFromJSONTraversesCorrectType() throws {
+  @Test
+  func `decoding misaligned types from JSON traverses correct type`() throws {
     // given
     let jsonData = #"{ "bool": "true", "string": 42, "int": "1", "double": "7.1" }"#.data(using: .utf8)!
 
@@ -32,7 +33,8 @@ struct LosslessValueTests {
     #expect(fixture.double == 7.1)
   }
 
-  @Test func testDecodingEncodedMisalignedTypesFromJSONDecodesCorrectTypes() throws {
+  @Test
+  func `decoding encoded misaligned types from JSON decodes correct types`() throws {
     // given
     let jsonData = #"{ "bool": "true", "string": 42, "int": "7", "double": "7.1" }"#.data(using: .utf8)!
 
@@ -54,7 +56,8 @@ struct LosslessValueTests {
     #expect(fixture.double == 3.14)
   }
 
-  @Test func testEncodingAndDecodedExpectedTypes() throws {
+  @Test
+  func `encoding and decoded expected types`() throws {
     // given
     let jsonData = #"{ "bool": true, "string": "42", "int": 7, "double": 7.1 }"#.data(using: .utf8)!
 
@@ -72,7 +75,8 @@ struct LosslessValueTests {
     #expect(fixture.double == 7.1)
   }
 
-  @Test func testDecodingBoolIntValueFromJSONDecodesCorrectly() throws {
+  @Test
+  func `decoding bool int value from JSON decodes correctly`() throws {
     struct FixtureWithBooleanAsInteger: Equatable, Codable {
       @LosslessBoolValue var bool: Bool
       @LosslessValue var string: String
@@ -97,7 +101,8 @@ struct LosslessValueTests {
     #expect(fixture.double == 7.1)
   }
 
-  @Test func testBoolAsIntegerShouldNotConflictWithDefaultStrategy() throws {
+  @Test
+  func `bool as integer should not conflict with default strategy`() throws {
     struct Response: Codable {
       @LosslessValue var id: String
       @LosslessBoolValue var bool: Bool
@@ -114,7 +119,8 @@ struct LosslessValueTests {
     #expect(result.bool == true)
   }
 
-  @Test func testDecodingBoolAsLogicalString() throws {
+  @Test
+  func `decoding bool as logical string`() throws {
     struct Response: Codable {
       @LosslessBoolValue var a: Bool
       @LosslessBoolValue var b: Bool

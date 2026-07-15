@@ -5,13 +5,14 @@
 //  Created by Elon on 4/9/25.
 //
 
-import Testing
 import Foundation
+import Testing
 
 import KarrotCodableKit
 
 struct DataValueTests {
-  @Test func testDecodingAndEncodingBase64String() throws {
+  @Test
+  func `decoding and encoding base 64 string`() throws {
     // given
     struct Fixture: Codable {
       @DataValue<Base64Strategy> var data: Data
@@ -31,7 +32,8 @@ struct DataValueTests {
     #expect(outputJSON == jsonData)
   }
 
-  @Test func testDecodingMalformedBase64Fails() throws {
+  @Test
+  func `decoding malformed base 64 fails`() throws {
     // given
     struct Fixture: Codable {
       @DataValue<Base64Strategy> var data: Data
@@ -42,7 +44,8 @@ struct DataValueTests {
     #expect(throws: (any Error).self) { try JSONDecoder().decode(Fixture.self, from: jsonData) }
   }
 
-  @Test func testDecodingAndEncodingBase64StringToArray() throws {
+  @Test
+  func `decoding and encoding base 64 string to array`() throws {
     // given
     struct Fixture: Codable {
       @DataValue<Base64Strategy> var data: [UInt8]

@@ -6,22 +6,23 @@
 //  Copyright © 2025 Danggeun Market Inc. All rights reserved.
 //
 
-import Testing
 import Foundation
+import Testing
 
 import KarrotCodableKit
 
 struct PolymorphicEnumCodableTests {
 
-  @Test func testPolymorphicEnumValue() throws {
+  @Test
+  func `polymorphic enum value`() throws {
     // given
     let json = #"""
-    {
-      "description" : "test",
-      "icon" : "test_icon",
-      "type" : "callout"
-    }
-    """#
+      {
+        "description" : "test",
+        "icon" : "test_icon",
+        "type" : "callout"
+      }
+      """#
 
     // when
     let result = try JSONDecoder().decode(CalloutBadge.self, from: Data(json.utf8))
@@ -41,36 +42,37 @@ struct PolymorphicEnumCodableTests {
 
     // then
     let expectResult = #"""
-    {
-      "description" : "test",
-      "icon" : "test_icon",
-      "type" : "callout"
-    }
-    """#
-    let jsonString = String(decoding: data, as: UTF8.self)
-    #expect(jsonString == expectResult)
-  }
-
-  @Test func testPolymorphicEnumArrayValue() throws {
-    // given
-    let json = #"""
-    [
       {
         "description" : "test",
         "icon" : "test_icon",
         "type" : "callout"
-      },
-      {
-        "description" : "test",
-        "key" : "hi",
-        "type" : "dismissible-callout"
-      },
-      {
-        "description" : "test",
-        "type" : "unknown-callout-type"
       }
-    ]
-    """#
+      """#
+    let jsonString = String(decoding: data, as: UTF8.self)
+    #expect(jsonString == expectResult)
+  }
+
+  @Test
+  func `polymorphic enum array value`() throws {
+    // given
+    let json = #"""
+      [
+        {
+          "description" : "test",
+          "icon" : "test_icon",
+          "type" : "callout"
+        },
+        {
+          "description" : "test",
+          "key" : "hi",
+          "type" : "dismissible-callout"
+        },
+        {
+          "description" : "test",
+          "type" : "unknown-callout-type"
+        }
+      ]
+      """#
 
     // when
     let result = try JSONDecoder().decode([CalloutBadge].self, from: Data(json.utf8))
@@ -95,23 +97,23 @@ struct PolymorphicEnumCodableTests {
 
     // then
     let expectResult = #"""
-    [
-      {
-        "description" : "test",
-        "icon" : "test_icon",
-        "type" : "callout"
-      },
-      {
-        "description" : "test",
-        "key" : "hi",
-        "type" : "dismissible-callout"
-      },
-      {
-        "description" : "test",
-        "type" : "undefined-callout"
-      }
-    ]
-    """#
+      [
+        {
+          "description" : "test",
+          "icon" : "test_icon",
+          "type" : "callout"
+        },
+        {
+          "description" : "test",
+          "key" : "hi",
+          "type" : "dismissible-callout"
+        },
+        {
+          "description" : "test",
+          "type" : "undefined-callout"
+        }
+      ]
+      """#
     let jsonString = String(decoding: data, as: UTF8.self)
     #expect(jsonString == expectResult)
   }

@@ -5,8 +5,8 @@
 //  Created by Elon on 2023/04/25.
 //
 
-import Testing
 import Foundation
+import Testing
 
 import KarrotCodableKit
 
@@ -21,7 +21,8 @@ struct LossyArrayTests {
     @LossyArray var nonPrimitiveValues: [NestedFixture]
   }
 
-  @Test func testDecodingLossyArrayIgnoresFailableElements() throws {
+  @Test
+  func `decoding lossy array ignores failable elements`() throws {
     // given
     let jsonData = #"{ "values": [1, null, 3, 4], "nonPrimitiveValues": [null] }"#.data(using: .utf8)!
 
@@ -33,7 +34,8 @@ struct LossyArrayTests {
     #expect(fixture.nonPrimitiveValues == [])
   }
 
-  @Test func testDecodingLossyArrayIgnoresLossyElements() throws {
+  @Test
+  func `decoding lossy array ignores lossy elements`() throws {
     // given
     let jsonData = #"{ "values": [1, null, "3", false, 4], "nonPrimitiveValues": [null] }"#.data(using: .utf8)!
 
@@ -45,7 +47,8 @@ struct LossyArrayTests {
     #expect(fixture.nonPrimitiveValues == [])
   }
 
-  @Test func testEncodingDecodedLossyArrayIgnoresFailableElements() throws {
+  @Test
+  func `encoding decoded lossy array ignores failable elements`() throws {
     // given
     let jsonData = #"{ "values": [null, 2, null, 4], "nonPrimitiveValues": [null] }"#.data(using: .utf8)!
     var _fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
@@ -61,7 +64,8 @@ struct LossyArrayTests {
     #expect(fixture.nonPrimitiveValues == [Fixture.NestedFixture(one: "1", two: ["x": ["y"]])])
   }
 
-  @Test func testEncodingDecodedLossyArrayRetainsContents() throws {
+  @Test
+  func `encoding decoded lossy array retains contents`() throws {
     // given
     let jsonData = #"{ "values": [1, 2], "nonPrimitiveValues": [{ "one": "one", "two": {"key": ["value"]}}] }"#
       .data(using: .utf8)!
@@ -76,7 +80,8 @@ struct LossyArrayTests {
     #expect(fixture.nonPrimitiveValues == [Fixture.NestedFixture(one: "one", two: ["key": ["value"]])])
   }
 
-  @Test func testEncodingDecodingLossyArrayWorksWithCustomStrategies() throws {
+  @Test
+  func `encoding decoding lossy array works with custom strategies`() throws {
     // given
     struct Fixture: Equatable, Codable {
       @LossyArray var theValues: [Date]

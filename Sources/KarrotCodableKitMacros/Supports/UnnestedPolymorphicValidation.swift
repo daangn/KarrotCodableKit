@@ -13,7 +13,7 @@ public enum UnnestedPolymorphicValidation {
 
   public static func validateDeclarationIsNotEnum(
     _ declaration: some DeclGroupSyntax,
-    macroName: String
+    macroName: String,
   ) throws {
     guard declaration.is(EnumDeclSyntax.self) else { return }
     let enumMacroName = macroName.replacingOccurrences(of: "UnnestedPolymorphic", with: "PolymorphicEnum")
@@ -36,7 +36,7 @@ public enum UnnestedPolymorphicValidation {
     declaration: some DeclGroupSyntax,
     identifier: String,
     nestedKey: String,
-    macroName: String
+    macroName: String,
   ) throws {
     try validateDeclarationIsNotEnum(declaration, macroName: macroName)
     try validateIdentifier(identifier)

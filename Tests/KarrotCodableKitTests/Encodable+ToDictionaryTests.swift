@@ -6,19 +6,20 @@
 //  Copyright © 2025 Danggeun Market Inc. All rights reserved.
 //
 
-import Testing
 import Foundation
+import Testing
 
 import KarrotCodableKit
 
 struct Encodable_ToDictionaryTests {
 
-  @Test func test_toDictionary() throws {
+  @Test
+  func `to dictionary`() throws {
     // given
     let dummy = ObjectDummy(
       id: 1,
       name: "ray",
-      wallet: ObjectDummy.Wallet(money: 1000)
+      wallet: ObjectDummy.Wallet(money: 1000),
     )
 
     // when
@@ -32,7 +33,8 @@ struct Encodable_ToDictionaryTests {
     #expect(wallet?["money"] as? Int == 1000)
   }
 
-  @Test func test_asDictionary_optional() throws {
+  @Test
+  func `as dictionary optional`() throws {
     // given
     let dummy = OptionalDummy(value: nil)
 

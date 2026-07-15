@@ -32,29 +32,29 @@ struct OptionalPolymorphicArrayValueResilientTests {
   // MARK: - Successful Decoding Tests
 
   @Test
-  func decodesValidArrayWithoutErrors() throws {
+  func `decodes valid array without errors`() throws {
     // given
     let jsonData = #"""
-    {
-      "notices": [
-        {
-          "description": "test1",
-          "icon": "test_icon1",
-          "type": "callout"
-        },
-        {
-          "description": "test2",
-          "action": "https://example.com",
-          "type": "actionable-callout"
-        }
-      ]
-    }
-    """#
+      {
+        "notices": [
+          {
+            "description": "test1",
+            "icon": "test_icon1",
+            "type": "callout"
+          },
+          {
+            "description": "test2",
+            "action": "https://example.com",
+            "type": "actionable-callout"
+          }
+        ]
+      }
+      """#
 
     // when
     let result = try JSONDecoder().decode(
       ResilientOptionalPolymorphicArrayDummyResponse.self,
-      from: Data(jsonData.utf8)
+      from: Data(jsonData.utf8),
     )
 
     // then
@@ -77,18 +77,18 @@ struct OptionalPolymorphicArrayValueResilientTests {
   }
 
   @Test
-  func decodesEmptyArrayWithoutErrors() throws {
+  func `decodes empty array without errors`() throws {
     // given
     let jsonData = #"""
-    {
-      "notices": []
-    }
-    """#
+      {
+        "notices": []
+      }
+      """#
 
     // when
     let result = try JSONDecoder().decode(
       ResilientOptionalPolymorphicArrayDummyResponse.self,
-      from: Data(jsonData.utf8)
+      from: Data(jsonData.utf8),
     )
 
     // then
@@ -101,18 +101,18 @@ struct OptionalPolymorphicArrayValueResilientTests {
   }
 
   @Test
-  func decodesNullValueWithoutErrors() throws {
+  func `decodes null value without errors`() throws {
     // given
     let jsonData = #"""
-    {
-      "notices": null
-    }
-    """#
+      {
+        "notices": null
+      }
+      """#
 
     // when
     let result = try JSONDecoder().decode(
       ResilientOptionalPolymorphicArrayDummyResponse.self,
-      from: Data(jsonData.utf8)
+      from: Data(jsonData.utf8),
     )
 
     // then
@@ -124,17 +124,17 @@ struct OptionalPolymorphicArrayValueResilientTests {
   }
 
   @Test
-  func decodesMissingKeyWithoutErrors() throws {
+  func `decodes missing key without errors`() throws {
     // given
     let jsonData = #"""
-    {
-    }
-    """#
+      {
+      }
+      """#
 
     // when
     let result = try JSONDecoder().decode(
       ResilientOptionalPolymorphicArrayDummyResponse.self,
-      from: Data(jsonData.utf8)
+      from: Data(jsonData.utf8),
     )
 
     // then
@@ -148,21 +148,21 @@ struct OptionalPolymorphicArrayValueResilientTests {
   // MARK: - Error Reporting Tests
 
   @Test
-  func reportsErrorWhenInvalidElementInArray() throws {
+  func `reports error when invalid element in array`() throws {
     /// given - Missing required 'description' field in second element
     let jsonData = #"""
-    {
-      "notices": [
-        {
-          "description": "test1",
-          "type": "callout"
-        },
-        {
-          "type": "callout"
-        }
-      ]
-    }
-    """#
+      {
+        "notices": [
+          {
+            "description": "test1",
+            "type": "callout"
+          },
+          {
+            "type": "callout"
+          }
+        ]
+      }
+      """#
 
     let decoder = JSONDecoder()
     let errorReporter = decoder.enableResilientDecodingErrorReporting()
@@ -183,13 +183,13 @@ struct OptionalPolymorphicArrayValueResilientTests {
   }
 
   @Test
-  func reportsErrorWhenNotArrayType() throws {
+  func `reports error when not array type`() throws {
     /// given
     let jsonData = #"""
-    {
-      "notices": "not an array"
-    }
-    """#
+      {
+        "notices": "not an array"
+      }
+      """#
 
     let decoder = JSONDecoder()
     let errorReporter = decoder.enableResilientDecodingErrorReporting()
@@ -213,23 +213,23 @@ struct OptionalPolymorphicArrayValueResilientTests {
 
   #if DEBUG
   @Test
-  func projectedValueReturnsNilErrorForSuccessfulDecoding() throws {
+  func `projected value returns nil error for successful decoding`() throws {
     // given
     let jsonData = #"""
-    {
-      "notices": [
-        {
-          "description": "test",
-          "type": "callout"
-        }
-      ]
-    }
-    """#
+      {
+        "notices": [
+          {
+            "description": "test",
+            "type": "callout"
+          }
+        ]
+      }
+      """#
 
     // when
     let result = try JSONDecoder().decode(
       ResilientOptionalPolymorphicArrayDummyResponse.self,
-      from: Data(jsonData.utf8)
+      from: Data(jsonData.utf8),
     )
 
     // then
@@ -238,18 +238,18 @@ struct OptionalPolymorphicArrayValueResilientTests {
   }
 
   @Test
-  func projectedValueReturnsOutcomeForNilValue() throws {
+  func `projected value returns outcome for nil value`() throws {
     // given
     let jsonData = #"""
-    {
-      "notices": null
-    }
-    """#
+      {
+        "notices": null
+      }
+      """#
 
     // when
     let result = try JSONDecoder().decode(
       ResilientOptionalPolymorphicArrayDummyResponse.self,
-      from: Data(jsonData.utf8)
+      from: Data(jsonData.utf8),
     )
 
     // then
@@ -258,17 +258,17 @@ struct OptionalPolymorphicArrayValueResilientTests {
   }
 
   @Test
-  func projectedValueReturnsOutcomeForMissingKey() throws {
+  func `projected value returns outcome for missing key`() throws {
     // given
     let jsonData = #"""
-    {
-    }
-    """#
+      {
+      }
+      """#
 
     // when
     let result = try JSONDecoder().decode(
       ResilientOptionalPolymorphicArrayDummyResponse.self,
-      from: Data(jsonData.utf8)
+      from: Data(jsonData.utf8),
     )
 
     // then
@@ -280,25 +280,25 @@ struct OptionalPolymorphicArrayValueResilientTests {
   // MARK: - Multiple Properties Test
 
   @Test
-  func decodesMultiplePropertiesCorrectly() throws {
+  func `decodes multiple properties correctly`() throws {
     // given
     let jsonData = #"""
-    {
-      "notices": [
-        {
-          "description": "test1",
-          "type": "callout"
-        }
-      ],
-      "notices2": null,
-      "notices3": []
-    }
-    """#
+      {
+        "notices": [
+          {
+            "description": "test1",
+            "type": "callout"
+          }
+        ],
+        "notices2": null,
+        "notices3": []
+      }
+      """#
 
     // when
     let result = try JSONDecoder().decode(
       ResilientOptionalPolymorphicArrayDummyResponse.self,
-      from: Data(jsonData.utf8)
+      from: Data(jsonData.utf8),
     )
 
     // then

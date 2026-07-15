@@ -18,7 +18,7 @@ final class UnnestedPolymorphicCodableMacroTests: XCTestCase {
 
   #if canImport(KarrotCodableKitMacros)
   let testMacros: [String: Macro.Type] = [
-    "UnnestedPolymorphicCodable": UnnestedPolymorphicCodableMacro.self,
+    "UnnestedPolymorphicCodable": UnnestedPolymorphicCodableMacro.self
   ]
   #endif
 
@@ -110,7 +110,7 @@ final class UnnestedPolymorphicCodableMacroTests: XCTestCase {
         }
         """,
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")
@@ -175,7 +175,7 @@ final class UnnestedPolymorphicCodableMacroTests: XCTestCase {
         }
         """,
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")
@@ -230,7 +230,7 @@ final class UnnestedPolymorphicCodableMacroTests: XCTestCase {
         }
         """,
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")
@@ -299,7 +299,7 @@ final class UnnestedPolymorphicCodableMacroTests: XCTestCase {
         }
         """,
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")
@@ -331,16 +331,16 @@ final class UnnestedPolymorphicCodableMacroTests: XCTestCase {
         DiagnosticSpec(
           message: "`@UnnestedPolymorphicCodable` cannot be applied to enum types. Use `@PolymorphicEnumCodable` instead.",
           line: 1,
-          column: 1
+          column: 1,
         ),
         DiagnosticSpec(
           message: "`@UnnestedPolymorphicCodable` cannot be applied to enum types. Use `@PolymorphicEnumCodable` instead.",
           line: 1,
-          column: 1
+          column: 1,
         ),
       ],
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")
@@ -370,16 +370,16 @@ final class UnnestedPolymorphicCodableMacroTests: XCTestCase {
         DiagnosticSpec(
           message: "Invalid polymorphic identifier: expected a non-empty string.",
           line: 1,
-          column: 1
+          column: 1,
         ),
         DiagnosticSpec(
           message: "Invalid polymorphic identifier: expected a non-empty string.",
           line: 1,
-          column: 1
+          column: 1,
         ),
       ],
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")
@@ -452,12 +452,12 @@ final class UnnestedPolymorphicCodableMacroTests: XCTestCase {
           column: 3,
           severity: .warning,
           fixIts: [
-            FixItSpec(message: "Make the property mutable instead"),
-          ]
-        ),
+            FixItSpec(message: "Make the property mutable instead")
+          ],
+        )
       ],
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")
@@ -487,16 +487,16 @@ final class UnnestedPolymorphicCodableMacroTests: XCTestCase {
         DiagnosticSpec(
           message: "Invalid nested key: expected a non-empty string.",
           line: 1,
-          column: 1
+          column: 1,
         ),
         DiagnosticSpec(
           message: "Invalid nested key: expected a non-empty string.",
           line: 1,
-          column: 1
+          column: 1,
         ),
       ],
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")

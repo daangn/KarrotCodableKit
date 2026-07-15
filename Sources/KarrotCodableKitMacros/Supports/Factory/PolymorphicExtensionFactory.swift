@@ -29,7 +29,7 @@ public enum PolymorphicExtensionFactory {
     for type: some TypeSyntaxProtocol,
     identifier: String,
     protocolType: PolymorphicProtocolType,
-    accessLevel: String
+    accessLevel: String,
   ) throws -> ExtensionDeclSyntax {
     try ExtensionDeclSyntax(
       """
@@ -46,7 +46,7 @@ public enum PolymorphicExtensionFactory {
     protocolType: PolymorphicProtocolType,
     accessLevel: String,
     initFromDecoder: String? = nil,
-    encodeToEncoder: String? = nil
+    encodeToEncoder: String? = nil,
   ) throws -> ExtensionDeclSyntax {
     var extensionBody = "\(accessLevel)static var polymorphicIdentifier: String { \"\(identifier)\" }"
 

@@ -74,5 +74,5 @@ import Foundation
 public macro UnnestedPolymorphicDecodable(
   identifier: String,
   forKey nestedKey: String,
-  codingKeyStyle: CodingKeyStyle = .default
+  codingKeyStyle: CodingKeyStyle = .default,
 ) = #externalMacro(module: "KarrotCodableKitMacros", type: "UnnestedPolymorphicDecodableMacro")

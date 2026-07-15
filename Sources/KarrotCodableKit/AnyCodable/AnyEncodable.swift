@@ -7,33 +7,31 @@
 
 import Foundation
 
-/**
- A type-erased `Encodable` value.
-
- The `AnyEncodable` type forwards encoding responsibilities
- to an underlying value, hiding its specific underlying type.
-
- You can encode mixed-type values in dictionaries
- and other collections that require `Encodable` conformance
- by declaring their contained type to be `AnyEncodable`:
-
-     let dictionary: [String: AnyEncodable] = [
-         "boolean": true,
-         "integer": 42,
-         "double": 3.141592653589793,
-         "string": "string",
-         "array": [1, 2, 3],
-         "nested": [
-             "a": "alpha",
-             "b": "bravo",
-             "c": "charlie"
-         ],
-         "null": nil
-     ]
-
-     let encoder = JSONEncoder()
-     let json = try! encoder.encode(dictionary)
- */
+/// A type-erased `Encodable` value.
+///
+/// The `AnyEncodable` type forwards encoding responsibilities
+/// to an underlying value, hiding its specific underlying type.
+///
+/// You can encode mixed-type values in dictionaries
+/// and other collections that require `Encodable` conformance
+/// by declaring their contained type to be `AnyEncodable`:
+///
+///    let dictionary: [String: AnyEncodable] = [
+///        "boolean": true,
+///        "integer": 42,
+///        "double": 3.141592653589793,
+///        "string": "string",
+///        "array": [1, 2, 3],
+///        "nested": [
+///            "a": "alpha",
+///            "b": "bravo",
+///            "c": "charlie"
+///        ],
+///        "null": nil
+///    ]
+///
+///    let encoder = JSONEncoder()
+///    let json = try! encoder.encode(dictionary)
 @frozen
 public struct AnyEncodable: Encodable {
   public let value: Any
@@ -109,7 +107,7 @@ extension _AnyEncodable {
     default:
       let context = EncodingError.Context(
         codingPath: container.codingPath,
-        debugDescription: "AnyEncodable value cannot be encoded"
+        debugDescription: "AnyEncodable value cannot be encoded",
       )
       throw EncodingError.invalidValue(value, context)
     }
@@ -143,7 +141,7 @@ extension _AnyEncodable {
     default:
       let context = EncodingError.Context(
         codingPath: container.codingPath,
-        debugDescription: "NSNumber cannot be encoded because its type is not handled"
+        debugDescription: "NSNumber cannot be encoded because its type is not handled",
       )
       throw EncodingError.invalidValue(nsnumber, context)
     }
@@ -155,41 +153,41 @@ extension AnyEncodable: Equatable {
   public static func == (lhs: AnyEncodable, rhs: AnyEncodable) -> Bool {
     switch (lhs.value, rhs.value) {
     case is (Void, Void):
-      return true
+      true
     case (let lhs as Bool, let rhs as Bool):
-      return lhs == rhs
+      lhs == rhs
     case (let lhs as Int, let rhs as Int):
-      return lhs == rhs
+      lhs == rhs
     case (let lhs as Int8, let rhs as Int8):
-      return lhs == rhs
+      lhs == rhs
     case (let lhs as Int16, let rhs as Int16):
-      return lhs == rhs
+      lhs == rhs
     case (let lhs as Int32, let rhs as Int32):
-      return lhs == rhs
+      lhs == rhs
     case (let lhs as Int64, let rhs as Int64):
-      return lhs == rhs
+      lhs == rhs
     case (let lhs as UInt, let rhs as UInt):
-      return lhs == rhs
+      lhs == rhs
     case (let lhs as UInt8, let rhs as UInt8):
-      return lhs == rhs
+      lhs == rhs
     case (let lhs as UInt16, let rhs as UInt16):
-      return lhs == rhs
+      lhs == rhs
     case (let lhs as UInt32, let rhs as UInt32):
-      return lhs == rhs
+      lhs == rhs
     case (let lhs as UInt64, let rhs as UInt64):
-      return lhs == rhs
+      lhs == rhs
     case (let lhs as Float, let rhs as Float):
-      return lhs == rhs
+      lhs == rhs
     case (let lhs as Double, let rhs as Double):
-      return lhs == rhs
+      lhs == rhs
     case (let lhs as String, let rhs as String):
-      return lhs == rhs
+      lhs == rhs
     case (let lhs as [String: AnyEncodable], let rhs as [String: AnyEncodable]):
-      return lhs == rhs
+      lhs == rhs
     case (let lhs as [AnyEncodable], let rhs as [AnyEncodable]):
-      return lhs == rhs
+      lhs == rhs
     default:
-      return false
+      false
     }
   }
 }
@@ -198,11 +196,11 @@ extension AnyEncodable: CustomStringConvertible {
   public var description: String {
     switch value {
     case is Void:
-      return String(describing: nil as Any?)
+      String(describing: nil as Any?)
     case let value as CustomStringConvertible:
-      return value.description
+      value.description
     default:
-      return String(describing: value)
+      String(describing: value)
     }
   }
 }
@@ -211,9 +209,9 @@ extension AnyEncodable: CustomDebugStringConvertible {
   public var debugDescription: String {
     switch value {
     case let value as CustomDebugStringConvertible:
-      return "AnyEncodable(\(value.debugDescription))"
+      "AnyEncodable(\(value.debugDescription))"
     default:
-      return "AnyEncodable(\(description))"
+      "AnyEncodable(\(description))"
     }
   }
 }

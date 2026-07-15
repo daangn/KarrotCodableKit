@@ -10,7 +10,7 @@ import Testing
 @testable import KarrotCodableKitMacros
 
 struct TrimmingBackticksTests {
-  @Test("Trimming backticks", arguments: [
+  @Test(arguments: [
     ("``", ""),
     ("```", ""),
     ("`class`", "class"),
@@ -25,7 +25,7 @@ struct TrimmingBackticksTests {
     ("`while`", "while"),
     ("`do`", "do"),
   ])
-  func trimmingBackticks(testValues: (given: String, then: String)) async throws {
+  func `Trimming backticks`(testValues: (given: String, then: String)) {
     #expect(testValues.given.trimmingBackticks == testValues.then)
   }
 }

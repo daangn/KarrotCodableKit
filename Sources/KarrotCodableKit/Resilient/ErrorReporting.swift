@@ -10,7 +10,7 @@ import Foundation
 // MARK: - Enabling Error Reporting
 
 extension CodingUserInfoKey {
-  public static let resilientDecodingErrorReporter = CodingUserInfoKey(
+  public static let resilientDecodingErrorReporter: CodingUserInfoKey = .init(
     rawValue: "ResilientDecodingErrorReporter"
   )!
 }
@@ -56,7 +56,7 @@ extension JSONDecoder {
   public func decode<T: Decodable>(
     _ type: T.Type,
     from data: Data,
-    reportResilientDecodingErrors: Bool
+    reportResilientDecodingErrors: Bool,
   ) throws -> (T, ErrorDigest?) {
     guard reportResilientDecodingErrors else {
       return (try decode(T.self, from: data), nil)
@@ -96,7 +96,7 @@ public final class ResilientDecodingErrorReporter {
     currentDigest.root.insert(error, at: path)
   }
 
-  fileprivate var currentDigest = ErrorDigest()
+  fileprivate var currentDigest: ErrorDigest = .init()
   private var hasErrors = false
 }
 
@@ -107,11 +107,12 @@ public struct ErrorDigest {
   }
 
   public func errors(includeUnknownNovelValueErrors: Bool) -> [Error] {
-    let allErrors: [Error] = if mayBeMissingReportedErrors {
-      [MayBeMissingReportedErrors()] + root.errors
-    } else {
-      root.errors
-    }
+    let allErrors: [Error] =
+      if mayBeMissingReportedErrors {
+        [MayBeMissingReportedErrors()] + root.errors
+      } else {
+        root.errors
+      }
 
     return allErrors.filter { includeUnknownNovelValueErrors || !($0 is UnknownNovelValueError) }
   }
@@ -140,7 +141,7 @@ public struct ErrorDigest {
     }
   }
 
-  fileprivate var root = Node()
+  fileprivate var root: Node = .init()
 }
 
 // MARK: - Reporting Errors

@@ -14,13 +14,13 @@ public enum UnnestedPolymorphicMethodGenerator {
     from declaration: some DeclGroupSyntax,
     nestedKey: String,
     accessLevel: String,
-    structName: String
+    structName: String,
   ) -> String {
     let assignableProperties = extractAssignableProperties(from: declaration)
     let functionBody = createInitFunctionBody(
       assignableProperties: assignableProperties,
       nestedKey: nestedKey,
-      structName: structName
+      structName: structName,
     )
 
     return """
@@ -34,13 +34,13 @@ public enum UnnestedPolymorphicMethodGenerator {
     from declaration: some DeclGroupSyntax,
     nestedKey: String,
     accessLevel: String,
-    structName: String
+    structName: String,
   ) -> String {
     let propertyParameters = extractPropertyParameters(from: declaration)
     let functionBody = createEncodeFunctionBody(
       propertyParameters: propertyParameters,
       nestedKey: nestedKey,
-      structName: structName
+      structName: structName,
     )
 
     return """
@@ -81,7 +81,7 @@ public enum UnnestedPolymorphicMethodGenerator {
   private static func createInitFunctionBody(
     assignableProperties: [String],
     nestedKey: String,
-    structName: String
+    structName: String,
   ) -> String {
     if assignableProperties.isEmpty {
       """
@@ -122,7 +122,7 @@ public enum UnnestedPolymorphicMethodGenerator {
   private static func createEncodeFunctionBody(
     propertyParameters: [String],
     nestedKey: String,
-    structName: String
+    structName: String,
   ) -> String {
     if propertyParameters.isEmpty {
       """

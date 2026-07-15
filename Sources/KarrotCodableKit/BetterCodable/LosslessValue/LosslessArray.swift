@@ -22,7 +22,7 @@ public struct LosslessArray<T: LosslessStringCodable> {
 
   public init(wrappedValue: [T]) {
     self.wrappedValue = wrappedValue
-    self.outcome = .decodedSuccessfully
+    outcome = .decodedSuccessfully
   }
 
   init(wrappedValue: [T], outcome: ResilientDecodingOutcome) {
@@ -43,9 +43,9 @@ extension LosslessArray: Decodable where T: Decodable {
   public init(from decoder: Decoder) throws {
     var container = try decoder.unkeyedContainer()
 
-    var elements: [T] = []
+    var elements = [T]()
     #if DEBUG
-    var results: [Result<T, Error>] = []
+    var results = [Result<T, Error>]()
     #endif
 
     while !container.isAtEnd {

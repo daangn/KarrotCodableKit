@@ -8,8 +8,8 @@ struct PolymorphicArrayValueResilientTests {
     @DummyNotice.PolymorphicArray var notices: [any DummyNotice]
   }
 
-  @Test("Empty array decoding should have decodedSuccessfully outcome")
-  func emptyArray() throws {
+  @Test
+  func `Empty array decoding should have decodedSuccessfully outcome`() throws {
     // given
     let json = """
       {
@@ -29,8 +29,8 @@ struct PolymorphicArrayValueResilientTests {
     #endif
   }
 
-  @Test("Successful array decoding should have decodedSuccessfully outcome")
-  func successfulArrayDecoding() throws {
+  @Test
+  func `Successful array decoding should have decodedSuccessfully outcome`() throws {
     // given
     let json = """
       {
@@ -73,8 +73,8 @@ struct PolymorphicArrayValueResilientTests {
     #endif
   }
 
-  @Test("Array should fail to decode if any element fails")
-  func arrayWithInvalidElement() throws {
+  @Test
+  func `Array should fail to decode if any element fails`() throws {
     // given
     let json = """
       {
@@ -99,8 +99,8 @@ struct PolymorphicArrayValueResilientTests {
     }
   }
 
-  @Test("Should throw error when key is missing")
-  func missingKey() throws {
+  @Test
+  func `Should throw error when key is missing`() throws {
     // given
     let json = """
       {}
@@ -113,8 +113,8 @@ struct PolymorphicArrayValueResilientTests {
     }
   }
 
-  @Test("Should throw error for invalid type")
-  func invalidType() throws {
+  @Test
+  func `Should throw error for invalid type`() throws {
     // given
     let json = """
       {
@@ -129,8 +129,8 @@ struct PolymorphicArrayValueResilientTests {
     }
   }
 
-  @Test("Array element errors should be reported")
-  func arrayElementErrorReported() throws {
+  @Test
+  func `Array element errors should be reported`() throws {
     /// given
     let json = """
       {

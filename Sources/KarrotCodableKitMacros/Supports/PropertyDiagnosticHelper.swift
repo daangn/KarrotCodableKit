@@ -16,7 +16,7 @@ enum PropertyDiagnosticHelper {
   /// Suggests changing 'let' to 'var' for properties that cannot be decoded properly.
   static func generateConstantWithInitializerDiagnostics(
     for declaration: some DeclGroupSyntax,
-    in context: some MacroExpansionContext
+    in context: some MacroExpansionContext,
   ) {
     let propertyDeclarations = CodingKeysSyntaxFactory.extractStoredPropertyDeclarations(from: declaration)
 
@@ -40,15 +40,15 @@ enum PropertyDiagnosticHelper {
           changes: [
             FixIt.Change.replace(
               oldNode: Syntax(letToken),
-              newNode: Syntax(TokenSyntax.keyword(.var, trailingTrivia: letToken.trailingTrivia))
-            ),
-          ]
+              newNode: Syntax(TokenSyntax.keyword(.var, trailingTrivia: letToken.trailingTrivia)),
+            )
+          ],
         )
 
         let diagnostic = Diagnostic(
           node: propDecl.variableDecl,
           message: ConstantWithInitializerWarning(),
-          fixIts: [fixIt]
+          fixIts: [fixIt],
         )
         context.diagnose(diagnostic)
       }

@@ -78,7 +78,7 @@ struct OptionalLossyAarrayDummyDecodableResponse {
     DummyActionableDecodableCallout.self,
     DummyDismissibleDecodableCallout.self,
   ],
-  fallbackType: DummyUndefinedDecodableCallout.self
+  fallbackType: DummyUndefinedDecodableCallout.self,
 )
 protocol DummyDecodableNotice: Decodable {
   var type: DummyDecodableNoticeType { get }
@@ -88,7 +88,7 @@ protocol DummyDecodableNotice: Decodable {
 
 enum DummyDecodableNoticeType: String, Decodable, DefaultCodableStrategy {
 
-  static let defaultValue = DummyDecodableNoticeType.undefinedCallout
+  static let defaultValue: DummyDecodableNoticeType = .undefinedCallout
 
   case callout
   case actionableCallout = "actionable-callout"
@@ -122,8 +122,11 @@ struct DummyDismissibleDecodableCallout: DummyDecodableNotice {
 
 @PolymorphicDecodable(identifier: "undefined-callout", codingKeyStyle: .snakeCase)
 struct DummyUndefinedDecodableCallout: DummyDecodableNotice {
+  // swiftformat:disable propertyTypes
+  // An explicit type annotation breaks generic inference of the @DefaultCodable wrapper.
   @DefaultCodable
   var type = DummyDecodableNoticeType.undefinedCallout
+  // swiftformat:enable propertyTypes
   let title: String?
   let description: String
 }

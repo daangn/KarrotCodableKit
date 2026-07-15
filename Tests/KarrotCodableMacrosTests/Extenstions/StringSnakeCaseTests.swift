@@ -19,7 +19,8 @@ import Testing
 @testable import KarrotCodableKitMacros
 
 struct StringSnakeCaseTests {
-  @Test func test_convert_to_snake_case() {
+  @Test
+  func `convert to snake case`() {
     // given
     let toSnakeCaseTests: [(camelCase: String, snake_case: String)] = [
       ("simpleOneTwo", "simple_one_two"),

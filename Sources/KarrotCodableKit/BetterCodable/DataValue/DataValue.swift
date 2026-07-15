@@ -29,7 +29,7 @@ public struct DataValue<Coder: DataValueCodableStrategy> {
 
   public init(wrappedValue: Coder.DataType) {
     self.wrappedValue = wrappedValue
-    self.outcome = .decodedSuccessfully
+    outcome = .decodedSuccessfully
   }
 
   init(wrappedValue: Coder.DataType, outcome: ResilientDecodingOutcome) {
@@ -48,8 +48,8 @@ extension DataValue: Decodable {
   public init(from decoder: Decoder) throws {
     do {
       let stringValue = try String(from: decoder)
-      self.wrappedValue = try Coder.decode(stringValue)
-      self.outcome = .decodedSuccessfully
+      wrappedValue = try Coder.decode(stringValue)
+      outcome = .decodedSuccessfully
     } catch {
       #if DEBUG
       decoder.reportError(error)

@@ -23,7 +23,7 @@ struct RFC3339StrategyTests {
 extension RFC3339StrategyTests {
 
   @Test
-  func encodesUTCDateWithZOffsetInsteadOfRFC822Offset() {
+  func `encodes UTC date with Z offset instead of RFC 822 offset`() {
     // given
     let date = Date(timeIntervalSince1970: 1715082540) // 2024-05-07T11:49:00 UTC
 
@@ -36,7 +36,7 @@ extension RFC3339StrategyTests {
   }
 
   @Test
-  func serializesUTCDateWithZOffsetViaJSONEncoder() throws {
+  func `serializes UTC date with Z offset via JSON encoder`() throws {
     // given
     let date = Date(timeIntervalSince1970: 1715082540) // 2024-05-07T11:49:00 UTC
     let fixture = Fixture(date: date)
@@ -58,9 +58,9 @@ extension RFC3339StrategyTests {
   @Test(arguments: [
     "2024-05-07T11:49:00Z",
     "2024-05-07T11:49:00+00:00",
-    "2024-05-07T11:49:00+0000"
+    "2024-05-07T11:49:00+0000",
   ])
-  func decodesEveryUTCOffsetFormToSameInstant(input: String) throws {
+  func `decodes every UTC offset form to same instant`(input: String) throws {
     // when
     let date = try RFC3339Strategy.decode(input)
 
@@ -71,9 +71,9 @@ extension RFC3339StrategyTests {
 
   @Test(arguments: [
     "1996-12-19T16:39:57-08:00",
-    "1996-12-19T16:39:57-0800"
+    "1996-12-19T16:39:57-0800",
   ])
-  func decodesNonUTCOffsetsWithOrWithoutColon(input: String) throws {
+  func `decodes non UTC offsets with or without colon`(input: String) throws {
     // when
     let date = try RFC3339Strategy.decode(input)
 
@@ -87,7 +87,7 @@ extension RFC3339StrategyTests {
 extension RFC3339StrategyTests {
 
   @Test
-  func throwsDataCorruptedErrorForMalformedString() {
+  func `throws data corrupted error for malformed string`() {
     // when / then
     #expect {
       try RFC3339Strategy.decode("not-a-valid-date")

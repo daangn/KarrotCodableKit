@@ -10,36 +10,36 @@ let package = Package(
   products: [
     .library(
       name: "KarrotCodableKit",
-      targets: ["KarrotCodableKit"]
-    ),
+      targets: ["KarrotCodableKit"],
+    )
   ],
   dependencies: [
-    .package(url: "https://github.com/swiftlang/swift-syntax.git", "509.0.0"..<"604.0.0"),
+    .package(url: "https://github.com/swiftlang/swift-syntax.git", "509.0.0"..<"604.0.0")
   ],
   targets: [
     .target(
       name: "KarrotCodableKit",
-      dependencies: ["KarrotCodableKitMacros"]
+      dependencies: ["KarrotCodableKitMacros"],
     ),
     .macro(
       name: "KarrotCodableKitMacros",
       dependencies: [
         .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
         .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
-      ]
+      ],
     ),
     .testTarget(
       name: "KarrotCodableKitTests",
       dependencies: [
-        "KarrotCodableKit",
-      ]
+        "KarrotCodableKit"
+      ],
     ),
     .testTarget(
       name: "KarrotCodableMacrosTests",
       dependencies: [
         "KarrotCodableKitMacros",
         .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
-      ]
+      ],
     ),
-  ]
+  ],
 )

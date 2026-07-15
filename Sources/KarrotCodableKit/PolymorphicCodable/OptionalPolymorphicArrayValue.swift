@@ -44,7 +44,7 @@ public struct OptionalPolymorphicArrayValue<PolymorphicType: PolymorphicCodableS
   /// Initializes the property wrapper with an optional array of values.
   public init(wrappedValue: [PolymorphicType.ExpectedType]?) {
     self.wrappedValue = wrappedValue
-    self.outcome = .decodedSuccessfully
+    outcome = .decodedSuccessfully
   }
 
   /// Initializes the property wrapper with an optional array of values and a decoding outcome.

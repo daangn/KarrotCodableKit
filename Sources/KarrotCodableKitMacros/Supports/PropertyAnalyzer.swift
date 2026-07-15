@@ -41,7 +41,7 @@ enum PropertyAnalyzer {
           name: propertyDeclaration.propertyName,
           type: typeString,
           isOptional: isOptional,
-          isConstant: isConstant
+          isConstant: isConstant,
         )
       }
   }
@@ -73,7 +73,7 @@ enum PropertyAnalyzer {
 
           return ConstantPropertyInfo(
             name: propertyName,
-            value: initializerValue
+            value: initializerValue,
           )
         }
 

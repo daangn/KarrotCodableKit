@@ -11,14 +11,14 @@ import Foundation
 extension KeyedDecodingContainer {
   public func decode<T>(
     _: PolymorphicLossyArrayValue<T>.Type,
-    forKey key: Key
+    forKey key: Key,
   ) throws -> PolymorphicLossyArrayValue<T> where T: PolymorphicCodableStrategy {
     // Return empty array if key is missing
     guard contains(key) else {
       #if DEBUG
       let context = DecodingError.Context(
         codingPath: codingPath + [key],
-        debugDescription: "Key not found but property is non-optional"
+        debugDescription: "Key not found but property is non-optional",
       )
       let error = DecodingError.keyNotFound(key, context)
       let decoder = try superDecoder(forKey: key)
@@ -26,7 +26,7 @@ extension KeyedDecodingContainer {
       return PolymorphicLossyArrayValue(
         wrappedValue: [],
         outcome: .recoveredFrom(error, wasReported: true),
-        results: []
+        results: [],
       )
       #else
       return PolymorphicLossyArrayValue(wrappedValue: [], outcome: .keyNotFound)
@@ -39,7 +39,7 @@ extension KeyedDecodingContainer {
 
   public func decodeIfPresent<T>(
     _: PolymorphicLossyArrayValue<T>.Type,
-    forKey key: Self.Key
+    forKey key: Self.Key,
   ) throws -> PolymorphicLossyArrayValue<T>? where T: PolymorphicCodableStrategy {
     // Check if key exists
     guard contains(key) else {
