@@ -60,9 +60,9 @@ public struct PolymorphicLossyArrayValue<PolymorphicType: PolymorphicCodableStra
 
   public init(wrappedValue: [PolymorphicType.ExpectedType]) {
     self.wrappedValue = wrappedValue
-    self.outcome = .decodedSuccessfully
+    outcome = .decodedSuccessfully
     #if DEBUG
-    self.results = []
+    results = []
     #endif
   }
 
@@ -70,7 +70,7 @@ public struct PolymorphicLossyArrayValue<PolymorphicType: PolymorphicCodableStra
   init(
     wrappedValue: [PolymorphicType.ExpectedType],
     outcome: ResilientDecodingOutcome,
-    results: [Result<PolymorphicType.ExpectedType, Error>] = []
+    results: [Result<PolymorphicType.ExpectedType, Error>] = [],
   ) {
     self.wrappedValue = wrappedValue
     self.outcome = outcome
@@ -98,7 +98,7 @@ extension PolymorphicLossyArrayValue: Decodable {
       #if DEBUG
       let context = DecodingError.Context(
         codingPath: decoder.codingPath,
-        debugDescription: "Value was nil but property is non-optional"
+        debugDescription: "Value was nil but property is non-optional",
       )
       let error = DecodingError.valueNotFound([PolymorphicType.ExpectedType].self, context)
       decoder.reportError(error)
@@ -111,18 +111,21 @@ extension PolymorphicLossyArrayValue: Decodable {
 
     do {
       var container = try decoder.unkeyedContainer()
-      let results = try container.decodeLossyPolymorphicElementResults(of: PolymorphicType.self)
-      let elements = results.compactMap(\.success)
+      let decoded = try container.decodeLossyPolymorphicElements(of: PolymorphicType.self)
 
       #if DEBUG
-      if results.contains(where: \.isFailure) {
-        let error = ResilientDecodingOutcome.ArrayDecodingError(results: results)
-        self.init(wrappedValue: elements, outcome: .recoveredFrom(error, wasReported: false), results: results)
+      if decoded.results.contains(where: \.isFailure) {
+        let error = ResilientDecodingOutcome.ArrayDecodingError(results: decoded.results)
+        self.init(
+          wrappedValue: decoded.elements,
+          outcome: .recoveredFrom(error, wasReported: false),
+          results: decoded.results,
+        )
       } else {
-        self.init(wrappedValue: elements, outcome: .decodedSuccessfully, results: results)
+        self.init(wrappedValue: decoded.elements, outcome: .decodedSuccessfully, results: decoded.results)
       }
       #else
-      self.init(wrappedValue: elements)
+      self.init(wrappedValue: decoded.elements)
       #endif
     } catch {
       // An invalid array-level value (e.g., not an array) recovers to an empty array.

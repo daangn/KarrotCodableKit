@@ -8,28 +8,49 @@
 
 import Foundation
 
+/// The outcome of a lossy polymorphic array pass. Per-element results are retained only in
+/// DEBUG builds, so release builds allocate a single element array and no `Result` storage.
+struct LossyPolymorphicElements<Element> {
+  let elements: [Element]
+  #if DEBUG
+  let results: [Result<Element, Error>]
+  #endif
+}
+
 extension UnkeyedDecodingContainer {
-  /// Decodes every element with the polymorphic `strategy`, capturing each element's result
-  /// instead of throwing, so lossy array wrappers can keep valid elements and record failures.
-  mutating func decodeLossyPolymorphicElementResults<Strategy: PolymorphicCodableStrategy>(
+  /// Decodes every element with the polymorphic `strategy`, skipping elements that fail to
+  /// decode instead of throwing, so lossy array wrappers can keep the valid elements.
+  /// In DEBUG builds each element's `Result` is also captured for resilient decoding outcomes.
+  mutating func decodeLossyPolymorphicElements<Strategy: PolymorphicCodableStrategy>(
     of strategy: Strategy.Type
-  ) throws -> [Result<Strategy.ExpectedType, Error>] {
+  ) throws -> LossyPolymorphicElements<Strategy.ExpectedType> {
+    var elements = [Strategy.ExpectedType]()
+    #if DEBUG
     var results = [Result<Strategy.ExpectedType, Error>]()
+    #endif
 
     while !isAtEnd {
       // Decoding through the element's super decoder always advances the container,
       // even when the element fails to decode.
       let elementDecoder = try superDecoder()
       do {
-        try results.append(.success(PolymorphicValue<Strategy>(from: elementDecoder).wrappedValue))
+        let value = try PolymorphicValue<Strategy>(from: elementDecoder).wrappedValue
+        elements.append(value)
+        #if DEBUG
+        results.append(.success(value))
+        #endif
       } catch {
         #if DEBUG
         elementDecoder.reportError(error)
-        #endif
         results.append(.failure(error))
+        #endif
       }
     }
 
-    return results
+    #if DEBUG
+    return LossyPolymorphicElements(elements: elements, results: results)
+    #else
+    return LossyPolymorphicElements(elements: elements)
+    #endif
   }
 }

@@ -66,7 +66,7 @@ public struct OptionalPolymorphicLossyArrayValue<PolymorphicType: PolymorphicCod
   init(
     wrappedValue: [PolymorphicType.ExpectedType]?,
     outcome: ResilientDecodingOutcome,
-    results: [Result<PolymorphicType.ExpectedType, Error>] = []
+    results: [Result<PolymorphicType.ExpectedType, Error>] = [],
   ) {
     self.wrappedValue = wrappedValue
     self.outcome = outcome
@@ -97,18 +97,21 @@ extension OptionalPolymorphicLossyArrayValue: Decodable {
 
     do {
       var container = try decoder.unkeyedContainer()
-      let results = try container.decodeLossyPolymorphicElementResults(of: PolymorphicType.self)
-      let elements = results.compactMap(\.success)
+      let decoded = try container.decodeLossyPolymorphicElements(of: PolymorphicType.self)
 
       #if DEBUG
-      if results.contains(where: \.isFailure) {
-        let error = ResilientDecodingOutcome.ArrayDecodingError(results: results)
-        self.init(wrappedValue: elements, outcome: .recoveredFrom(error, wasReported: false), results: results)
+      if decoded.results.contains(where: \.isFailure) {
+        let error = ResilientDecodingOutcome.ArrayDecodingError(results: decoded.results)
+        self.init(
+          wrappedValue: decoded.elements,
+          outcome: .recoveredFrom(error, wasReported: false),
+          results: decoded.results,
+        )
       } else {
-        self.init(wrappedValue: elements, outcome: .decodedSuccessfully, results: results)
+        self.init(wrappedValue: decoded.elements, outcome: .decodedSuccessfully, results: decoded.results)
       }
       #else
-      self.init(wrappedValue: elements, outcome: .decodedSuccessfully)
+      self.init(wrappedValue: decoded.elements, outcome: .decodedSuccessfully)
       #endif
     } catch {
       // Same policy as `PolymorphicLossyArrayValue`: an invalid array-level value recovers to `[]`.
