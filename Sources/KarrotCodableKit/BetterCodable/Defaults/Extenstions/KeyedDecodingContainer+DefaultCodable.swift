@@ -166,7 +166,7 @@ extension KeyedDecodingContainer {
       decoder?.reportError(error)
       return DefaultCodable(
         wrappedValue: P.defaultValue,
-        outcome: .recoveredFrom(error, wasReported: decoder != nil)
+        outcome: .recoveredFrom(error, wasReported: decoder != nil),
       )
       #else
       return DefaultCodable(wrappedValue: P.defaultValue)
@@ -179,7 +179,7 @@ extension KeyedDecodingContainer {
       decoder?.reportError(error)
       return DefaultCodable(
         wrappedValue: P.defaultValue,
-        outcome: .recoveredFrom(error, wasReported: decoder != nil)
+        outcome: .recoveredFrom(error, wasReported: decoder != nil),
       )
       #else
       return DefaultCodable(wrappedValue: P.defaultValue)

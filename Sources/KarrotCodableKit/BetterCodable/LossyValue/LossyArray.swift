@@ -20,7 +20,7 @@ public struct LossyArray<T> {
 
   public init(wrappedValue: [T]) {
     self.wrappedValue = wrappedValue
-    self.outcome = .decodedSuccessfully
+    outcome = .decodedSuccessfully
   }
 
   init(wrappedValue: [T], outcome: ResilientDecodingOutcome) {
@@ -46,7 +46,7 @@ extension LossyArray: Decodable where T: Decodable {
         #if DEBUG
         let context = DecodingError.Context(
           codingPath: decoder.codingPath,
-          debugDescription: "Value was nil but property is non-optional"
+          debugDescription: "Value was nil but property is non-optional",
         )
         let error = DecodingError.valueNotFound([T].self, context)
         decoder.reportError(error)
@@ -63,9 +63,9 @@ extension LossyArray: Decodable where T: Decodable {
     do {
       var container = try decoder.unkeyedContainer()
 
-      var elements: [T] = []
+      var elements = [T]()
       #if DEBUG
-      var results: [Result<T, Error>] = []
+      var results = [Result<T, Error>]()
       #endif
 
       while !container.isAtEnd {

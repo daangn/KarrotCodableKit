@@ -5,13 +5,14 @@
 //  Created by Elon on 2023/04/25.
 //
 
-import Testing
 import Foundation
+import Testing
 
 import KarrotCodableKit
 
 struct DateValueTests {
-  @Test func testDecodingAndEncodingISO8601DateString() throws {
+  @Test
+  func `decoding and encoding ISO 8601 date string`() throws {
     struct Fixture: Codable {
       @DateValue<ISO8601Strategy> var iso8601: Date
     }
@@ -26,7 +27,8 @@ struct DateValueTests {
     #expect(fixture.iso8601 == Date(timeIntervalSince1970: 851042397))
   }
 
-  @Test func testDecodingAndEncodingISO8601DateStringWithFractionalSeconds() throws {
+  @Test
+  func `decoding and encoding ISO 8601 date string with fractional seconds`() throws {
     struct Fixture: Codable {
       @DateValue<ISO8601WithFractionalSecondsStrategy> var iso8601: Date
       @DateValue<ISO8601WithFractionalSecondsStrategy> var iso8601Short: Date
@@ -48,7 +50,8 @@ struct DateValueTests {
     #expect(fixture.iso8601 == Date(timeIntervalSince1970: 851013597.123))
   }
 
-  @Test func testDecodingAndEncodingRFC3339DateString() throws {
+  @Test
+  func `decoding and encoding RFC 3339 date string`() throws {
     struct Fixture: Codable {
       @DateValue<RFC3339Strategy> var rfc3339Date: Date
     }
@@ -63,7 +66,8 @@ struct DateValueTests {
     #expect(fixture.rfc3339Date == Date(timeIntervalSince1970: 851042397))
   }
 
-  @Test func testDecodingRFC3339NanoDateString() throws {
+  @Test
+  func `decoding RFC 3339 nano date string`() throws {
     struct Fixture: Codable {
       @DateValue<RFC3339NanoStrategy> var rfc3339Date1: Date
       @DateValue<RFC3339NanoStrategy> var rfc3339Date2: Date
@@ -97,7 +101,8 @@ struct DateValueTests {
     #expect(fixture.rfc3339Date6 == Date(timeIntervalSince1970: 1715082540.000))
   }
 
-  @Test func testEncodingRFC3339NanoDateToString() throws {
+  @Test
+  func `encoding RFC 3339 nano date to string`() {
     // given
     let date = Date(timeIntervalSince1970: 1720588949.481)
 
@@ -108,7 +113,8 @@ struct DateValueTests {
     #expect(result == "2024-07-10T05:22:29.481000Z")
   }
 
-  @Test func testDecodingAndEncodingUTCTimestamp() throws {
+  @Test
+  func `decoding and encoding UTC timestamp`() throws {
     struct Fixture: Codable {
       @DateValue<TimestampStrategy> var timestamp: Date
     }
@@ -118,7 +124,8 @@ struct DateValueTests {
     #expect(fixture.timestamp == Date(timeIntervalSince1970: 851042397))
   }
 
-  @Test func testDecodingAndEncodingWithCustomStrategies() throws {
+  @Test
+  func `decoding and encoding with custom strategies`() throws {
     struct Fixture: Codable {
       @DateValue<TimestampStrategy> var timeStamp: Date
     }

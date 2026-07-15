@@ -18,16 +18,16 @@ struct OptionalLosslessValueTests {
   }
 
   @Test
-  func decodingNullValues() throws {
+  func `decoding null values`() throws {
     // given
     let json = #"""
-    {
-      "optionalBool": null,
-      "optionalString": null,
-      "optionalInt": null,
-      "optionalDouble": null
-    }
-    """#
+      {
+        "optionalBool": null,
+        "optionalString": null,
+        "optionalInt": null,
+        "optionalDouble": null
+      }
+      """#
 
     // when
     let jsonData = try #require(json.data(using: .utf8))
@@ -41,11 +41,11 @@ struct OptionalLosslessValueTests {
   }
 
   @Test
-  func decodingMissingFields() throws {
+  func `decoding missing fields`() throws {
     // given
     let json = #"""
-    {}
-    """#
+      {}
+      """#
 
     // when
     let jsonData = try #require(json.data(using: .utf8))
@@ -59,16 +59,16 @@ struct OptionalLosslessValueTests {
   }
 
   @Test
-  func decodingMisalignedTypesFromJSON() throws {
+  func `decoding misaligned types from JSON`() throws {
     // given
     let json = #"""
-    {
-      "optionalBool": "true",
-      "optionalString": 42,
-      "optionalInt": "1",
-      "optionalDouble": "7.1"
-    }
-    """#
+      {
+        "optionalBool": "true",
+        "optionalString": 42,
+        "optionalInt": "1",
+        "optionalDouble": "7.1"
+      }
+      """#
 
     // when
     let jsonData = try #require(json.data(using: .utf8))
@@ -81,17 +81,17 @@ struct OptionalLosslessValueTests {
     #expect(fixture.optionalDouble == 7.1)
   }
 
-  @Test("decoding expected types")
-  func decodingExpectedTypes() throws {
+  @Test
+  func `decoding expected types`() throws {
     // given
     let json = #"""
-    {
-      "optionalBool": true,
-      "optionalString": "42",
-      "optionalInt": 7,
-      "optionalDouble": 7.1
-    }
-    """#
+      {
+        "optionalBool": true,
+        "optionalString": "42",
+        "optionalInt": 7,
+        "optionalDouble": 7.1
+      }
+      """#
 
     // when
     let jsonData = try #require(json.data(using: .utf8))
@@ -104,14 +104,14 @@ struct OptionalLosslessValueTests {
     #expect(fixture.optionalDouble == 7.1)
   }
 
-  @Test("encoding and decoding with null values")
-  func encodingAndDecodingWithNullValues() throws {
+  @Test
+  func `encoding and decoding with null values`() throws {
     // given
     let fixture = Fixture(
       optionalBool: nil,
       optionalString: nil,
       optionalInt: nil,
-      optionalDouble: nil
+      optionalDouble: nil,
     )
 
     // when
@@ -122,14 +122,14 @@ struct OptionalLosslessValueTests {
     #expect(fixture == decodedFixture)
   }
 
-  @Test("encoding and decoding with mixed values")
-  func encodingAndDecodingWithMixedValues() throws {
+  @Test
+  func `encoding and decoding with mixed values`() throws {
     // given
     let fixture = Fixture(
       optionalBool: true,
       optionalString: nil,
       optionalInt: 42,
-      optionalDouble: nil
+      optionalDouble: nil,
     )
 
     // when
@@ -140,17 +140,17 @@ struct OptionalLosslessValueTests {
     #expect(fixture == decodedFixture)
   }
 
-  @Test("decoding with partial null values")
-  func decodingWithPartialNullValues() throws {
+  @Test
+  func `decoding with partial null values`() throws {
     // given
     let json = #"""
-    {
-      "optionalBool": true,
-      "optionalString": null,
-      "optionalInt": "42",
-      "optionalDouble": 3.14
-    }
-    """#
+      {
+        "optionalBool": true,
+        "optionalString": null,
+        "optionalInt": "42",
+        "optionalDouble": 3.14
+      }
+      """#
 
     // when
     let jsonData = try #require(json.data(using: .utf8))
@@ -164,7 +164,6 @@ struct OptionalLosslessValueTests {
   }
 
   @Test(
-    "decoding boolean from various string values",
     arguments: [
       (#"{ "value": "true" }"#, true as Bool?),
       (#"{ "value": "yes" }"#, true as Bool?),
@@ -176,7 +175,7 @@ struct OptionalLosslessValueTests {
       (#"{ "value": null }"#, nil as Bool?),
     ]
   )
-  func decodingBooleanFromVariousStringValues(json: String, expected: Bool?) throws {
+  func `decoding boolean from various string values`(json: String, expected: Bool?) throws {
     // given
     struct BoolFixture: Codable {
       @OptionalLosslessValueCodable<LosslessBooleanStrategy<Bool>> var value: Bool?
@@ -190,17 +189,17 @@ struct OptionalLosslessValueTests {
     #expect(fixture.value == expected)
   }
 
-  @Test("decoding encoded misaligned types with nulls")
-  func decodingEncodedMisalignedTypesWithNulls() throws {
+  @Test
+  func `decoding encoded misaligned types with nulls`() throws {
     // given
     let json = #"""
-    {
-      "optionalBool": "true",
-      "optionalString": null,
-      "optionalInt": "7",
-      "optionalDouble": null
-    }
-    """#
+      {
+        "optionalBool": "true",
+        "optionalString": null,
+        "optionalInt": "7",
+        "optionalDouble": null
+      }
+      """#
 
     // when
     let jsonData = try #require(json.data(using: .utf8))

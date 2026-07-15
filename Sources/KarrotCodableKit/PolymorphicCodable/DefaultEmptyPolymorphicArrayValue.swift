@@ -45,7 +45,7 @@ public struct DefaultEmptyPolymorphicArrayValue<PolymorphicType: PolymorphicCoda
 
   public init(wrappedValue: [PolymorphicType.ExpectedType]) {
     self.wrappedValue = wrappedValue
-    self.outcome = .decodedSuccessfully
+    outcome = .decodedSuccessfully
   }
 
   init(wrappedValue: [PolymorphicType.ExpectedType], outcome: ResilientDecodingOutcome) {
@@ -72,17 +72,17 @@ extension DefaultEmptyPolymorphicArrayValue: Decodable {
         elements.append(value)
       }
 
-      self.wrappedValue = elements
-      self.outcome = .decodedSuccessfully
+      wrappedValue = elements
+      outcome = .decodedSuccessfully
     } catch {
       // Report error to error reporter
       #if DEBUG
       decoder.reportError(error)
-      self.wrappedValue = []
-      self.outcome = .recoveredFrom(error, wasReported: true)
+      wrappedValue = []
+      outcome = .recoveredFrom(error, wasReported: true)
       #else
-      self.wrappedValue = []
-      self.outcome = .recoveredFrom(error, wasReported: false)
+      wrappedValue = []
+      outcome = .recoveredFrom(error, wasReported: false)
       #endif
     }
   }

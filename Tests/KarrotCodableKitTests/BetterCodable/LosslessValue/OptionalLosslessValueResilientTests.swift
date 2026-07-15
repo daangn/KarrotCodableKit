@@ -18,8 +18,8 @@ struct OptionalLosslessValueResilientTests {
     @OptionalLosslessValue var optionalDoubleValue: Double?
   }
 
-  @Test("projected value provides error information for non-null values")
-  func projectedValueProvidesErrorInfoForNonNullValues() throws {
+  @Test
+  func `projected value provides error information for non-null values`() throws {
     // given
     let json = """
       {
@@ -51,8 +51,8 @@ struct OptionalLosslessValueResilientTests {
     #endif
   }
 
-  @Test("projected value provides info for null values")
-  func projectedValueProvidesInfoForNullValues() throws {
+  @Test
+  func `projected value provides info for null values`() throws {
     // given
     let json = """
       {
@@ -84,8 +84,8 @@ struct OptionalLosslessValueResilientTests {
     #endif
   }
 
-  @Test("projected value provides info for missing fields")
-  func projectedValueProvidesInfoForMissingFields() throws {
+  @Test
+  func `projected value provides info for missing fields`() throws {
     // given
     let json = """
       {}
@@ -113,7 +113,7 @@ struct OptionalLosslessValueResilientTests {
   }
 
   @Test
-  func invalidValue() throws {
+  func `invalid value`() throws {
     // given
     struct MixedFixture: Decodable {
       @OptionalLosslessValue var optionalStringValue: String?
@@ -140,7 +140,6 @@ struct OptionalLosslessValueResilientTests {
   }
 
   @Test(
-    "handles type conversion with bool strategy",
     arguments: [
       (#"{ "value": "true" }"#, true as Bool?, ResilientDecodingOutcome.decodedSuccessfully),
       (#"{ "value": "yes" }"#, true as Bool?, .decodedSuccessfully),
@@ -150,10 +149,10 @@ struct OptionalLosslessValueResilientTests {
       (#"{}"#, nil as Bool?, .keyNotFound),
     ]
   )
-  func handlesTypeConversionWithBoolStrategy(
+  func `handles type conversion with bool strategy`(
     json: String,
     expected: Bool?,
-    outcome: ResilientDecodingOutcome
+    outcome: ResilientDecodingOutcome,
   ) throws {
     // given
     struct BoolFixture: Decodable {

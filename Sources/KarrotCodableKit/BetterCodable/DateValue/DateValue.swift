@@ -29,7 +29,7 @@ public struct DateValue<Formatter: DateValueCodableStrategy> {
 
   public init(wrappedValue: Date) {
     self.wrappedValue = wrappedValue
-    self.outcome = .decodedSuccessfully
+    outcome = .decodedSuccessfully
   }
 
   init(wrappedValue: Date, outcome: ResilientDecodingOutcome) {
@@ -48,8 +48,8 @@ extension DateValue: Decodable where Formatter.RawValue: Decodable {
   public init(from decoder: Decoder) throws {
     do {
       let value = try Formatter.RawValue(from: decoder)
-      self.wrappedValue = try Formatter.decode(value)
-      self.outcome = .decodedSuccessfully
+      wrappedValue = try Formatter.decode(value)
+      outcome = .decodedSuccessfully
     } catch {
       #if DEBUG
       decoder.reportError(error)

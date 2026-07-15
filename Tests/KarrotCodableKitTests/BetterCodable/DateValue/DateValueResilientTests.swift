@@ -17,8 +17,8 @@ struct DateValueResilientTests {
     @DateValue<TimestampStrategy> var timestampDate: Date
   }
 
-  @Test("projected value provides error information")
-  func projectedValueProvidesErrorInfo() throws {
+  @Test
+  func `projected value provides error information`() throws {
     let json = """
       {
         "isoDate": "2025-01-01T12:00:00Z",
@@ -44,8 +44,8 @@ struct DateValueResilientTests {
     #endif
   }
 
-  @Test("invalid date format handling")
-  func invalidDateFormat() async throws {
+  @Test
+  func `invalid date format handling`() async throws {
     let json = """
       {
         "isoDate": "invalid-date",
@@ -68,8 +68,8 @@ struct DateValueResilientTests {
     }
   }
 
-  @Test("null values handling")
-  func nullValues() async throws {
+  @Test
+  func `null values handling`() async throws {
     let json = """
       {
         "isoDate": null,
@@ -92,8 +92,8 @@ struct DateValueResilientTests {
     }
   }
 
-  @Test("error reporting with JSONDecoder")
-  func errorReporting() async throws {
+  @Test
+  func `error reporting with JSONDecoder`() async throws {
     let json = """
       {
         "isoDate": 12345,

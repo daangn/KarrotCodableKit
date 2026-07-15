@@ -13,25 +13,25 @@ import KarrotCodableKit
 struct OptionalPolymorphicArrayValueTests {
 
   @Test
-  func decodingOptionalPolymorphicArrayValue() throws {
+  func `decoding optional polymorphic array value`() throws {
     // given
     let jsonData = #"""
-    {
-      "notices1" : [
-        {
-          "description" : "test1",
-          "icon" : "test_icon1",
-          "type" : "callout"
-        },
-        {
-          "description" : "test2",
-          "action" : "https://example.com",
-          "type" : "actionable-callout"
-        }
-      ],
-      "notices2" : null
-    }
-    """#
+      {
+        "notices1" : [
+          {
+            "description" : "test1",
+            "icon" : "test_icon1",
+            "type" : "callout"
+          },
+          {
+            "description" : "test2",
+            "action" : "https://example.com",
+            "type" : "actionable-callout"
+          }
+        ],
+        "notices2" : null
+      }
+      """#
 
     // when
     let result = try JSONDecoder().decode(OptionalPolymorphicArrayDummyResponse.self, from: Data(jsonData.utf8))
@@ -54,7 +54,7 @@ struct OptionalPolymorphicArrayValueTests {
   }
 
   @Test
-  func encodingOptionalPolymorphicArrayValue() throws {
+  func `encoding optional polymorphic array value`() throws {
     // given
     let response = OptionalPolymorphicArrayDummyResponse(
       notices1: [
@@ -62,23 +62,23 @@ struct OptionalPolymorphicArrayValueTests {
           type: .callout,
           title: nil,
           description: "test",
-          icon: "test_icon"
+          icon: "test_icon",
         )
       ],
-      notices2: nil
+      notices2: nil,
     )
 
     let expectResult = #"""
-    {
-      "notices1" : [
-        {
-          "description" : "test",
-          "icon" : "test_icon",
-          "type" : "callout"
-        }
-      ]
-    }
-    """#
+      {
+        "notices1" : [
+          {
+            "description" : "test",
+            "icon" : "test_icon",
+            "type" : "callout"
+          }
+        ]
+      }
+      """#
 
     // when
     let encoder = JSONEncoder()
@@ -91,14 +91,14 @@ struct OptionalPolymorphicArrayValueTests {
   }
 
   @Test
-  func decodingOptionalPolymorphicArrayValueWithEmptyArray() throws {
+  func `decoding optional polymorphic array value with empty array`() throws {
     // given
     let jsonData = #"""
-    {
-      "notices1" : [],
-      "notices2" : null
-    }
-    """#
+      {
+        "notices1" : [],
+        "notices2" : null
+      }
+      """#
 
     // when
     let result = try JSONDecoder().decode(OptionalPolymorphicArrayDummyResponse.self, from: Data(jsonData.utf8))
@@ -110,19 +110,19 @@ struct OptionalPolymorphicArrayValueTests {
   }
 
   @Test
-  func decodingOptionalPolymorphicArrayValueWithMissingKey() throws {
+  func `decoding optional polymorphic array value with missing key`() throws {
     // given
     let jsonData = #"""
-    {
-      "notices2" : [
-        {
-          "description" : "test",
-          "icon" : "test_icon",
-          "type" : "callout"
-        }
-      ]
-    }
-    """#
+      {
+        "notices2" : [
+          {
+            "description" : "test",
+            "icon" : "test_icon",
+            "type" : "callout"
+          }
+        ]
+      }
+      """#
 
     // when
     let result = try JSONDecoder().decode(OptionalPolymorphicArrayDummyResponse.self, from: Data(jsonData.utf8))
@@ -137,23 +137,23 @@ struct OptionalPolymorphicArrayValueTests {
   }
 
   @Test
-  func decodingOptionalPolymorphicArrayValueWithInvalidElement() throws {
+  func `decoding optional polymorphic array value with invalid element`() throws {
     // given - Array with one invalid element (missing required 'description' property)
     let jsonData = #"""
-    {
-      "notices1" : [
-        {
-          "icon" : "test_icon",
-          "type" : "callout"
-        },
-        {
-          "description" : "test",
-          "icon" : "test_icon",
-          "type" : "callout"
-        }
-      ]
-    }
-    """#
+      {
+        "notices1" : [
+          {
+            "icon" : "test_icon",
+            "type" : "callout"
+          },
+          {
+            "description" : "test",
+            "icon" : "test_icon",
+            "type" : "callout"
+          }
+        ]
+      }
+      """#
 
     // when & then - Should throw error, not return nil or empty array
     #expect(throws: DecodingError.self) {
@@ -162,17 +162,17 @@ struct OptionalPolymorphicArrayValueTests {
   }
 
   @Test
-  func decodingOptionalPolymorphicArrayValueWhenNotArray() throws {
+  func `decoding optional polymorphic array value when not array`() throws {
     // given - Value is not an array
     let jsonData = #"""
-    {
-      "notices1" : {
-        "description" : "test",
-        "icon" : "test_icon",
-        "type" : "callout"
+      {
+        "notices1" : {
+          "description" : "test",
+          "icon" : "test_icon",
+          "type" : "callout"
+        }
       }
-    }
-    """#
+      """#
 
     // when & then - Should throw error
     #expect(throws: DecodingError.self) {
@@ -181,11 +181,11 @@ struct OptionalPolymorphicArrayValueTests {
   }
 
   @Test
-  func encodingDecodingNilValues() throws {
+  func `encoding decoding nil values`() throws {
     // given
     let response = OptionalPolymorphicArrayDummyResponse(
       notices1: nil,
-      notices2: nil
+      notices2: nil,
     )
 
     // when - encode
@@ -207,7 +207,7 @@ struct OptionalPolymorphicArrayValueTests {
   }
 
   @Test
-  func encodingEmptyArrayIsKeptNotOmitted() throws {
+  func `encoding empty array is kept not omitted`() throws {
     // given - an empty array ([]) is non-nil and must be kept, not omitted like nil
     let response = OptionalPolymorphicArrayDummyResponse(notices1: [], notices2: nil)
 
@@ -227,7 +227,7 @@ struct OptionalPolymorphicArrayValueTests {
   }
 
   @Test
-  func encodingNilInUnkeyedContextProducesNull() throws {
+  func `encoding nil in unkeyed context produces null`() throws {
     // given - in an unkeyed container (array element) there is no key to omit,
     // so a nil wrapper is encoded as an explicit null (matching Apple's `[T?]` behavior)
     let elements: [DummyNotice.OptionalPolymorphicArray] = [

@@ -5,8 +5,8 @@
 //  Created by Elon on 2023/04/25.
 //
 
-import Testing
 import Foundation
+import Testing
 
 import KarrotCodableKit
 
@@ -14,7 +14,8 @@ struct DefaultNilTests {
   /// This test demonstrates the problem that `@LossyOptional` solves. When decoding
   /// optional types, it often the case that we end up with an error instead of
   /// defaulting back to `nil`.
-  @Test func testDecodingBadUrlAsOptionalWithoutDefaultNil() {
+  @Test
+  func `decoding bad url as optional without default nil`() {
     // given
     struct Fixture: Codable {
       var a: URL?
@@ -25,7 +26,8 @@ struct DefaultNilTests {
     #expect(throws: (any Error).self) { try JSONDecoder().decode(Fixture.self, from: jsonData) }
   }
 
-  @Test func testDecodingWithUrlConversions() throws {
+  @Test
+  func `decoding with url conversions`() throws {
     // given
     struct Fixture: Codable {
       @LossyOptional var a: URL?
@@ -43,7 +45,8 @@ struct DefaultNilTests {
     #expect(fixture.b == URL(string: goodUrlString))
   }
 
-  @Test func testDecodingWithIntegerConversions() throws {
+  @Test
+  func `decoding with integer conversions`() throws {
     // given
     struct Fixture: Codable {
       @LossyOptional var a: Int?
@@ -61,7 +64,8 @@ struct DefaultNilTests {
     #expect(fixture.b == 3)
   }
 
-  @Test func testDecodingWithNullValue() throws {
+  @Test
+  func `decoding with null value`() throws {
     // given
     struct Fixture: Codable {
       @LossyOptional var a: String?
@@ -75,7 +79,8 @@ struct DefaultNilTests {
     #expect(fixture.a == nil)
   }
 
-  @Test func testDecodingWithMissingKey() throws {
+  @Test
+  func `decoding with missing key`() throws {
     // given
     struct Fixture: Codable {
       @LossyOptional var a: String?

@@ -6,33 +6,34 @@
 //  Copyright © 2025 Danggeun Market Inc. All rights reserved.
 //
 
-import Testing
 import Foundation
+import Testing
 
 import KarrotCodableKit
 
 struct LossyOptionalPolymorphicValueTests {
 
-  @Test func testEncodingLossyOptionalPolymorphicValue() throws {
+  @Test
+  func `encoding lossy optional polymorphic value`() throws {
     // given
     let response = LossyOptionalDummyResponse(
       notice1: DummyCallout(
         type: .callout,
         title: nil,
         description: "test",
-        icon: "test_icon"
+        icon: "test_icon",
       )
     )
 
     let expectResult = #"""
-    {
-      "notice1" : {
-        "description" : "test",
-        "icon" : "test_icon",
-        "type" : "callout"
+      {
+        "notice1" : {
+          "description" : "test",
+          "icon" : "test_icon",
+          "type" : "callout"
+        }
       }
-    }
-    """#
+      """#
 
     // when
     let encoder = JSONEncoder()
@@ -44,17 +45,18 @@ struct LossyOptionalPolymorphicValueTests {
     #expect(jsonString == expectResult)
   }
 
-  @Test func testDecodingLossyOptionalPolymorphicValue() throws {
+  @Test
+  func `decoding lossy optional polymorphic value`() throws {
     // given
     let jsonData = #"""
-    {
-      "notice2" : {
-        "description" : "test",
-        "icon" : "test_icon",
-        "type" : "callout"
+      {
+        "notice2" : {
+          "description" : "test",
+          "icon" : "test_icon",
+          "type" : "callout"
+        }
       }
-    }
-    """#
+      """#
 
     // when
     let result = try JSONDecoder().decode(LossyOptionalDummyResponse.self, from: Data(jsonData.utf8))
@@ -64,14 +66,15 @@ struct LossyOptionalPolymorphicValueTests {
     #expect(result.notice2?.type == .callout)
   }
 
-  @Test func testDecodingEncodingLossyOptionalPolymorphicValue() throws {
+  @Test
+  func `decoding encoding lossy optional polymorphic value`() throws {
     // given
     let json = #"""
-    {
-      "notice1" : null,
-      "notice2" : null
-    }
-    """#
+      {
+        "notice1" : null,
+        "notice2" : null
+      }
+      """#
 
     // when
     let result = try JSONDecoder().decode(LossyOptionalDummyResponse.self, from: Data(json.utf8))
@@ -93,23 +96,24 @@ struct LossyOptionalPolymorphicValueTests {
 }
 
 extension LossyOptionalPolymorphicValueTests {
-  @Test func testDecodingOnlyValue() throws {
+  @Test
+  func `decoding only value`() throws {
     // given
     let jsonData = #"""
-    {
-      "notice2" : {
-        "description" : "test",
-        "icon" : "test_icon",
-        "type" : "callout"
-      },
-      "notice3" : null
-    }
-    """#
+      {
+        "notice2" : {
+          "description" : "test",
+          "icon" : "test_icon",
+          "type" : "callout"
+        },
+        "notice3" : null
+      }
+      """#
 
     // when
     let result = try JSONDecoder().decode(
       OptionalDummyDecodableResponse.self,
-      from: Data(jsonData.utf8)
+      from: Data(jsonData.utf8),
     )
 
     // then

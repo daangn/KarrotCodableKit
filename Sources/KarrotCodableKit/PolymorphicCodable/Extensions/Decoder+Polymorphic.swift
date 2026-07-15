@@ -12,7 +12,7 @@ extension Decoder {
   public func decode<ExpectedType, PolymorphicMetaCodingKey: CodingKey>(
     codingKey: PolymorphicMetaCodingKey,
     matchingTypes: [PolymorphicDecodableType.Type],
-    fallbackType: PolymorphicDecodableType.Type?
+    fallbackType: PolymorphicDecodableType.Type?,
   ) throws -> ExpectedType {
     let container = try container(keyedBy: PolymorphicMetaCodingKey.self)
     let polymorphicTypeIdentifier = try container.decode(String.self, forKey: codingKey)
@@ -30,7 +30,7 @@ extension Decoder {
     guard let expectedValue = decodedValue as? ExpectedType else {
       throw PolymorphicCodableError.unableToCast(
         decoded: decodedValue,
-        into: String(describing: ExpectedType.self)
+        into: String(describing: ExpectedType.self),
       )
     }
 

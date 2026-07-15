@@ -79,10 +79,8 @@ extension String {
     }
     words.append(wordStart..<searchRange.upperBound)
 
-    let result = words.map { range in
+    return words.map { range in
       self[range].lowercased()
     }.joined(separator: "_")
-
-    return result
   }
 }

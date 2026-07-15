@@ -20,7 +20,7 @@ final class PolymorphicDecodableMacroTests: XCTestCase {
 
   #if canImport(KarrotCodableKitMacros)
   let testMacros: [String: Macro.Type] = [
-    "PolymorphicDecodable": PolymorphicDecodableMacro.self,
+    "PolymorphicDecodable": PolymorphicDecodableMacro.self
   ]
   #endif
 
@@ -64,7 +64,7 @@ final class PolymorphicDecodableMacroTests: XCTestCase {
         }
         """,
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")
@@ -107,11 +107,11 @@ final class PolymorphicDecodableMacroTests: XCTestCase {
         DiagnosticSpec(
           message: "Invalid polymorphic identifier: expected a non-empty string.",
           line: 1,
-          column: 1
-        ),
+          column: 1,
+        )
       ],
       macros: testMacros,
-      indentationWidth: .spaces(2)
+      indentationWidth: .spaces(2),
     )
     #else
     throw XCTSkip("macros are only supported when running tests for the host platform")

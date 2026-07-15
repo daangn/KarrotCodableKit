@@ -5,8 +5,8 @@
 //  Created by Elon on 4/9/25.
 //
 
-import Testing
 import Foundation
+import Testing
 @testable import KarrotCodableKit
 
 struct AnyCodableTests {
@@ -19,7 +19,8 @@ struct AnyCodableTests {
     var hasUnderscore: String
   }
 
-  @Test func testJSONDecoding() throws {
+  @Test
+  func `JSON decoding`() throws {
     // given
     let json = """
       {
@@ -42,16 +43,17 @@ struct AnyCodableTests {
     let dictionary = try decoder.decode([String: AnyCodable].self, from: json)
 
     // then
-    #expect(dictionary["boolean"]?.value as! Bool == true)
-    #expect(dictionary["integer"]?.value as! Int == 42)
-    #expect(abs(dictionary["double"]?.value as! Double - 3.141592653589793) < 0.001)
-    #expect(dictionary["string"]?.value as! String == "string")
-    #expect(dictionary["array"]?.value as! [Int] == [1, 2, 3])
-    #expect(dictionary["nested"]?.value as! [String: String] == ["a": "alpha", "b": "bravo", "c": "charlie"])
-    #expect(dictionary["null"]?.value as! NSNull == NSNull())
+    #expect(dictionary["boolean"]?.value as? Bool == true)
+    #expect(dictionary["integer"]?.value as? Int == 42)
+    #expect(abs(try #require(dictionary["double"]?.value as? Double) - 3.141592653589793) < 0.001)
+    #expect(dictionary["string"]?.value as? String == "string")
+    #expect(dictionary["array"]?.value as? [Int] == [1, 2, 3])
+    #expect(dictionary["nested"]?.value as? [String: String] == ["a": "alpha", "b": "bravo", "c": "charlie"])
+    #expect(dictionary["null"]?.value as? NSNull == NSNull())
   }
 
-  @Test func testJSONDecodingEquatable() throws {
+  @Test
+  func `JSON decoding equatable`() throws {
     // given
     let json = """
       {
@@ -84,13 +86,14 @@ struct AnyCodableTests {
     #expect(dictionary1["null"] == dictionary2["null"])
   }
 
-  @Test func testJSONEncoding() throws {
+  @Test
+  func `JSON encoding`() throws {
     // given
     let someCodable = AnyCodable(SomeCodable(
       string: "String",
       int: 100,
       bool: true,
-      hasUnderscore: "another string"
+      hasUnderscore: "another string",
     ))
 
     let injectedValue = 1234
@@ -113,7 +116,7 @@ struct AnyCodableTests {
 
     // when
     let json = try encoder.encode(dictionary)
-    let encodedJSONObject = try JSONSerialization.jsonObject(with: json) as! NSDictionary
+    let encodedJSONObject = try #require(try JSONSerialization.jsonObject(with: json) as? NSDictionary)
 
     // then
     let expected = """
@@ -138,7 +141,7 @@ struct AnyCodableTests {
           "null": null
       }
       """.data(using: .utf8)!
-    let expectedJSONObject = try JSONSerialization.jsonObject(with: expected) as! NSDictionary
+    let expectedJSONObject = try #require(try JSONSerialization.jsonObject(with: expected) as? NSDictionary)
 
     #expect(encodedJSONObject == expectedJSONObject)
   }

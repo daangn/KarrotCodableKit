@@ -15,15 +15,15 @@ struct OptionalPolymorphicValueTests {
   func testDecodingOptionalPolymorphicValue() throws {
     // given
     let jsonData = #"""
-    {
-      "notice2" : {
-        "description" : "test",
-        "icon" : "test_icon",
-        "type" : "callout"
-      },
-      "notice3": null
-    }
-    """#
+      {
+        "notice2" : {
+          "description" : "test",
+          "icon" : "test_icon",
+          "type" : "callout"
+        },
+        "notice3": null
+      }
+      """#
 
     // when
     let result = try JSONDecoder().decode(OptionalDummyResponse.self, from: Data(jsonData.utf8))
@@ -38,30 +38,13 @@ struct OptionalPolymorphicValueTests {
   }
 
   @Test
-  func decodingOptionalPolymorphicValueWhenEmptyObject() throws {
+  func `decoding optional polymorphic value when empty object`() throws {
     // given
     let jsonData = #"""
-    {
-      "notice1" : {}
-    }
-    """#
-
-    // when & then
-    #expect(throws: DecodingError.self) {
-      _ = try JSONDecoder().decode(OptionalDummyResponse.self, from: Data(jsonData.utf8))
-    }
-  }
-
-  @Test
-  func decodingOptionalPolymorphicValueWhenMissingRequiredProperty() throws {
-    // given
-    let jsonData = #"""
-    {
-      "notice1" : {
-        "type" : "callout"
+      {
+        "notice1" : {}
       }
-    }
-    """#
+      """#
 
     // when & then
     #expect(throws: DecodingError.self) {
@@ -70,17 +53,34 @@ struct OptionalPolymorphicValueTests {
   }
 
   @Test
-  func encodingOptionalPolymorphicValueOmitsNilFields() throws {
+  func `decoding optional polymorphic value when missing required property`() throws {
+    // given
+    let jsonData = #"""
+      {
+        "notice1" : {
+          "type" : "callout"
+        }
+      }
+      """#
+
+    // when & then
+    #expect(throws: DecodingError.self) {
+      _ = try JSONDecoder().decode(OptionalDummyResponse.self, from: Data(jsonData.utf8))
+    }
+  }
+
+  @Test
+  func `encoding optional polymorphic value omits nil fields`() throws {
     // given
     let response = OptionalDummyResponse(
       notice1: DummyCallout(
         type: .callout,
         title: nil,
         description: "test",
-        icon: "test_icon"
+        icon: "test_icon",
       ),
       notice2: nil,
-      notice3: nil
+      notice3: nil,
     )
 
     // when
@@ -90,20 +90,20 @@ struct OptionalPolymorphicValueTests {
 
     // then - nil fields (notice2, notice3) are omitted, matching Apple's default Codable behavior
     let expectResult = #"""
-    {
-      "notice1" : {
-        "description" : "test",
-        "icon" : "test_icon",
-        "type" : "callout"
+      {
+        "notice1" : {
+          "description" : "test",
+          "icon" : "test_icon",
+          "type" : "callout"
+        }
       }
-    }
-    """#
+      """#
     let jsonString = try #require(String(bytes: data, encoding: .utf8))
     #expect(jsonString == expectResult)
   }
 
   @Test
-  func encodingDecodingOptionalPolymorphicValueRoundTrip() throws {
+  func `encoding decoding optional polymorphic value round trip`() throws {
     // given
     let response = OptionalDummyResponse(notice1: nil, notice2: nil, notice3: nil)
 

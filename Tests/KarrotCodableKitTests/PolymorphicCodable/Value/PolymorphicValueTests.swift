@@ -6,14 +6,15 @@
 //  Copyright © 2025 Danggeun Market Inc. All rights reserved.
 //
 
-import Testing
 import Foundation
+import Testing
 
 import KarrotCodableKit
 
 struct PolymorphicValueTests {
 
-  @Test func testEncodingPolymorphicValue() throws {
+  @Test
+  func `encoding polymorphic value`() throws {
     // given
     let response = DummyResponse(
       notice: DummyCallout(type: .callout, title: nil, description: "test", icon: "test_icon"),
@@ -22,39 +23,39 @@ struct PolymorphicValueTests {
           type: .actionableCallout,
           title: nil,
           description: "test",
-          action: URL(string: "https://daangn.com")!
+          action: try #require(URL(string: "https://daangn.com")),
         ),
         DummyDismissibleCallout(
           type: .dismissibleCallout,
           title: "test_title",
           description: "test",
-          key: "key"
+          key: "key",
         ),
-      ]
+      ],
     )
 
     let expectResult = #"""
-    {
-      "notice" : {
-        "description" : "test",
-        "icon" : "test_icon",
-        "type" : "callout"
-      },
-      "notices" : [
-        {
-          "action" : "https:\/\/daangn.com",
+      {
+        "notice" : {
           "description" : "test",
-          "type" : "actionable-callout"
+          "icon" : "test_icon",
+          "type" : "callout"
         },
-        {
-          "description" : "test",
-          "key" : "key",
-          "title" : "test_title",
-          "type" : "dismissible-callout"
-        }
-      ]
-    }
-    """#
+        "notices" : [
+          {
+            "action" : "https:\/\/daangn.com",
+            "description" : "test",
+            "type" : "actionable-callout"
+          },
+          {
+            "description" : "test",
+            "key" : "key",
+            "title" : "test_title",
+            "type" : "dismissible-callout"
+          }
+        ]
+      }
+      """#
 
     // when
     let encoder = JSONEncoder()
@@ -66,35 +67,36 @@ struct PolymorphicValueTests {
     #expect(jsonString == expectResult)
   }
 
-  @Test func testDecodingPolymorphicValue() throws {
+  @Test
+  func `decoding polymorphic value`() throws {
     // given
     let jsonData = #"""
-    {
-      "notice" : {
-        "description" : "test",
-        "icon" : "test_icon",
-        "type" : "callout"
-      },
-      "notices" : [
-        {
-          "action" : "https:\/\/daangn.com",
+      {
+        "notice" : {
           "description" : "test",
-          "type" : "actionable-callout"
+          "icon" : "test_icon",
+          "type" : "callout"
         },
-        {
-          "description" : "test",
-          "key" : "key",
-          "title" : "test_title",
-          "type" : "dismissible-callout"
-        },
-        {
-          "description" : "test",
-          "title" : "test_title",
-          "type" : "unknown-callout-type"
-        }
-      ]
-    }
-    """#
+        "notices" : [
+          {
+            "action" : "https:\/\/daangn.com",
+            "description" : "test",
+            "type" : "actionable-callout"
+          },
+          {
+            "description" : "test",
+            "key" : "key",
+            "title" : "test_title",
+            "type" : "dismissible-callout"
+          },
+          {
+            "description" : "test",
+            "title" : "test_title",
+            "type" : "unknown-callout-type"
+          }
+        ]
+      }
+      """#
 
     // when
     let result = try JSONDecoder().decode(DummyResponse.self, from: Data(jsonData.utf8))
@@ -107,23 +109,24 @@ struct PolymorphicValueTests {
     #expect(result.notices[2].type == .undefinedCallout)
   }
 
-  @Test func testDecodingUndefinedPolymorphicValue() throws {
+  @Test
+  func `decoding undefined polymorphic value`() throws {
     // given
     let jsonData = #"""
-    {
-      "notice" : {
-        "description" : "test1",
-        "icon" : "test_icon",
-        "type" : "unknown-callout-type"
-      },
-      "notices": [
-        {
-          "description" : "test2",
-          "type" : "unknown-type"
-        }
-      ]
-    }
-    """#
+      {
+        "notice" : {
+          "description" : "test1",
+          "icon" : "test_icon",
+          "type" : "unknown-callout-type"
+        },
+        "notices": [
+          {
+            "description" : "test2",
+            "type" : "unknown-type"
+          }
+        ]
+      }
+      """#
 
     // when
     let result = try JSONDecoder().decode(DummyResponse.self, from: Data(jsonData.utf8))
@@ -136,35 +139,36 @@ struct PolymorphicValueTests {
 }
 
 extension PolymorphicValueTests {
-  @Test func testDecodingOnlyValue() throws {
+  @Test
+  func `decoding only value`() throws {
     // given
     let jsonData = #"""
-    {
-      "notice" : {
-        "description" : "test",
-        "icon" : "test_icon",
-        "type" : "callout"
-      },
-      "notices" : [
-        {
-          "action" : "https:\/\/daangn.com",
+      {
+        "notice" : {
           "description" : "test",
-          "type" : "actionable-callout"
+          "icon" : "test_icon",
+          "type" : "callout"
         },
-        {
-          "description" : "test",
-          "key" : "key",
-          "title" : "test_title",
-          "type" : "dismissible-callout"
-        },
-        {
-          "description" : "test",
-          "title" : "test_title",
-          "type" : "unknown-callout-type"
-        }
-      ]
-    }
-    """#
+        "notices" : [
+          {
+            "action" : "https:\/\/daangn.com",
+            "description" : "test",
+            "type" : "actionable-callout"
+          },
+          {
+            "description" : "test",
+            "key" : "key",
+            "title" : "test_title",
+            "type" : "dismissible-callout"
+          },
+          {
+            "description" : "test",
+            "title" : "test_title",
+            "type" : "unknown-callout-type"
+          }
+        ]
+      }
+      """#
 
     // when
     let result = try JSONDecoder().decode(DummyDecodableResponse.self, from: Data(jsonData.utf8))

@@ -20,7 +20,7 @@ public struct LossyDictionary<Key: Hashable, Value> {
 
   public init(wrappedValue: [Key: Value]) {
     self.wrappedValue = wrappedValue
-    self.outcome = .decodedSuccessfully
+    outcome = .decodedSuccessfully
   }
 
   init(wrappedValue: [Key: Value], outcome: ResilientDecodingOutcome) {
@@ -42,11 +42,11 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
 
     init?(stringValue: String) {
       self.stringValue = stringValue
-      self.intValue = Int(stringValue)
+      intValue = Int(stringValue)
     }
 
     init?(intValue: Int) {
-      self.stringValue = "\(intValue)"
+      stringValue = "\(intValue)"
       self.intValue = intValue
     }
   }
@@ -57,7 +57,7 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
 
     public init(from decoder: Decoder) throws {
       let container = try decoder.singleValueContainer()
-      self.value = try container.decode(DecodablValue.self)
+      value = try container.decode(DecodablValue.self)
     }
   }
 
@@ -98,7 +98,7 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
         container: container,
         key: extractedKey.codingKey,
         originalKey: extractedKey.originalKey,
-        state: &state
+        state: &state,
       )
     }
 
@@ -125,7 +125,7 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
         container: container,
         key: key,
         intKey: intValue,
-        state: &state
+        state: &state,
       )
     }
 
@@ -136,7 +136,7 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
     container: KeyedDecodingContainer<DictionaryCodingKey>,
     key: DictionaryCodingKey,
     originalKey: String,
-    state: inout DecodingState
+    state: inout DecodingState,
   ) {
     // Safe casting - if it fails, we skip this key entirely
     guard let castKey = originalKey as? Key else { return }
@@ -161,7 +161,7 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
     container: KeyedDecodingContainer<DictionaryCodingKey>,
     key: DictionaryCodingKey,
     intKey: Int,
-    state: inout DecodingState
+    state: inout DecodingState,
   ) {
     // Safe casting - if it fails, we skip this key entirely
     guard let castKey = intKey as? Key else { return }
@@ -201,7 +201,7 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
       #if DEBUG
       let context = DecodingError.Context(
         codingPath: decoder.codingPath,
-        debugDescription: "Value was nil but property is non-optional"
+        debugDescription: "Value was nil but property is non-optional",
       )
       let error = DecodingError.valueNotFound([Key: Value].self, context)
       decoder.reportError(error)
@@ -213,18 +213,19 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
     }
 
     do {
-      let state: DecodingState = if Key.self == String.self {
-        try Self.decodeStringKeyedDictionary(from: decoder)
-      } else if Key.self == Int.self {
-        try Self.decodeIntKeyedDictionary(from: decoder)
-      } else {
-        throw DecodingError.dataCorrupted(
-          DecodingError.Context(
-            codingPath: decoder.codingPath,
-            debugDescription: "Unable to decode key type."
+      let state: DecodingState =
+        if Key.self == String.self {
+          try Self.decodeStringKeyedDictionary(from: decoder)
+        } else if Key.self == Int.self {
+          try Self.decodeIntKeyedDictionary(from: decoder)
+        } else {
+          throw DecodingError.dataCorrupted(
+            DecodingError.Context(
+              codingPath: decoder.codingPath,
+              debugDescription: "Unable to decode key type.",
+            )
           )
-        )
-      }
+        }
 
       self = Self.createFinalResult(from: state)
     } catch {
@@ -239,7 +240,7 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
 
   private static func extractKeys(
     from decoder: Decoder,
-    container: KeyedDecodingContainer<DictionaryCodingKey>
+    container: KeyedDecodingContainer<DictionaryCodingKey>,
   ) throws -> [ExtractedKey] {
     // Decode a dictionary ignoring the values to decode the original keys
     // without using the `JSONDecoder.KeyDecodingStrategy`.
@@ -247,7 +248,7 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
 
     return zip(
       container.allKeys.sorted(by: { $0.stringValue < $1.stringValue }),
-      keys.sorted()
+      keys.sorted(),
     )
     .map { ExtractedKey(codingKey: $0, originalKey: $1) }
   }
@@ -272,7 +273,7 @@ extension LossyDictionary: Sendable where Key: Sendable, Value: Sendable {}
 extension KeyedDecodingContainer {
   public func decode<DictKey, DictValue>(
     _: LossyDictionary<DictKey, DictValue>.Type,
-    forKey key: Key
+    forKey key: Key,
   ) throws -> LossyDictionary<DictKey, DictValue>
     where DictKey: Hashable & Decodable, DictValue: Decodable
   {
@@ -282,7 +283,7 @@ extension KeyedDecodingContainer {
       #if DEBUG
       let context = DecodingError.Context(
         codingPath: codingPath + [key],
-        debugDescription: "Key not found but property is non-optional"
+        debugDescription: "Key not found but property is non-optional",
       )
       let error = DecodingError.keyNotFound(key, context)
       let decoder = try? superDecoder(forKey: key)

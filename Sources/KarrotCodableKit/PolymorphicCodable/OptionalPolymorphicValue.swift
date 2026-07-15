@@ -32,7 +32,7 @@ public struct OptionalPolymorphicValue<PolymorphicType: PolymorphicCodableStrate
 
   public init(wrappedValue: PolymorphicType.ExpectedType?) {
     self.wrappedValue = wrappedValue
-    self.outcome = .decodedSuccessfully
+    outcome = .decodedSuccessfully
   }
 
   init(wrappedValue: PolymorphicType.ExpectedType?, outcome: ResilientDecodingOutcome) {
@@ -52,7 +52,7 @@ extension OptionalPolymorphicValue: Encodable {
   public func encode(to encoder: Encoder) throws {
     try encoder.encodeIfPresent(
       wrappedValue,
-      codingKey: PolymorphicType.polymorphicMetaCodingKey
+      codingKey: PolymorphicType.polymorphicMetaCodingKey,
     )
   }
 }
@@ -60,16 +60,16 @@ extension OptionalPolymorphicValue: Encodable {
 extension OptionalPolymorphicValue: Decodable {
   public init(from decoder: Decoder) throws {
     do {
-      self.wrappedValue = try PolymorphicType.decode(from: decoder)
-      self.outcome = .decodedSuccessfully
+      wrappedValue = try PolymorphicType.decode(from: decoder)
+      outcome = .decodedSuccessfully
 
     } catch DecodingError.keyNotFound {
-      self.wrappedValue = nil
-      self.outcome = .keyNotFound
+      wrappedValue = nil
+      outcome = .keyNotFound
 
     } catch DecodingError.valueNotFound(let rawType, _) where rawType == PolymorphicType.ExpectedType.self {
-      self.wrappedValue = nil
-      self.outcome = .valueWasNil
+      wrappedValue = nil
+      outcome = .valueWasNil
 
     } catch {
       // OptionalPolymorphicValue throws errors instead of recovering

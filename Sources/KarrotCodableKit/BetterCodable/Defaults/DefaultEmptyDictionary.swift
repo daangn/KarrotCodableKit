@@ -9,7 +9,7 @@ import Foundation
 
 public struct DefaultEmptyDictionaryStrategy<
   Key: Decodable & Hashable,
-  Value: Decodable
+  Value: Decodable,
 >: DefaultCodableStrategy {
   public static var defaultValue: [Key: Value] { [:] }
 }
@@ -20,5 +20,5 @@ public struct DefaultEmptyDictionaryStrategy<
 /// to decode the container.
 public typealias DefaultEmptyDictionary<
   Key: Decodable & Hashable,
-  Value: Decodable
+  Value: Decodable,
 > = DefaultCodable<DefaultEmptyDictionaryStrategy<Key, Value>>

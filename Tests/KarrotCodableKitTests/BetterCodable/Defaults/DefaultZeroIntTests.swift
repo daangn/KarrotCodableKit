@@ -5,8 +5,8 @@
 //  Created by Elon on 2023/04/27.
 //
 
-import Testing
 import Foundation
+import Testing
 
 import KarrotCodableKit
 
@@ -15,7 +15,8 @@ struct DefaultZeroIntTests {
     @DefaultZeroInt var intValue: Int
   }
 
-  @Test func testDecodingFailableIntDefaultZeroInt() throws {
+  @Test
+  func `decoding failable int default zero int`() throws {
     // given
     let jsonData = #"{ "intValue": null }"#.data(using: .utf8)!
 
@@ -26,7 +27,8 @@ struct DefaultZeroIntTests {
     #expect(fixture.intValue == 0)
   }
 
-  @Test func testDecodingKeyNotPresentDefaultZeroInt() throws {
+  @Test
+  func `decoding key not present default zero int`() throws {
     // given
     let jsonData = #"{}"#.data(using: .utf8)!
 
@@ -37,7 +39,8 @@ struct DefaultZeroIntTests {
     #expect(fixture.intValue == 0)
   }
 
-  @Test func testDecodinSuccessDefaultZeroInt() throws {
+  @Test
+  func `decodin success default zero int`() throws {
     // given
     let jsonData = #"{ "intValue": 999 }"#.data(using: .utf8)!
 

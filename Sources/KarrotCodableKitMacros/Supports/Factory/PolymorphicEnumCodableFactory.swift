@@ -29,7 +29,7 @@ enum PolymorphicEnumCodableFactory {
     with caseInfos: [CaseInfo],
     identifierCodingKey: String,
     accessLevel: String,
-    fallbackCaseName: String?
+    fallbackCaseName: String?,
   ) -> String {
     let caseSwitches = caseInfos.map { caseInfo in
       """
@@ -44,7 +44,8 @@ enum PolymorphicEnumCodableFactory {
         guard let fallbackCase else { return "" } // This will be caught by validateFallbackCaseName
         return """
           default:
-              self = .\(fallbackCaseName)(\(fallbackCase.parameterName)try \(fallbackCase.associatedType)(from: decoder))
+              self = .\(fallbackCaseName)(\(fallbackCase.parameterName)try \(fallbackCase
+          .associatedType)(from: decoder))
           """
       } else {
         return """
@@ -69,7 +70,7 @@ enum PolymorphicEnumCodableFactory {
 
   static func makeEncodeToEncoder(
     with caseInfos: [CaseInfo],
-    accessLevel: String
+    accessLevel: String,
   ) -> String {
     let encodeSwitches = caseInfos.map { caseInfo in
       """
@@ -108,7 +109,7 @@ enum PolymorphicEnumCodableFactory {
   /// Validates and extracts the fallbackCaseName from the attribute arguments
   static func validateFallbackCaseName(
     in node: AttributeSyntax,
-    caseInfos: [CaseInfo]
+    caseInfos: [CaseInfo],
   ) throws -> String? {
     let fallbackCaseNameString = node.arguments?.as(LabeledExprListSyntax.self)
       .flatMap {
@@ -161,7 +162,7 @@ enum PolymorphicEnumCodableFactory {
         return CaseInfo(
           name: caseName,
           parameterName: parameterName,
-          associatedType: associatedValue.type
+          associatedType: associatedValue.type,
         )
       }
   }

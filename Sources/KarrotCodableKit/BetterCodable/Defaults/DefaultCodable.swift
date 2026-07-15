@@ -40,7 +40,7 @@ public struct DefaultCodable<Default: DefaultCodableStrategy> {
 
   public init(wrappedValue: Default.DefaultValue) {
     self.wrappedValue = wrappedValue
-    self.outcome = .decodedSuccessfully
+    outcome = .decodedSuccessfully
   }
 
   init(wrappedValue: Default.DefaultValue, outcome: ResilientDecodingOutcome) {
@@ -58,7 +58,7 @@ public struct DefaultCodable<Default: DefaultCodableStrategy> {
 extension DefaultCodable where Default.Type == Default.DefaultValue.Type {
   public init(wrappedValue: Default) {
     self.wrappedValue = wrappedValue
-    self.outcome = .decodedSuccessfully
+    outcome = .decodedSuccessfully
   }
 }
 

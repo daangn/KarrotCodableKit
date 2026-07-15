@@ -11,7 +11,7 @@ import Foundation
 extension KeyedDecodingContainer {
   public func decode<T>(
     _ type: LossyOptionalPolymorphicValue<T>.Type,
-    forKey key: Key
+    forKey key: Key,
   ) throws -> LossyOptionalPolymorphicValue<T> where T: PolymorphicCodableStrategy {
     if let value = try decodeIfPresent(type, forKey: key) {
       value
@@ -22,7 +22,7 @@ extension KeyedDecodingContainer {
 
   public func decodeIfPresent<T>(
     _ type: LossyOptionalPolymorphicValue<T>.Type,
-    forKey key: Self.Key
+    forKey key: Self.Key,
   ) throws -> LossyOptionalPolymorphicValue<T>? where T: PolymorphicCodableStrategy {
     // Check if key exists
     guard contains(key) else {

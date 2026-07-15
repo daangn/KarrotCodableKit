@@ -39,10 +39,10 @@ extension ResilientDecodingOutcome: Equatable {
 /// so we define an empty struct with `static` properties and functions which match the `enum` above.
 /// This reduces the number of places we need to use `#if DEBUG` substantially.
 public struct ResilientDecodingOutcome: Sendable {
-  public static let decodedSuccessfully = Self()
-  public static let keyNotFound = Self()
-  public static let valueWasNil = Self()
-  public static let recoveredFromDebugOnlyError = Self()
+  public static let decodedSuccessfully: Self = .init()
+  public static let keyNotFound: Self = .init()
+  public static let valueWasNil: Self = .init()
+  public static let recoveredFromDebugOnlyError: Self = .init()
   public static func recoveredFrom(_: any Error, wasReported: Bool) -> Self { Self() }
 }
 #endif

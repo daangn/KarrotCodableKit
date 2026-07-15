@@ -31,7 +31,7 @@ public struct RFC3339Strategy: DateValueCodableStrategy {
       throw DecodingError.dataCorrupted(
         DecodingError.Context(
           codingPath: [],
-          debugDescription: "\"\(value)\" is invalid date format!"
+          debugDescription: "\"\(value)\" is invalid date format!",
         )
       )
     }

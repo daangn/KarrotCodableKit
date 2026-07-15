@@ -5,8 +5,8 @@
 //  Created by Elon on 2023/04/25.
 //
 
-import Testing
 import Foundation
+import Testing
 
 import KarrotCodableKit
 
@@ -48,7 +48,8 @@ struct DefaultCodableTest_DateStrategy {
     fileprivate var discoverDate: Date
   }
 
-  @Test func testDecodingAndEncodingWithDateStrategy() throws {
+  @Test
+  func `decoding and encoding with date strategy`() throws {
     let expectedDate = Date(timeIntervalSinceReferenceDate: 222601260)
     let jsonData = #"{ "discoverDate": "2008-01-21T09:41:00.000Z" }"#.data(using: .utf8)!
     let fixture = try JSONDecoder.iso.decode(Fixture.self, from: jsonData)
@@ -75,7 +76,8 @@ struct DefaultCodableTest_NestedPropertyWrapper {
     var returnDate: Date
   }
 
-  @Test func testNestedPropertyWrappersCanMergeDefaultCodableWithDateStrategy() throws {
+  @Test
+  func `nested property wrappers can merge default codable with date strategy`() throws {
     let _1970 = Date(timeIntervalSince1970: 0)
     let _1971 = Date(timeIntervalSince1970: 31536000)
 
@@ -122,7 +124,8 @@ struct DefaultCodableTests_TypesWithContainers {
     public var type: DictionaryContainer
   }
 
-  @Test func testDecodingAndEncodingWithArrayContainer() throws {
+  @Test
+  func `decoding and encoding with array container`() throws {
     let jsonData = #"{ "type": { "value": [2, 4, 6] } }"#.data(using: .utf8)!
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
     #expect(fixture.type.value == [2, 4, 6])
@@ -132,7 +135,8 @@ struct DefaultCodableTests_TypesWithContainers {
     #expect(str == #"{"type":{"value":[2,4,6]}}"#)
   }
 
-  @Test func testDecodingAndEncodingWithDictionaryContainer() throws {
+  @Test
+  func `decoding and encoding with dictionary container`() throws {
     let jsonData = #"{ "type": { "value": {"b": 17 } } }"#.data(using: .utf8)!
     let fixture = try JSONDecoder().decode(Fixture2.self, from: jsonData)
     #expect(fixture.type.value == ["b": 17])
@@ -168,8 +172,8 @@ struct DefaultCodableTests_EnumWithAssociatedValue {
       let k = try c.decode(String.self, forKey: .z)
       let i = try c.decode(Int.self, forKey: .i)
 
-      if k == "ziz" { self.z = .ziz(i) }
-      else { self.z = .zaz(i) }
+      if k == "ziz" { z = .ziz(i) }
+      else { z = .zaz(i) }
     }
 
     func encode(to encoder: Encoder) throws {
@@ -195,7 +199,8 @@ struct DefaultCodableTests_EnumWithAssociatedValue {
     public var value: CustomType
   }
 
-  @Test func testDecodingAndEncodingCustomEnumWithAssociatedValue() throws {
+  @Test
+  func `decoding and encoding custom enum with associated value`() throws {
     let jsonData = #"{ "value": { "fish": "ziz", "int": 4 } }"#.data(using: .utf8)!
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
     #expect(fixture.value.z == .ziz(4))

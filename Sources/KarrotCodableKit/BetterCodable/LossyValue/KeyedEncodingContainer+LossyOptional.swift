@@ -18,10 +18,10 @@ extension KeyedEncodingContainer {
   /// This mirrors Apple's default `Codable` behavior for optional properties, where a `nil` value
   /// results in the key being skipped rather than encoded as an explicit `null`. It is the encoding-side
   /// counterpart to the `decode(_:forKey:)` overload that treats a missing key as the default `nil`.
-  public mutating func encode<T>(
-    _ value: DefaultCodable<DefaultNilStrategy<T>>,
-    forKey key: Key
-  ) throws where T: Encodable {
+  public mutating func encode(
+    _ value: DefaultCodable<DefaultNilStrategy<some Encodable>>,
+    forKey key: Key,
+  ) throws {
     guard value.wrappedValue != nil else { return }
     try value.encode(to: superEncoder(forKey: key))
   }

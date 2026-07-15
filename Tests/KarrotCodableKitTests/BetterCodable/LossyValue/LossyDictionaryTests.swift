@@ -5,8 +5,8 @@
 //  Created by Elon on 2023/04/25.
 //
 
-import Testing
 import Foundation
+import Testing
 
 import KarrotCodableKit
 
@@ -16,7 +16,8 @@ struct LossyDictionaryTests {
     @LossyDictionary var intToString: [Int: String]
   }
 
-  @Test func testDecodingLossyDictionaryIgnoresFailableElements() throws {
+  @Test
+  func `decoding lossy dictionary ignores failable elements`() throws {
     // given
     let jsonData = """
       {
@@ -41,7 +42,8 @@ struct LossyDictionaryTests {
     #expect(fixture.intToString == [1: "one", 2: "two"])
   }
 
-  @Test func testEncodingDecodedLossyDictionaryIgnoresFailableElements() throws {
+  @Test
+  func `encoding decoded lossy dictionary ignores failable elements`() throws {
     // given
     let jsonData = """
       {
@@ -70,7 +72,8 @@ struct LossyDictionaryTests {
     #expect(fixture.intToString == [1: "one", 2: "two", 3: "three"])
   }
 
-  @Test func testEncodingDecodedLosslessArrayRetainsContents() throws {
+  @Test
+  func `encoding decoded lossless array retains contents`() throws {
     // given
     let jsonData = """
       {
@@ -95,7 +98,8 @@ struct LossyDictionaryTests {
     #expect(fixture.intToString == [1: "one", 2: "two", 3: "three"])
   }
 
-  @Test func testEncodingLosslessDictionaryRetainsKeys() throws {
+  @Test
+  func `encoding lossless dictionary retains keys`() throws {
     // given
     let decoder = JSONDecoder()
     decoder.keyDecodingStrategy = .convertFromSnakeCase
@@ -109,7 +113,7 @@ struct LossyDictionaryTests {
         "normal key": 4,
         "another_key": 5,
       ],
-      intToString: [:]
+      intToString: [:],
     )
 
     // when

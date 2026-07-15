@@ -35,14 +35,14 @@ public struct LosslessValueCodable<Strategy: LosslessDecodingStrategy>: Codable 
 
   public init(wrappedValue: Strategy.Value) {
     self.wrappedValue = wrappedValue
-    self.type = Strategy.Value.self
-    self.outcome = .decodedSuccessfully
+    type = Strategy.Value.self
+    outcome = .decodedSuccessfully
   }
 
   init(
     wrappedValue: Strategy.Value,
     outcome: ResilientDecodingOutcome,
-    type: LosslessStringCodable.Type
+    type: LosslessStringCodable.Type,
   ) {
     self.wrappedValue = wrappedValue
     self.outcome = outcome
@@ -57,9 +57,9 @@ public struct LosslessValueCodable<Strategy: LosslessDecodingStrategy>: Codable 
 
   public init(from decoder: Decoder) throws {
     do {
-      self.wrappedValue = try Strategy.Value(from: decoder)
-      self.type = Strategy.Value.self
-      self.outcome = .decodedSuccessfully
+      wrappedValue = try Strategy.Value(from: decoder)
+      type = Strategy.Value.self
+      outcome = .decodedSuccessfully
     } catch {
       guard
         let rawValue = Strategy.losslessDecodableTypes.lazy.compactMap({ $0(decoder) }).first,
@@ -71,9 +71,9 @@ public struct LosslessValueCodable<Strategy: LosslessDecodingStrategy>: Codable 
         throw error
       }
 
-      self.wrappedValue = value
-      self.type = Swift.type(of: rawValue)
-      self.outcome = .decodedSuccessfully
+      wrappedValue = value
+      type = Swift.type(of: rawValue)
+      outcome = .decodedSuccessfully
     }
   }
 

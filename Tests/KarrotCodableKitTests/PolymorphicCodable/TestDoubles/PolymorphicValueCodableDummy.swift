@@ -102,7 +102,7 @@ struct OptionalPolymorphicLossyArrayDummyResponse {
     DummyActionableCallout.self,
     DummyDismissibleCallout.self,
   ],
-  fallbackType: DummyUndefinedCallout.self
+  fallbackType: DummyUndefinedCallout.self,
 )
 public protocol DummyNotice: Codable, Equatable {
   var type: DummyNoticeType { get }
@@ -112,7 +112,7 @@ public protocol DummyNotice: Codable, Equatable {
 
 public enum DummyNoticeType: String, Codable, DefaultCodableStrategy {
 
-  public static let defaultValue = DummyNoticeType.undefinedCallout
+  public static let defaultValue: DummyNoticeType = .undefinedCallout
 
   case callout
   case actionableCallout = "actionable-callout"
@@ -146,8 +146,11 @@ struct DummyDismissibleCallout: DummyNotice {
 
 @PolymorphicCodable(identifier: "undefined-callout", codingKeyStyle: .snakeCase)
 struct DummyUndefinedCallout: DummyNotice {
+  // swiftformat:disable propertyTypes
+  // An explicit type annotation breaks generic inference of the @DefaultCodable wrapper.
   @DefaultCodable
   var type = DummyNoticeType.undefinedCallout
+  // swiftformat:enable propertyTypes
   let title: String?
   let description: String
 }

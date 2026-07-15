@@ -18,7 +18,7 @@ extension PolymorphicCodableStrategyProvidingMacro: MemberMacro {
   public static func expansion(
     of node: AttributeSyntax,
     providingMembersOf declaration: some DeclGroupSyntax,
-    in context: some MacroExpansionContext
+    in context: some MacroExpansionContext,
   ) throws -> [DeclSyntax] {
     guard let protocolDecl = declaration.as(ProtocolDeclSyntax.self) else {
       throw CodableKitError.message("Macro must be attached to a protocol.")
@@ -34,8 +34,12 @@ extension PolymorphicCodableStrategyProvidingMacro: MemberMacro {
       DeclSyntax("typealias PolymorphicArray = PolymorphicArrayValue<\(raw: strategyStructName)>"),
       DeclSyntax("typealias OptionalPolymorphicArray = OptionalPolymorphicArrayValue<\(raw: strategyStructName)>"),
       DeclSyntax("typealias PolymorphicLossyArray = PolymorphicLossyArrayValue<\(raw: strategyStructName)>"),
-      DeclSyntax("typealias OptionalPolymorphicLossyArray = OptionalPolymorphicLossyArrayValue<\(raw: strategyStructName)>"),
-      DeclSyntax("typealias DefaultEmptyPolymorphicArray = DefaultEmptyPolymorphicArrayValue<\(raw: strategyStructName)>"),
+      DeclSyntax(
+        "typealias OptionalPolymorphicLossyArray = OptionalPolymorphicLossyArrayValue<\(raw: strategyStructName)>"
+      ),
+      DeclSyntax(
+        "typealias DefaultEmptyPolymorphicArray = DefaultEmptyPolymorphicArrayValue<\(raw: strategyStructName)>"
+      ),
     ]
   }
 }
@@ -46,7 +50,7 @@ extension PolymorphicCodableStrategyProvidingMacro: PeerMacro {
   public static func expansion(
     of node: AttributeSyntax,
     providingPeersOf declaration: some DeclSyntaxProtocol,
-    in context: some MacroExpansionContext
+    in context: some MacroExpansionContext,
   ) throws -> [DeclSyntax] {
     guard let protocolDecl = declaration.as(ProtocolDeclSyntax.self) else { return [] }
 
@@ -59,7 +63,7 @@ extension PolymorphicCodableStrategyProvidingMacro: PeerMacro {
 
     let identifierCodingKeyString = SyntaxHelper.findArgument(
       named: "identifierCodingKey",
-      in: arguments
+      in: arguments,
     ).flatMap {
       SyntaxHelper.extractString(from: $0)
     } ?? "type"
@@ -101,7 +105,7 @@ extension PolymorphicCodableStrategyProvidingMacro: PeerMacro {
           }
         }
         """
-      ),
+      )
     ]
   }
 

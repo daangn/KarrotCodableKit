@@ -23,8 +23,8 @@ struct LossyDictionaryResilientTests {
     @LossyDictionary var objectDict: [String: NestedObject]
   }
 
-  @Test("projected value provides error information for each failed key-value pair")
-  func projectedValueProvidesErrorInfo() throws {
+  @Test
+  func `projected value provides error information for each failed key-value pair`() throws {
     let json = """
       {
         "stringDict": {
@@ -78,8 +78,8 @@ struct LossyDictionaryResilientTests {
     #endif
   }
 
-  @Test("error reporting with JSONDecoder")
-  func errorReporting() throws {
+  @Test
+  func `error reporting with JSONDecoder`() throws {
     let json = """
       {
         "stringDict": {
@@ -109,8 +109,8 @@ struct LossyDictionaryResilientTests {
     #endif
   }
 
-  @Test("complete failure results in empty dictionary")
-  func completeFailure() throws {
+  @Test
+  func `complete failure results in empty dictionary`() throws {
     let json = """
       {
         "stringDict": "not a dictionary",
@@ -136,8 +136,8 @@ struct LossyDictionaryResilientTests {
     #endif
   }
 
-  @Test("missing keys result in empty dictionary")
-  func missingKeys() throws {
+  @Test
+  func `missing keys result in empty dictionary`() throws {
     let json = "{}"
 
     let decoder = JSONDecoder()

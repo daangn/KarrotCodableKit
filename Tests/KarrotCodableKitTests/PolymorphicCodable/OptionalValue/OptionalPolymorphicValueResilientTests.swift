@@ -8,8 +8,8 @@ struct OptionalPolymorphicValueResilientTests {
     @DummyNotice.OptionalPolymorphic var notice: (any DummyNotice)?
   }
 
-  @Test("Outcome should be valueWasNil when decoding nil value")
-  func nilValue() throws {
+  @Test
+  func `Outcome should be valueWasNil when decoding nil value`() throws {
     // given
     let json = """
       {
@@ -29,8 +29,8 @@ struct OptionalPolymorphicValueResilientTests {
     #endif
   }
 
-  @Test("Outcome should be keyNotFound when key is missing")
-  func missingKey() throws {
+  @Test
+  func `Outcome should be keyNotFound when key is missing`() throws {
     // given
     let json = """
       {}
@@ -48,8 +48,8 @@ struct OptionalPolymorphicValueResilientTests {
     #endif
   }
 
-  @Test("Outcome should be decodedSuccessfully for successful decoding")
-  func successfulDecoding() throws {
+  @Test
+  func `Outcome should be decodedSuccessfully for successful decoding`() throws {
     // given
     let json = """
       {
@@ -79,8 +79,8 @@ struct OptionalPolymorphicValueResilientTests {
     #endif
   }
 
-  @Test("Should throw error for unknown type")
-  func unknownTypeThrowsError() throws {
+  @Test
+  func `Should throw error for unknown type`() throws {
     // given
     let json = """
       {
@@ -98,8 +98,8 @@ struct OptionalPolymorphicValueResilientTests {
     }
   }
 
-  @Test("Should throw error for invalid JSON format")
-  func invalidJSONThrowsError() throws {
+  @Test
+  func `Should throw error for invalid JSON format`() throws {
     // given
     let json = """
       {

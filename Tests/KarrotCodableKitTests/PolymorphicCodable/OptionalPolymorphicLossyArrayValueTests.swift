@@ -14,30 +14,30 @@ import KarrotCodableKit
 struct OptionalPolymorphicLossyArrayValueTests {
 
   @Test
-  func decodingValidArray() throws {
+  func `decoding valid array`() throws {
     // given
     let jsonData = #"""
-    {
-      "notices1" : [
-        {
-          "description" : "test1",
-          "icon" : "test_icon1",
-          "type" : "callout"
-        },
-        {
-          "description" : "test2",
-          "action" : "https://example.com",
-          "type" : "actionable-callout"
-        }
-      ],
-      "notices2" : null
-    }
-    """#
+      {
+        "notices1" : [
+          {
+            "description" : "test1",
+            "icon" : "test_icon1",
+            "type" : "callout"
+          },
+          {
+            "description" : "test2",
+            "action" : "https://example.com",
+            "type" : "actionable-callout"
+          }
+        ],
+        "notices2" : null
+      }
+      """#
 
     // when
     let result = try JSONDecoder().decode(
       OptionalPolymorphicLossyArrayDummyResponse.self,
-      from: Data(jsonData.utf8)
+      from: Data(jsonData.utf8),
     )
 
     // then
@@ -55,19 +55,19 @@ struct OptionalPolymorphicLossyArrayValueTests {
   }
 
   @Test
-  func decodingNullValue() throws {
+  func `decoding null value`() throws {
     // given
     let jsonData = #"""
-    {
-      "notices1" : null,
-      "notices2" : null
-    }
-    """#
+      {
+        "notices1" : null,
+        "notices2" : null
+      }
+      """#
 
     // when
     let result = try JSONDecoder().decode(
       OptionalPolymorphicLossyArrayDummyResponse.self,
-      from: Data(jsonData.utf8)
+      from: Data(jsonData.utf8),
     )
 
     // then
@@ -76,24 +76,24 @@ struct OptionalPolymorphicLossyArrayValueTests {
   }
 
   @Test
-  func decodingMissingKey() throws {
+  func `decoding missing key`() throws {
     // given
     let jsonData = #"""
-    {
-      "notices2" : [
-        {
-          "description" : "test",
-          "icon" : "test_icon",
-          "type" : "callout"
-        }
-      ]
-    }
-    """#
+      {
+        "notices2" : [
+          {
+            "description" : "test",
+            "icon" : "test_icon",
+            "type" : "callout"
+          }
+        ]
+      }
+      """#
 
     // when
     let result = try JSONDecoder().decode(
       OptionalPolymorphicLossyArrayDummyResponse.self,
-      from: Data(jsonData.utf8)
+      from: Data(jsonData.utf8),
     )
 
     // then
@@ -104,19 +104,19 @@ struct OptionalPolymorphicLossyArrayValueTests {
   }
 
   @Test
-  func decodingEmptyArray() throws {
+  func `decoding empty array`() throws {
     // given
     let jsonData = #"""
-    {
-      "notices1" : [],
-      "notices2" : null
-    }
-    """#
+      {
+        "notices1" : [],
+        "notices2" : null
+      }
+      """#
 
     // when
     let result = try JSONDecoder().decode(
       OptionalPolymorphicLossyArrayDummyResponse.self,
-      from: Data(jsonData.utf8)
+      from: Data(jsonData.utf8),
     )
 
     // then
@@ -126,28 +126,28 @@ struct OptionalPolymorphicLossyArrayValueTests {
   }
 
   @Test
-  func decodingWithInvalidElementSkipsIt() throws {
+  func `decoding with invalid element skips it`() throws {
     // given - Array with one invalid element (missing required 'description' property)
     let jsonData = #"""
-    {
-      "notices1" : [
-        {
-          "icon" : "test_icon",
-          "type" : "callout"
-        },
-        {
-          "description" : "test",
-          "icon" : "test_icon",
-          "type" : "callout"
-        }
-      ]
-    }
-    """#
+      {
+        "notices1" : [
+          {
+            "icon" : "test_icon",
+            "type" : "callout"
+          },
+          {
+            "description" : "test",
+            "icon" : "test_icon",
+            "type" : "callout"
+          }
+        ]
+      }
+      """#
 
     // when
     let result = try JSONDecoder().decode(
       OptionalPolymorphicLossyArrayDummyResponse.self,
-      from: Data(jsonData.utf8)
+      from: Data(jsonData.utf8),
     )
 
     // then - Invalid element is skipped, valid element is kept
@@ -159,26 +159,26 @@ struct OptionalPolymorphicLossyArrayValueTests {
   }
 
   @Test
-  func decodingWithAllInvalidElementsReturnsEmptyArray() throws {
+  func `decoding with all invalid elements returns empty array`() throws {
     // given - Array where all elements are invalid
     let jsonData = #"""
-    {
-      "notices1" : [
-        {
-          "icon" : "test_icon1",
-          "type" : "callout"
-        },
-        {
-          "type" : "actionable-callout"
-        }
-      ]
-    }
-    """#
+      {
+        "notices1" : [
+          {
+            "icon" : "test_icon1",
+            "type" : "callout"
+          },
+          {
+            "type" : "actionable-callout"
+          }
+        ]
+      }
+      """#
 
     // when
     let result = try JSONDecoder().decode(
       OptionalPolymorphicLossyArrayDummyResponse.self,
-      from: Data(jsonData.utf8)
+      from: Data(jsonData.utf8),
     )
 
     // then - All elements are invalid, so the array is empty (not nil)
@@ -195,23 +195,23 @@ struct OptionalPolymorphicLossyArrayValueTests {
           type: .callout,
           title: nil,
           description: "test",
-          icon: "test_icon"
+          icon: "test_icon",
         )
       ],
-      notices2: nil
+      notices2: nil,
     )
 
     let expectResult = #"""
-    {
-      "notices1" : [
-        {
-          "description" : "test",
-          "icon" : "test_icon",
-          "type" : "callout"
-        }
-      ]
-    }
-    """#
+      {
+        "notices1" : [
+          {
+            "description" : "test",
+            "icon" : "test_icon",
+            "type" : "callout"
+          }
+        ]
+      }
+      """#
 
     // when
     let encoder = JSONEncoder()
@@ -224,11 +224,11 @@ struct OptionalPolymorphicLossyArrayValueTests {
   }
 
   @Test
-  func encodingDecodingRoundTrip() throws {
+  func `encoding decoding round trip`() throws {
     // given
     let response = OptionalPolymorphicLossyArrayDummyResponse(
       notices1: nil,
-      notices2: nil
+      notices2: nil,
     )
 
     // when - encode
@@ -243,7 +243,7 @@ struct OptionalPolymorphicLossyArrayValueTests {
     // when - decode back
     let decodedResponse = try JSONDecoder().decode(
       OptionalPolymorphicLossyArrayDummyResponse.self,
-      from: data
+      from: data,
     )
 
     // then
@@ -252,7 +252,7 @@ struct OptionalPolymorphicLossyArrayValueTests {
   }
 
   @Test
-  func encodingEmptyArrayIsKeptNotOmitted() throws {
+  func `encoding empty array is kept not omitted`() throws {
     // given - an empty array ([]) is non-nil and must be kept, not omitted like nil
     let response = OptionalPolymorphicLossyArrayDummyResponse(notices1: [], notices2: nil)
 

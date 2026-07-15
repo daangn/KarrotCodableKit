@@ -34,7 +34,7 @@ public struct LossyOptionalPolymorphicValue<PolymorphicType: PolymorphicCodableS
 
   public init(wrappedValue: PolymorphicType.ExpectedType?) {
     self.wrappedValue = wrappedValue
-    self.outcome = .decodedSuccessfully
+    outcome = .decodedSuccessfully
   }
 
   init(wrappedValue: PolymorphicType.ExpectedType?, outcome: ResilientDecodingOutcome) {
@@ -54,7 +54,7 @@ extension LossyOptionalPolymorphicValue: Encodable {
   public func encode(to encoder: Encoder) throws {
     try encoder.encodeIfPresent(
       wrappedValue,
-      codingKey: PolymorphicType.polymorphicMetaCodingKey
+      codingKey: PolymorphicType.polymorphicMetaCodingKey,
     )
   }
 }
@@ -62,25 +62,25 @@ extension LossyOptionalPolymorphicValue: Encodable {
 extension LossyOptionalPolymorphicValue: Decodable {
   public init(from decoder: Decoder) throws {
     do {
-      self.wrappedValue = try PolymorphicType.decode(from: decoder)
-      self.outcome = .decodedSuccessfully
+      wrappedValue = try PolymorphicType.decode(from: decoder)
+      outcome = .decodedSuccessfully
 
     } catch DecodingError.keyNotFound {
-      self.wrappedValue = nil
-      self.outcome = .keyNotFound
+      wrappedValue = nil
+      outcome = .keyNotFound
 
     } catch DecodingError.valueNotFound(let rawType, _) where rawType == PolymorphicType.ExpectedType.self {
-      self.wrappedValue = nil
-      self.outcome = .valueWasNil
+      wrappedValue = nil
+      outcome = .valueWasNil
 
     } catch {
       #if DEBUG
       // Report error to resilient decoding error reporter
       decoder.reportError(error)
-      self.wrappedValue = nil
-      self.outcome = .recoveredFrom(error, wasReported: true)
+      wrappedValue = nil
+      outcome = .recoveredFrom(error, wasReported: true)
       #else
-      self.outcome = .recoveredFrom(error, wasReported: false)
+      outcome = .recoveredFrom(error, wasReported: false)
       #endif
     }
   }

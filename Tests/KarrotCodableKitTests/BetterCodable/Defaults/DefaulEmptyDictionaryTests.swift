@@ -5,8 +5,8 @@
 //  Created by Elon on 2023/04/25.
 //
 
-import Testing
 import Foundation
+import Testing
 
 import KarrotCodableKit
 
@@ -15,7 +15,8 @@ struct DefaultEmptyDictionaryTests {
     @DefaultEmptyDictionary var stringToInt: [String: Int]
   }
 
-  @Test func testDecodingFailableDictionaryDefaultsToEmptyDictionary() throws {
+  @Test
+  func `decoding failable dictionary defaults to empty dictionary`() throws {
     // given
     let jsonData = #"{ "stringToInt": null }"#.data(using: .utf8)!
 
@@ -26,7 +27,8 @@ struct DefaultEmptyDictionaryTests {
     #expect(fixture.stringToInt == [:])
   }
 
-  @Test func testDecodingKeyNotPresentDefaultsToEmptyDictionary() throws {
+  @Test
+  func `decoding key not present defaults to empty dictionary`() throws {
     // given
     let jsonData = #"{}"#.data(using: .utf8)!
 
@@ -37,7 +39,8 @@ struct DefaultEmptyDictionaryTests {
     #expect(fixture.stringToInt == [:])
   }
 
-  @Test func testEncodingDecodedFailableDictionaryDefaultsToEmptyDictionary() throws {
+  @Test
+  func `encoding decoded failable dictionary defaults to empty dictionary`() throws {
     // given
     let jsonData = #"{ "stringToInt": null }"#.data(using: .utf8)!
     var _fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
@@ -51,7 +54,8 @@ struct DefaultEmptyDictionaryTests {
     #expect(fixture.stringToInt == ["one": 1])
   }
 
-  @Test func testEncodingDecodedFulfillableDictionaryRetainsContents() throws {
+  @Test
+  func `encoding decoded fulfillable dictionary retains contents`() throws {
     // given
     let jsonData = #"{ "stringToInt": {"one": 1, "two": 2} }"#.data(using: .utf8)!
     let _fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)

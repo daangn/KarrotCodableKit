@@ -8,8 +8,8 @@ struct DefaultEmptyPolymorphicArrayValueResilientTests {
     @DummyNotice.DefaultEmptyPolymorphicArray var notices: [any DummyNotice]
   }
 
-  @Test("Empty array decoding should have decodedSuccessfully outcome")
-  func emptyArray() throws {
+  @Test
+  func `Empty array decoding should have decodedSuccessfully outcome`() throws {
     // given
     let json = """
       {
@@ -29,8 +29,8 @@ struct DefaultEmptyPolymorphicArrayValueResilientTests {
     #endif
   }
 
-  @Test("Successful array decoding should have decodedSuccessfully outcome")
-  func successfulArrayDecoding() throws {
+  @Test
+  func `Successful array decoding should have decodedSuccessfully outcome`() throws {
     // given
     let json = """
       {
@@ -66,8 +66,8 @@ struct DefaultEmptyPolymorphicArrayValueResilientTests {
     #endif
   }
 
-  @Test("Should return empty array when array contains any invalid element")
-  func arrayWithAnyInvalidElement() throws {
+  @Test
+  func `Should return empty array when array contains any invalid element`() throws {
     // given
     let json = """
       {
@@ -102,8 +102,8 @@ struct DefaultEmptyPolymorphicArrayValueResilientTests {
     #endif
   }
 
-  @Test("Should return empty array when key is missing")
-  func missingKey() throws {
+  @Test
+  func `Should return empty array when key is missing`() throws {
     // given
     let json = """
       {}
@@ -121,8 +121,8 @@ struct DefaultEmptyPolymorphicArrayValueResilientTests {
     #endif
   }
 
-  @Test("Should return empty array for null value")
-  func nullValue() throws {
+  @Test
+  func `Should return empty array for null value`() throws {
     // given
     let json = """
       {
@@ -142,8 +142,8 @@ struct DefaultEmptyPolymorphicArrayValueResilientTests {
     #endif
   }
 
-  @Test("Should return empty array for invalid type")
-  func invalidType() throws {
+  @Test
+  func `Should return empty array for invalid type`() throws {
     // given
     let json = """
       {
@@ -167,8 +167,8 @@ struct DefaultEmptyPolymorphicArrayValueResilientTests {
     #endif
   }
 
-  @Test("Error reporter should be called")
-  func errorReporting() throws {
+  @Test
+  func `Error reporter should be called`() throws {
     /// given
     let json = """
       {

@@ -11,7 +11,7 @@ import Foundation
 extension KeyedDecodingContainer {
   public func decode<T>(
     _ type: DefaultEmptyPolymorphicArrayValue<T>.Type,
-    forKey key: Key
+    forKey key: Key,
   ) throws -> DefaultEmptyPolymorphicArrayValue<T> where T: PolymorphicCodableStrategy {
     // Check if key exists
     guard contains(key) else {
@@ -30,7 +30,7 @@ extension KeyedDecodingContainer {
 
   public func decodeIfPresent<T>(
     _ type: DefaultEmptyPolymorphicArrayValue<T>.Type,
-    forKey key: Self.Key
+    forKey key: Self.Key,
   ) throws -> DefaultEmptyPolymorphicArrayValue<T>? where T: PolymorphicCodableStrategy {
     // Check if key exists
     guard contains(key) else {

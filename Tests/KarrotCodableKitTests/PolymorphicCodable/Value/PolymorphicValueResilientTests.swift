@@ -15,8 +15,8 @@ struct PolymorphicValueResilientTests {
     @DummyNotice.Polymorphic var notice: any DummyNotice
   }
 
-  @Test("projected value provides error information")
-  func projectedValueProvidesErrorInfo() throws {
+  @Test
+  func `projected value provides error information`() throws {
     // given
     let json = """
       {
@@ -44,8 +44,8 @@ struct PolymorphicValueResilientTests {
     #endif
   }
 
-  @Test("unknown type handling with fallback")
-  func unknownType() throws {
+  @Test
+  func `unknown type handling with fallback`() throws {
     // given
     let json = """
       {
@@ -74,8 +74,8 @@ struct PolymorphicValueResilientTests {
     #endif
   }
 
-  @Test("null values handling")
-  func nullValues() async throws {
+  @Test
+  func `null values handling`() async throws {
     // given
     let json = """
       {
@@ -99,8 +99,8 @@ struct PolymorphicValueResilientTests {
     }
   }
 
-  @Test("error reporting with JSONDecoder")
-  func errorReporting() async throws {
+  @Test
+  func `error reporting with JSONDecoder`() async throws {
     /// given
     let json = """
       {

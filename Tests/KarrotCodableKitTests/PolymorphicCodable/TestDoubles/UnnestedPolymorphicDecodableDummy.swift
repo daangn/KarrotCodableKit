@@ -18,7 +18,7 @@ struct DummyDecodingFeedResponse: Decodable {
 @UnnestedPolymorphicDecodable(
   identifier: "IMAGE_VIEW_ITEM",
   forKey: "default",
-  codingKeyStyle: .snakeCase
+  codingKeyStyle: .snakeCase,
 )
 struct ImageViewItem: ViewItem {
   let id: String
@@ -28,7 +28,7 @@ struct ImageViewItem: ViewItem {
 
 @UnnestedPolymorphicDecodable(
   identifier: "SUBTITLE_DECODABLE_VIEW_ITEM",
-  forKey: "data"
+  forKey: "data",
 )
 struct SubtitleDecodableViewItem: ViewItem {
   let id: String
@@ -38,7 +38,7 @@ struct SubtitleDecodableViewItem: ViewItem {
 
 @UnnestedPolymorphicDecodable(
   identifier: "OPTIONAL_DECODABLE_VIEW_ITEM",
-  forKey: "data"
+  forKey: "data",
 )
 struct OptionalDecodableViewItem: ViewItem {
   let id: String

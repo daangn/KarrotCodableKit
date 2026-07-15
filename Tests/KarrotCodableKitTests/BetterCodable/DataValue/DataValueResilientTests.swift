@@ -16,8 +16,8 @@ struct DataValueResilientTests {
     @DataValue<Base64Strategy> var anotherData: Data
   }
 
-  @Test("projected value provides error information")
-  func projectedValueProvidesErrorInfo() throws {
+  @Test
+  func `projected value provides error information`() throws {
     let json = """
       {
         "base64Data": "SGVsbG8gV29ybGQ=",
@@ -40,8 +40,8 @@ struct DataValueResilientTests {
     #endif
   }
 
-  @Test("invalid base64 format handling")
-  func invalidBase64Format() async throws {
+  @Test
+  func `invalid base64 format handling`() async throws {
     let json = """
       {
         "base64Data": "Invalid!@#$%^&*()Base64",
@@ -63,8 +63,8 @@ struct DataValueResilientTests {
     }
   }
 
-  @Test("null values handling")
-  func nullValues() async throws {
+  @Test
+  func `null values handling`() async throws {
     let json = """
       {
         "base64Data": null,
@@ -86,8 +86,8 @@ struct DataValueResilientTests {
     }
   }
 
-  @Test("error reporting with JSONDecoder")
-  func errorReporting() async throws {
+  @Test
+  func `error reporting with JSONDecoder`() async throws {
     let json = """
       {
         "base64Data": 12345,

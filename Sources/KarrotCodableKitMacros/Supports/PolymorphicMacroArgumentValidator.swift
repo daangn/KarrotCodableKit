@@ -90,7 +90,7 @@ public enum PolymorphicMacroArgumentValidator {
     return UnnestedPolymorphicMacroArguments(
       identifier: identifier,
       nestedKey: nestedKey,
-      codingKeyStyle: codingKeyStyle
+      codingKeyStyle: codingKeyStyle,
     )
   }
 

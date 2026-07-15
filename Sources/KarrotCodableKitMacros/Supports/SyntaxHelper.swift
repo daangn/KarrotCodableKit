@@ -14,7 +14,7 @@ enum SyntaxHelper {
   /// Helper function to find argument by name in LabeledExprListSyntax
   static func findArgument(
     named name: String,
-    in arguments: LabeledExprListSyntax
+    in arguments: LabeledExprListSyntax,
   ) -> ExprSyntax? {
     arguments.first { $0.label?.text == name }?.expression
   }

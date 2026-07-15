@@ -5,8 +5,8 @@
 //  Created by Elon on 4/9/25.
 //
 
-import Testing
 import Foundation
+import Testing
 @testable import KarrotCodableKit
 
 struct AnyEncodableTests {
@@ -19,13 +19,14 @@ struct AnyEncodableTests {
     var hasUnderscore: String
   }
 
-  @Test func testJSONEncoding() throws {
+  @Test
+  func `JSON encoding`() throws {
     // given
     let someEncodable = AnyEncodable(SomeEncodable(
       string: "String",
       int: 100,
       bool: true,
-      hasUnderscore: "another string"
+      hasUnderscore: "another string",
     ))
 
     let dictionary: [String: AnyEncodable] = [
@@ -46,7 +47,7 @@ struct AnyEncodableTests {
 
     // when
     let json = try encoder.encode(dictionary)
-    let encodedJSONObject = try JSONSerialization.jsonObject(with: json, options: []) as! NSDictionary
+    let encodedJSONObject = try #require(try JSONSerialization.jsonObject(with: json, options: []) as? NSDictionary)
 
     // then
     let expected = """
@@ -70,12 +71,16 @@ struct AnyEncodableTests {
           "null": null
       }
       """.data(using: .utf8)!
-    let expectedJSONObject = try JSONSerialization.jsonObject(with: expected, options: []) as! NSDictionary
+    let expectedJSONObject = try #require(try JSONSerialization.jsonObject(
+      with: expected,
+      options: [],
+    ) as? NSDictionary)
 
     #expect(encodedJSONObject == expectedJSONObject)
   }
 
-  @Test func testEncodeNSNumber() throws {
+  @Test
+  func `encode NS number`() throws {
     // given
     let dictionary: [String: NSNumber] = [
       "boolean": true,
@@ -95,7 +100,7 @@ struct AnyEncodableTests {
 
     // when
     let json = try encoder.encode(AnyEncodable(dictionary))
-    let encodedJSONObject = try JSONSerialization.jsonObject(with: json, options: []) as! NSDictionary
+    let encodedJSONObject = try #require(try JSONSerialization.jsonObject(with: json, options: []) as? NSDictionary)
 
     // then
     let expected = """
@@ -114,7 +119,10 @@ struct AnyEncodableTests {
           "double": 3.141592653589793,
       }
       """.data(using: .utf8)!
-    let expectedJSONObject = try JSONSerialization.jsonObject(with: expected, options: []) as! NSDictionary
+    let expectedJSONObject = try #require(try JSONSerialization.jsonObject(
+      with: expected,
+      options: [],
+    ) as? NSDictionary)
 
     #expect(encodedJSONObject == expectedJSONObject)
     #expect(encodedJSONObject["boolean"] is Bool)
@@ -134,7 +142,8 @@ struct AnyEncodableTests {
     #expect(encodedJSONObject["double"] is Double)
   }
 
-  @Test func testStringInterpolationEncoding() throws {
+  @Test
+  func `string interpolation encoding`() throws {
     // given
     let dictionary: [String: AnyEncodable] = [
       "boolean": "\(true)",
@@ -147,7 +156,7 @@ struct AnyEncodableTests {
 
     // when
     let json = try encoder.encode(dictionary)
-    let encodedJSONObject = try JSONSerialization.jsonObject(with: json, options: []) as! NSDictionary
+    let encodedJSONObject = try #require(try JSONSerialization.jsonObject(with: json, options: []) as? NSDictionary)
 
     // then
     let expected = """
@@ -159,7 +168,10 @@ struct AnyEncodableTests {
           "array": "[1, 2, 3]",
       }
       """.data(using: .utf8)!
-    let expectedJSONObject = try JSONSerialization.jsonObject(with: expected, options: []) as! NSDictionary
+    let expectedJSONObject = try #require(try JSONSerialization.jsonObject(
+      with: expected,
+      options: [],
+    ) as? NSDictionary)
 
     #expect(encodedJSONObject == expectedJSONObject)
   }

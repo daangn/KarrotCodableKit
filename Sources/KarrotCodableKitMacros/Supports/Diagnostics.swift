@@ -30,11 +30,11 @@ enum CodableKitError: Error, CustomStringConvertible {
 
 struct ConstantWithInitializerWarning: DiagnosticMessage {
   let message = "Immutable property will not be decoded because it is declared with an initial value which cannot be overwritten"
-  let diagnosticID = MessageID(domain: "KarrotCodableKitMacros", id: "constantWithInitializer")
-  let severity = DiagnosticSeverity.warning
+  let diagnosticID: MessageID = .init(domain: "KarrotCodableKitMacros", id: "constantWithInitializer")
+  let severity: DiagnosticSeverity = .warning
 }
 
 struct MakePropertyMutableFixIt: FixItMessage {
   let message = "Make the property mutable instead"
-  let fixItID = MessageID(domain: "KarrotCodableKitMacros", id: "makePropertyMutable")
+  let fixItID: MessageID = .init(domain: "KarrotCodableKitMacros", id: "makePropertyMutable")
 }

@@ -20,6 +20,6 @@ import KarrotCodableKit
     StaticPropertyViewItem.self,
     FunctionViewItem.self,
     ComplexTypeViewItem.self,
-  ]
+  ],
 )
 protocol ViewItem {}

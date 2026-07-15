@@ -11,18 +11,18 @@ import Foundation
 extension KeyedDecodingContainer {
   public func decode<T>(
     _ type: OptionalPolymorphicLossyArrayValue<T>.Type,
-    forKey key: Key
+    forKey key: Key,
   ) throws -> OptionalPolymorphicLossyArrayValue<T> where T: PolymorphicCodableStrategy {
     if let value = try decodeIfPresent(type, forKey: key) {
-      return value
+      value
     } else {
-      return OptionalPolymorphicLossyArrayValue(wrappedValue: nil, outcome: .keyNotFound)
+      OptionalPolymorphicLossyArrayValue(wrappedValue: nil, outcome: .keyNotFound)
     }
   }
 
   public func decodeIfPresent<T>(
     _ type: OptionalPolymorphicLossyArrayValue<T>.Type,
-    forKey key: Self.Key
+    forKey key: Self.Key,
   ) throws -> OptionalPolymorphicLossyArrayValue<T>? where T: PolymorphicCodableStrategy {
     // Check if key exists
     guard contains(key) else {

@@ -19,8 +19,8 @@ struct DefaultCodableResilientTests {
     @DefaultEmptyDictionary var dictValue: [String: Int]
   }
 
-  @Test("projected value provides error information for failed decoding")
-  func projectedValueProvidesErrorInfo() throws {
+  @Test
+  func `projected value provides error information for failed decoding`() throws {
     let json = """
       {
         "intValue": "not a number",
@@ -32,7 +32,7 @@ struct DefaultCodableResilientTests {
       """
 
     let decoder = JSONDecoder()
-    let data = json.data(using: .utf8)!
+    let data = try #require(json.data(using: .utf8))
     let fixture = try decoder.decode(Fixture.self, from: data)
 
     // Verify default behavior - use default value on decoding failure
@@ -62,12 +62,12 @@ struct DefaultCodableResilientTests {
     #endif
   }
 
-  @Test("missing keys use default values without error")
-  func missingKeysUseDefaultValues() throws {
+  @Test
+  func `missing keys use default values without error`() throws {
     let json = "{}"
 
     let decoder = JSONDecoder()
-    let data = json.data(using: .utf8)!
+    let data = try #require(json.data(using: .utf8))
     let fixture = try decoder.decode(Fixture.self, from: data)
 
     // Check default values
@@ -87,8 +87,8 @@ struct DefaultCodableResilientTests {
     #endif
   }
 
-  @Test("valid values decode successfully")
-  func validValuesDecodeSuccessfully() throws {
+  @Test
+  func `valid values decode successfully`() throws {
     let json = """
       {
         "intValue": 42,
@@ -100,7 +100,7 @@ struct DefaultCodableResilientTests {
       """
 
     let decoder = JSONDecoder()
-    let data = json.data(using: .utf8)!
+    let data = try #require(json.data(using: .utf8))
     let fixture = try decoder.decode(Fixture.self, from: data)
 
     // Check normal values
@@ -120,8 +120,8 @@ struct DefaultCodableResilientTests {
     #endif
   }
 
-  @Test("null values use default values")
-  func nullValuesUseDefaultValues() throws {
+  @Test
+  func `null values use default values`() throws {
     let json = """
       {
         "intValue": null,
@@ -133,7 +133,7 @@ struct DefaultCodableResilientTests {
       """
 
     let decoder = JSONDecoder()
-    let data = json.data(using: .utf8)!
+    let data = try #require(json.data(using: .utf8))
     let fixture = try decoder.decode(Fixture.self, from: data)
 
     // Use default value for null
@@ -153,8 +153,8 @@ struct DefaultCodableResilientTests {
     #endif
   }
 
-  @Test("error reporting with JSONDecoder")
-  func errorReportingWithDecoder() throws {
+  @Test
+  func `error reporting with JSONDecoder`() throws {
     let json = """
       {
         "intValue": "invalid",
@@ -166,7 +166,7 @@ struct DefaultCodableResilientTests {
     let decoder = JSONDecoder()
     let errorReporter = decoder.enableResilientDecodingErrorReporting()
 
-    let data = json.data(using: .utf8)!
+    let data = try #require(json.data(using: .utf8))
     _ = try decoder.decode(Fixture.self, from: data)
 
     let errorDigest = errorReporter.flushReportedErrors()
@@ -181,8 +181,8 @@ struct DefaultCodableResilientTests {
     #endif
   }
 
-  @Test("LossyOptional behavior")
-  func lossyOptional() throws {
+  @Test
+  func `LossyOptional behavior`() throws {
     struct OptionalFixture: Decodable {
       @LossyOptional var url: URL?
       @LossyOptional var date: Date?
@@ -198,7 +198,7 @@ struct DefaultCodableResilientTests {
       """
 
     let decoder = JSONDecoder()
-    let data = json.data(using: .utf8)!
+    let data = try #require(json.data(using: .utf8))
     let fixture = try decoder.decode(OptionalFixture.self, from: data)
 
     // nil on decoding failure
@@ -238,8 +238,8 @@ struct DefaultCodableResilientTests {
     @DefaultCodable<FrozenTestEnum> var frozenEnum: FrozenTestEnum
   }
 
-  @Test("RawRepresentable with valid raw values")
-  func rawRepresentableValidValues() throws {
+  @Test
+  func `RawRepresentable with valid raw values`() throws {
     // given
     let json = """
       {
@@ -250,7 +250,7 @@ struct DefaultCodableResilientTests {
 
     // when
     let decoder = JSONDecoder()
-    let data = json.data(using: .utf8)!
+    let data = try #require(json.data(using: .utf8))
     let fixture = try decoder.decode(RawRepresentableFixture.self, from: data)
 
     // then
@@ -265,8 +265,8 @@ struct DefaultCodableResilientTests {
     #endif
   }
 
-  @Test("RawRepresentable with unknown raw values (non-frozen)")
-  func rawRepresentableUnknownValueNonFrozen() throws {
+  @Test
+  func `RawRepresentable with unknown raw values (non-frozen)`() throws {
     // given
     let json = """
       {
@@ -277,7 +277,7 @@ struct DefaultCodableResilientTests {
 
     // when
     let decoder = JSONDecoder()
-    let data = json.data(using: .utf8)!
+    let data = try #require(json.data(using: .utf8))
     let fixture = try decoder.decode(RawRepresentableFixture.self, from: data)
 
     // then
@@ -295,8 +295,8 @@ struct DefaultCodableResilientTests {
     #endif
   }
 
-  @Test("RawRepresentable with unknown raw values (frozen)")
-  func rawRepresentableUnknownValueFrozen() throws {
+  @Test
+  func `RawRepresentable with unknown raw values (frozen)`() throws {
     // given
     let json = """
       {
@@ -308,7 +308,7 @@ struct DefaultCodableResilientTests {
     // when
     let decoder = JSONDecoder()
     let errorReporter = decoder.enableResilientDecodingErrorReporting()
-    let data = json.data(using: .utf8)!
+    let data = try #require(json.data(using: .utf8))
     let fixture = try decoder.decode(RawRepresentableFixture.self, from: data)
 
     // then
@@ -334,14 +334,14 @@ struct DefaultCodableResilientTests {
     #endif
   }
 
-  @Test("RawRepresentable with missing keys")
-  func rawRepresentableMissingKeys() throws {
+  @Test
+  func `RawRepresentable with missing keys`() throws {
     // given
     let json = "{}"
 
     // when
     let decoder = JSONDecoder()
-    let data = json.data(using: .utf8)!
+    let data = try #require(json.data(using: .utf8))
     let fixture = try decoder.decode(RawRepresentableFixture.self, from: data)
 
     // then
@@ -356,8 +356,8 @@ struct DefaultCodableResilientTests {
     #endif
   }
 
-  @Test("RawRepresentable with null values")
-  func rawRepresentableNullValues() throws {
+  @Test
+  func `RawRepresentable with null values`() throws {
     // given
     let json = """
       {
@@ -368,7 +368,7 @@ struct DefaultCodableResilientTests {
 
     // when
     let decoder = JSONDecoder()
-    let data = json.data(using: .utf8)!
+    let data = try #require(json.data(using: .utf8))
     let fixture = try decoder.decode(RawRepresentableFixture.self, from: data)
 
     // then
@@ -383,8 +383,8 @@ struct DefaultCodableResilientTests {
     #endif
   }
 
-  @Test("RawRepresentable with type mismatch")
-  func rawRepresentableTypeMismatch() throws {
+  @Test
+  func `RawRepresentable with type mismatch`() throws {
     // given - enums expect String but we provide numbers
     let json = """
       {
@@ -395,7 +395,7 @@ struct DefaultCodableResilientTests {
 
     // when
     let decoder = JSONDecoder()
-    let data = json.data(using: .utf8)!
+    let data = try #require(json.data(using: .utf8))
     let fixture = try decoder.decode(RawRepresentableFixture.self, from: data)
 
     // then

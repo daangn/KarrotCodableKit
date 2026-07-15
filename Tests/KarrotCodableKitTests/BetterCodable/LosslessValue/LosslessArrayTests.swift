@@ -5,8 +5,8 @@
 //  Created by Elon on 2023/04/25.
 //
 
-import Testing
 import Foundation
+import Testing
 
 import KarrotCodableKit
 
@@ -19,7 +19,8 @@ struct LosslessArrayTests {
     @LosslessArray var values: [String]
   }
 
-  @Test func testDecodingLosslessArrayActsLikeLossyArray() throws {
+  @Test
+  func `decoding lossless array acts like lossy array`() throws {
     // given
     let jsonData = #"{ "values": [1, null, 3, 4] }"#.data(using: .utf8)!
 
@@ -30,7 +31,8 @@ struct LosslessArrayTests {
     #expect(fixture.values == [1, 3, 4])
   }
 
-  @Test func testDecodingIntsConvertsStringsIntoLosslessElements() throws {
+  @Test
+  func `decoding ints converts strings into lossless elements`() throws {
     // given
     let jsonData = #"{ "values": ["1", 2, null, "4"] }"#.data(using: .utf8)!
 
@@ -41,7 +43,8 @@ struct LosslessArrayTests {
     #expect(fixture.values == [1, 2, 4])
   }
 
-  @Test func testDecodingStringsPreservesLosslessElements() throws {
+  @Test
+  func `decoding strings preserves lossless elements`() throws {
     // given
     let jsonData = #"{ "values": ["1", 2, 3.14, null, false, "4"] }"#.data(using: .utf8)!
 
@@ -52,7 +55,8 @@ struct LosslessArrayTests {
     #expect(fixture.values == ["1", "2", "3.14", "false", "4"])
   }
 
-  @Test func testEncodingDecodedLosslessArrayIgnoresFailableElements() throws {
+  @Test
+  func `encoding decoded lossless array ignores failable elements`() throws {
     // given
     let jsonData = #"{ "values": [null, "2", null, 4] }"#.data(using: .utf8)!
 
@@ -70,7 +74,8 @@ struct LosslessArrayTests {
     #expect(fixture.values == [2, 4, 5])
   }
 
-  @Test func testEncodingDecodedLosslessArrayRetainsContents() throws {
+  @Test
+  func `encoding decoded lossless array retains contents`() throws {
     // given
     let jsonData = #"{ "values": [1, 2, "3"] }"#.data(using: .utf8)!
 

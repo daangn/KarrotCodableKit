@@ -5,8 +5,8 @@
 //  Created by Elon on 2023/04/25.
 //
 
-import Testing
 import Foundation
+import Testing
 
 import KarrotCodableKit
 
@@ -21,7 +21,8 @@ struct DefaultEmptyArrayTests {
     @DefaultEmptyArray var nonPrimitiveValues: [NestedFixture]
   }
 
-  @Test func testDecodingFailableArrayDefaultsToEmptyArray() throws {
+  @Test
+  func `decoding failable array defaults to empty array`() throws {
     // given
     let jsonData = #"{ "values": null, "nonPrimitiveValues": null }"#.data(using: .utf8)!
 
@@ -33,7 +34,8 @@ struct DefaultEmptyArrayTests {
     #expect(fixture.nonPrimitiveValues == [])
   }
 
-  @Test func testDecodingKeyNotPresentDefaultsToEmptyArray() throws {
+  @Test
+  func `decoding key not present defaults to empty array`() throws {
     // given
     let jsonData = #"{}"#.data(using: .utf8)!
 
@@ -45,7 +47,8 @@ struct DefaultEmptyArrayTests {
     #expect(fixture.nonPrimitiveValues == [])
   }
 
-  @Test func testEncodingDecodedFailableArrayDefaultsToEmptyArray() throws {
+  @Test
+  func `encoding decoded failable array defaults to empty array`() throws {
     // given
     let jsonData = #"{ "values": null, "nonPrimitiveValues": null }"#.data(using: .utf8)!
     var _fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
@@ -61,7 +64,8 @@ struct DefaultEmptyArrayTests {
     #expect(fixture.nonPrimitiveValues == [Fixture.NestedFixture(one: "a", two: ["b": ["c"]])])
   }
 
-  @Test func testEncodingDecodedFulfillableArrayRetainsContents() throws {
+  @Test
+  func `encoding decoded fulfillable array retains contents`() throws {
     // given
     let jsonData = #"{ "values": [1, 2], "nonPrimitiveValues": [{ "one": "one", "two": {"key": ["value"]}}] }"#
       .data(using: .utf8)!

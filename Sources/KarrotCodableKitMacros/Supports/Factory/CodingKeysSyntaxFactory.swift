@@ -84,7 +84,7 @@ enum CodingKeysSyntaxFactory {
 
         return PropertyDeclaration(
           variableDecl: variableDecl,
-          propertyName: propertyName
+          propertyName: propertyName,
         )
       }
   }

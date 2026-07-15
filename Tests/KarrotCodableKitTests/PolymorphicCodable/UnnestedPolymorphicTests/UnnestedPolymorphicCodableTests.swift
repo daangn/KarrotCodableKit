@@ -12,25 +12,25 @@ import KarrotCodableKit
 
 struct UnnestedPolymorphicCodableTests {
   @Test
-  func decodingUnnestedPolymorphicCodable() async throws {
+  func `decoding unnested polymorphic codable`() throws {
     // given
     let jsonData = #"""
-    {
-      "items": [
-        {
-          "type": "TITLE_VIEW_ITEM",
-          "data": {
-            "id": "1e243b34-b8a6-41c8-b08f-cba8d014021f",
-            "item_title": "Hello, world!"
+      {
+        "items": [
+          {
+            "type": "TITLE_VIEW_ITEM",
+            "data": {
+              "id": "1e243b34-b8a6-41c8-b08f-cba8d014021f",
+              "item_title": "Hello, world!"
+            }
+          },
+          {
+            "type": "EMPTY_VIEW_ITEM",
+            "data": {}
           }
-        },
-        {
-          "type": "EMPTY_VIEW_ITEM",
-          "data": {}
-        }
-      ]
-    }
-    """#
+        ]
+      }
+      """#
 
     // when
     let result = try JSONDecoder().decode(DummyFeedResponse.self, from: Data(jsonData.utf8))
@@ -46,13 +46,13 @@ struct UnnestedPolymorphicCodableTests {
   }
 
   @Test
-  func encodingUnnestedPolymorphicCodable() async throws {
+  func `encoding unnested polymorphic codable`() throws {
     // given
     let response = DummyFeedResponse(
       items: [
         TitleViewItem(
           id: "1e243b34-b8a6-41c8-b08f-cba8d014021f",
-          itemTitle: "Hello, world!"
+          itemTitle: "Hello, world!",
         ),
         EmptyViewItem(),
       ]
@@ -65,30 +65,30 @@ struct UnnestedPolymorphicCodableTests {
 
     // then
     let expectResult = #"""
-    {
-      "items" : [
-        {
-          "data" : {
-            "id" : "1e243b34-b8a6-41c8-b08f-cba8d014021f",
-            "item_title" : "Hello, world!"
+      {
+        "items" : [
+          {
+            "data" : {
+              "id" : "1e243b34-b8a6-41c8-b08f-cba8d014021f",
+              "item_title" : "Hello, world!"
+            },
+            "type" : "TITLE_VIEW_ITEM"
           },
-          "type" : "TITLE_VIEW_ITEM"
-        },
-        {
-          "data" : {
+          {
+            "data" : {
 
-          },
-          "type" : "EMPTY_VIEW_ITEM"
-        }
-      ]
-    }
-    """#
+            },
+            "type" : "EMPTY_VIEW_ITEM"
+          }
+        ]
+      }
+      """#
     let jsonString = String(decoding: data, as: UTF8.self)
     #expect(jsonString == expectResult)
   }
 
   @Test
-  func unnestedPolymorphicCodableWithOptionalPropertiesMissingKeys() async throws {
+  func `unnested polymorphic codable with optional properties missing keys`() throws {
     // given
     let json = """
       {
@@ -112,7 +112,7 @@ struct UnnestedPolymorphicCodableTests {
   }
 
   @Test
-  func unnestedPolymorphicCodableWithOptionalPropertiesPartialData() async throws {
+  func `unnested polymorphic codable with optional properties partial data`() throws {
     // given
     let json = """
       {
@@ -138,7 +138,7 @@ struct UnnestedPolymorphicCodableTests {
   }
 
   @Test
-  func unnestedPolymorphicCodableWithRequiredPropertyMissing() async throws {
+  func `unnested polymorphic codable with required property missing`() throws {
     // given
     let json = """
       {
@@ -160,7 +160,7 @@ struct UnnestedPolymorphicCodableTests {
   }
 
   @Test
-  func unnestedPolymorphicCodableWithMissingNestedDataKey() async throws {
+  func `unnested polymorphic codable with missing nested data key`() throws {
     // given
     let json = """
       {
@@ -179,7 +179,7 @@ struct UnnestedPolymorphicCodableTests {
   }
 
   @Test
-  func unnestedPolymorphicCodableEncodingWithOptionalProperties() async throws {
+  func `unnested polymorphic codable encoding with optional properties`() throws {
     // given
     let item = OptionalViewItem(id: "test123", title: "Test Title", count: nil, url: nil)
 
@@ -202,13 +202,13 @@ struct UnnestedPolymorphicCodableTests {
   }
 
   @Test
-  func unnestedPolymorphicCodableRoundTripWithOptionalProperties() async throws {
+  func `unnested polymorphic codable round trip with optional properties`() throws {
     // given
     let originalItem = OptionalViewItem(
       id: "test123",
       title: "Test Title",
       count: 42,
-      url: URL(string: "https://example.com")
+      url: URL(string: "https://example.com"),
     )
 
     // when
@@ -226,7 +226,7 @@ struct UnnestedPolymorphicCodableTests {
   }
 
   @Test
-  func unnestedPolymorphicCodableWithWrongDataType() async throws {
+  func `unnested polymorphic codable with wrong data type`() throws {
     // given
     let json = """
       {
@@ -248,11 +248,11 @@ struct UnnestedPolymorphicCodableTests {
   // MARK: - Edge Case Tests
 
   @Test
-  func constantPropertiesEncodingTest() async throws {
+  func `constant properties encoding test`() throws {
     // given
     let originalItem = ConstantPropertyViewItem(
       id: "test123",
-      title: "Test Title"
+      title: "Test Title",
     )
 
     // when - encoding
@@ -276,7 +276,7 @@ struct UnnestedPolymorphicCodableTests {
   }
 
   @Test
-  func constantPropertiesDecodingTest() async throws {
+  func `constant properties decoding test`() throws {
     // given
     let decodingJson = """
       {
@@ -303,11 +303,11 @@ struct UnnestedPolymorphicCodableTests {
   }
 
   @Test
-  func computedPropertiesEncodingTest() async throws {
+  func `computed properties encoding test`() throws {
     // given
     let originalItem = ComputedPropertyViewItem(
       id: "test123",
-      title: "Test Title"
+      title: "Test Title",
     )
 
     // when - encoding
@@ -324,7 +324,7 @@ struct UnnestedPolymorphicCodableTests {
   }
 
   @Test
-  func computedPropertiesDecodingTest() async throws {
+  func `computed properties decoding test`() throws {
     // given
     let decodingJson = """
       {
@@ -349,11 +349,11 @@ struct UnnestedPolymorphicCodableTests {
   }
 
   @Test
-  func staticPropertiesEncodingTest() async throws {
+  func `static properties encoding test`() throws {
     // given
     let originalItem = StaticPropertyViewItem(
       id: "test123",
-      title: "Test Title"
+      title: "Test Title",
     )
 
     // when - encoding
@@ -370,7 +370,7 @@ struct UnnestedPolymorphicCodableTests {
   }
 
   @Test
-  func staticPropertiesDecodingTest() async throws {
+  func `static properties decoding test`() throws {
     // given
     let decodingJson = """
       {
@@ -395,11 +395,11 @@ struct UnnestedPolymorphicCodableTests {
   }
 
   @Test
-  func functionsEncodingTest() async throws {
+  func `functions encoding test`() throws {
     // given
     let originalItem = FunctionViewItem(
       id: "test123",
-      title: "Test Title"
+      title: "Test Title",
     )
 
     // when - encoding
@@ -416,7 +416,7 @@ struct UnnestedPolymorphicCodableTests {
   }
 
   @Test
-  func functionsDecodingTest() async throws {
+  func `functions decoding test`() throws {
     // given
     let decodingJson = """
       {
@@ -441,7 +441,7 @@ struct UnnestedPolymorphicCodableTests {
   }
 
   @Test
-  func complexTypesEncodingTest() async throws {
+  func `complex types encoding test`() throws {
     // given
     let nestedStruct = NestedStruct(name: "test", value: 123)
     let optionalNested = NestedStruct(name: "optional", value: 456)
@@ -450,7 +450,7 @@ struct UnnestedPolymorphicCodableTests {
       tags: ["tag1", "tag2", "tag3"],
       metadata: ["key1": "value1", "key2": "value2"],
       nestedStruct: nestedStruct,
-      optionalNestedStruct: optionalNested
+      optionalNestedStruct: optionalNested,
     )
 
     // when - encoding
@@ -469,7 +469,7 @@ struct UnnestedPolymorphicCodableTests {
   }
 
   @Test
-  func complexTypesDecodingTest() async throws {
+  func `complex types decoding test`() throws {
     // given
     let nestedStruct = NestedStruct(name: "test", value: 123)
     let optionalNested = NestedStruct(name: "optional", value: 456)
@@ -478,7 +478,7 @@ struct UnnestedPolymorphicCodableTests {
       tags: ["tag1", "tag2", "tag3"],
       metadata: ["key1": "value1", "key2": "value2"],
       nestedStruct: nestedStruct,
-      optionalNestedStruct: optionalNested
+      optionalNestedStruct: optionalNested,
     )
 
     // when - encoding to get test data
@@ -501,7 +501,7 @@ struct UnnestedPolymorphicCodableTests {
   }
 
   @Test
-  func complexTypesWithMissingOptionalProperties() async throws {
+  func `complex types with missing optional properties`() throws {
     // given
     let json = """
       {
