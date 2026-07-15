@@ -5,7 +5,8 @@
 //  Created by Elon on 2023/04/25.
 //
 
-import XCTest
+import Testing
+import Foundation
 
 import KarrotCodableKit
 
@@ -41,27 +42,27 @@ extension JSONEncoder {
   }
 }
 
-final class DefaultCodableTest_DateStrategy: XCTestCase {
+struct DefaultCodableTest_DateStrategy {
   struct Fixture: Equatable, Codable {
     @DefaultCodable<Date.DefaultToNow>
     fileprivate var discoverDate: Date
   }
 
-  func testDecodingAndEncodingWithDateStrategy() throws {
+  @Test func testDecodingAndEncodingWithDateStrategy() throws {
     let expectedDate = Date(timeIntervalSinceReferenceDate: 222601260)
     let jsonData = #"{ "discoverDate": "2008-01-21T09:41:00.000Z" }"#.data(using: .utf8)!
     let fixture = try JSONDecoder.iso.decode(Fixture.self, from: jsonData)
-    XCTAssertEqual(fixture.discoverDate, expectedDate)
+    #expect(fixture.discoverDate == expectedDate)
 
     let data = try JSONEncoder.iso.encode(fixture)
     let str = String(data: data, encoding: .utf8)
-    XCTAssertEqual(str, #"{"discoverDate":"2008-01-21T09:41:00.000Z"}"#)
+    #expect(str == #"{"discoverDate":"2008-01-21T09:41:00.000Z"}"#)
   }
 }
 
 // MARK: - Nested Property Wrapper
 
-final class DefaultCodableTest_NestedPropertyWrapper: XCTestCase {
+struct DefaultCodableTest_NestedPropertyWrapper {
   enum DefaultToNowTimeStampDateValue: DefaultCodableStrategy {
     static var defaultValue: DateValue<TimestampStrategy> {
       .init(wrappedValue: Date(timeIntervalSince1970: 0))
@@ -74,7 +75,7 @@ final class DefaultCodableTest_NestedPropertyWrapper: XCTestCase {
     var returnDate: Date
   }
 
-  func testNestedPropertyWrappersCanMergeDefaultCodableWithDateStrategy() throws {
+  @Test func testNestedPropertyWrappersCanMergeDefaultCodableWithDateStrategy() throws {
     let _1970 = Date(timeIntervalSince1970: 0)
     let _1971 = Date(timeIntervalSince1970: 31536000)
 
@@ -86,15 +87,15 @@ final class DefaultCodableTest_NestedPropertyWrapper: XCTestCase {
     let fixture2 = try JSONDecoder().decode(Fixture.self, from: jsonData2)
     let fixture3 = try JSONDecoder().decode(Fixture.self, from: jsonData3)
 
-    XCTAssertEqual(fixture1.returnDate, _1970)
-    XCTAssertEqual(fixture2.returnDate, _1970)
-    XCTAssertEqual(fixture3.returnDate, _1971)
+    #expect(fixture1.returnDate == _1970)
+    #expect(fixture2.returnDate == _1970)
+    #expect(fixture3.returnDate == _1971)
   }
 }
 
 // MARK: - Types with Containers
 
-final class DefaultCodableTests_TypesWithContainers: XCTestCase {
+struct DefaultCodableTests_TypesWithContainers {
   struct ArrayContainer: Codable {
     var value: [Int]
   }
@@ -121,30 +122,30 @@ final class DefaultCodableTests_TypesWithContainers: XCTestCase {
     public var type: DictionaryContainer
   }
 
-  func testDecodingAndEncodingWithArrayContainer() throws {
+  @Test func testDecodingAndEncodingWithArrayContainer() throws {
     let jsonData = #"{ "type": { "value": [2, 4, 6] } }"#.data(using: .utf8)!
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
-    XCTAssertEqual(fixture.type.value, [2, 4, 6])
+    #expect(fixture.type.value == [2, 4, 6])
 
     let data = try JSONEncoder().encode(fixture)
     let str = String(data: data, encoding: .utf8)
-    XCTAssertEqual(str, #"{"type":{"value":[2,4,6]}}"#)
+    #expect(str == #"{"type":{"value":[2,4,6]}}"#)
   }
 
-  func testDecodingAndEncodingWithDictionaryContainer() throws {
+  @Test func testDecodingAndEncodingWithDictionaryContainer() throws {
     let jsonData = #"{ "type": { "value": {"b": 17 } } }"#.data(using: .utf8)!
     let fixture = try JSONDecoder().decode(Fixture2.self, from: jsonData)
-    XCTAssertEqual(fixture.type.value, ["b": 17])
+    #expect(fixture.type.value == ["b": 17])
 
     let data = try JSONEncoder().encode(fixture)
     let str = String(data: data, encoding: .utf8)
-    XCTAssertEqual(str, #"{"type":{"value":{"b":17}}}"#)
+    #expect(str == #"{"type":{"value":{"b":17}}}"#)
   }
 }
 
 // MARK: - Enums with Associated Values
 
-final class DefaultCodableTests_EnumWithAssociatedValue: XCTestCase {
+struct DefaultCodableTests_EnumWithAssociatedValue {
   enum Zar: Equatable {
     case ziz(Int)
     case zaz(Int)
@@ -194,16 +195,16 @@ final class DefaultCodableTests_EnumWithAssociatedValue: XCTestCase {
     public var value: CustomType
   }
 
-  func testDecodingAndEncodingCustomEnumWithAssociatedValue() throws {
+  @Test func testDecodingAndEncodingCustomEnumWithAssociatedValue() throws {
     let jsonData = #"{ "value": { "fish": "ziz", "int": 4 } }"#.data(using: .utf8)!
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
-    XCTAssertEqual(fixture.value.z, .ziz(4))
+    #expect(fixture.value.z == .ziz(4))
 
     let encoder = JSONEncoder()
     encoder.outputFormatting = .sortedKeys
 
     let data = try encoder.encode(fixture)
     let str = String(data: data, encoding: .utf8)
-    XCTAssertEqual(str, #"{"value":{"fish":"ziz","int":4}}"#)
+    #expect(str == #"{"value":{"fish":"ziz","int":4}}"#)
   }
 }

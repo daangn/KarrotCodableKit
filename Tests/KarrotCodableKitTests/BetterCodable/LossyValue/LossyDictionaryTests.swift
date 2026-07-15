@@ -5,17 +5,18 @@
 //  Created by Elon on 2023/04/25.
 //
 
-import XCTest
+import Testing
+import Foundation
 
 import KarrotCodableKit
 
-final class LossyDictionaryTests: XCTestCase {
+struct LossyDictionaryTests {
   struct Fixture: Equatable, Codable {
     @LossyDictionary var stringToInt: [String: Int]
     @LossyDictionary var intToString: [Int: String]
   }
 
-  func testDecodingLossyDictionaryIgnoresFailableElements() throws {
+  @Test func testDecodingLossyDictionaryIgnoresFailableElements() throws {
     // given
     let jsonData = """
       {
@@ -36,11 +37,11 @@ final class LossyDictionaryTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
 
     // then
-    XCTAssertEqual(fixture.stringToInt, ["one": 1, "two": 2])
-    XCTAssertEqual(fixture.intToString, [1: "one", 2: "two"])
+    #expect(fixture.stringToInt == ["one": 1, "two": 2])
+    #expect(fixture.intToString == [1: "one", 2: "two"])
   }
 
-  func testEncodingDecodedLossyDictionaryIgnoresFailableElements() throws {
+  @Test func testEncodingDecodedLossyDictionaryIgnoresFailableElements() throws {
     // given
     let jsonData = """
       {
@@ -65,11 +66,11 @@ final class LossyDictionaryTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: fixtureData)
 
     // then
-    XCTAssertEqual(fixture.stringToInt, ["one": 1, "two": 2, "three": 3])
-    XCTAssertEqual(fixture.intToString, [1: "one", 2: "two", 3: "three"])
+    #expect(fixture.stringToInt == ["one": 1, "two": 2, "three": 3])
+    #expect(fixture.intToString == [1: "one", 2: "two", 3: "three"])
   }
 
-  func testEncodingDecodedLosslessArrayRetainsContents() throws {
+  @Test func testEncodingDecodedLosslessArrayRetainsContents() throws {
     // given
     let jsonData = """
       {
@@ -90,11 +91,11 @@ final class LossyDictionaryTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
 
     // then
-    XCTAssertEqual(fixture.stringToInt, ["one": 1, "two": 2, "three": 3])
-    XCTAssertEqual(fixture.intToString, [1: "one", 2: "two", 3: "three"])
+    #expect(fixture.stringToInt == ["one": 1, "two": 2, "three": 3])
+    #expect(fixture.intToString == [1: "one", 2: "two", 3: "three"])
   }
 
-  func testEncodingLosslessDictionaryRetainsKeys() throws {
+  @Test func testEncodingLosslessDictionaryRetainsKeys() throws {
     // given
     let decoder = JSONDecoder()
     decoder.keyDecodingStrategy = .convertFromSnakeCase
@@ -115,6 +116,6 @@ final class LossyDictionaryTests: XCTestCase {
     let reencodedFixture = try decoder.decode(Fixture.self, from: encoder.encode(fixture))
 
     // then
-    XCTAssertEqual(reencodedFixture, fixture)
+    #expect(reencodedFixture == fixture)
   }
 }

@@ -6,13 +6,14 @@
 //  Copyright © 2025 Danggeun Market Inc. All rights reserved.
 //
 
-import XCTest
+import Testing
+import Foundation
 
 import KarrotCodableKit
 
-final class Encodable_ToDictionaryTests: XCTestCase {
+struct Encodable_ToDictionaryTests {
 
-  func test_toDictionary() throws {
+  @Test func test_toDictionary() throws {
     // given
     let dummy = ObjectDummy(
       id: 1,
@@ -24,14 +25,14 @@ final class Encodable_ToDictionaryTests: XCTestCase {
     let dict = try dummy.toDictionary()
 
     // then
-    XCTAssertEqual(dict["id"] as? Int, 1)
-    XCTAssertEqual(dict["name"] as? String, "ray")
+    #expect(dict["id"] as? Int == 1)
+    #expect(dict["name"] as? String == "ray")
 
     let wallet = dict["wallet"] as? [String: Any]
-    XCTAssertEqual(wallet?["money"] as? Int, 1000)
+    #expect(wallet?["money"] as? Int == 1000)
   }
 
-  func test_asDictionary_optional() throws {
+  @Test func test_asDictionary_optional() throws {
     // given
     let dummy = OptionalDummy(value: nil)
 
@@ -39,7 +40,7 @@ final class Encodable_ToDictionaryTests: XCTestCase {
     let dict = try dummy.toDictionary()
 
     // then
-    XCTAssertEqual(dict.count, 0)
+    #expect(dict.count == 0)
   }
 }
 

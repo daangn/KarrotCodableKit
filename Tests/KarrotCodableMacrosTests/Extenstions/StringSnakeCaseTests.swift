@@ -14,12 +14,12 @@
 
 import Foundation
 
-import XCTest
+import Testing
 
 @testable import KarrotCodableKitMacros
 
-final class StringSnakeCaseTests: XCTestCase {
-  func test_convert_to_snake_case() {
+struct StringSnakeCaseTests {
+  @Test func test_convert_to_snake_case() {
     // given
     let toSnakeCaseTests: [(camelCase: String, snake_case: String)] = [
       ("simpleOneTwo", "simple_one_two"),
@@ -58,7 +58,7 @@ final class StringSnakeCaseTests: XCTestCase {
       let expected = test.camelCase.toSnakeCase
 
       // then
-      XCTAssertEqual(test.snake_case, expected)
+      #expect(test.snake_case == expected)
     }
   }
 }

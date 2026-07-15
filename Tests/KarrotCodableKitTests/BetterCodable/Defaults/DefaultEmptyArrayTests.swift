@@ -5,11 +5,12 @@
 //  Created by Elon on 2023/04/25.
 //
 
-import XCTest
+import Testing
+import Foundation
 
 import KarrotCodableKit
 
-final class DefaultEmptyArrayTests: XCTestCase {
+struct DefaultEmptyArrayTests {
   struct Fixture: Equatable, Codable {
     struct NestedFixture: Equatable, Codable {
       var one: String
@@ -20,7 +21,7 @@ final class DefaultEmptyArrayTests: XCTestCase {
     @DefaultEmptyArray var nonPrimitiveValues: [NestedFixture]
   }
 
-  func testDecodingFailableArrayDefaultsToEmptyArray() throws {
+  @Test func testDecodingFailableArrayDefaultsToEmptyArray() throws {
     // given
     let jsonData = #"{ "values": null, "nonPrimitiveValues": null }"#.data(using: .utf8)!
 
@@ -28,11 +29,11 @@ final class DefaultEmptyArrayTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
 
     // then
-    XCTAssertEqual(fixture.values, [])
-    XCTAssertEqual(fixture.nonPrimitiveValues, [])
+    #expect(fixture.values == [])
+    #expect(fixture.nonPrimitiveValues == [])
   }
 
-  func testDecodingKeyNotPresentDefaultsToEmptyArray() throws {
+  @Test func testDecodingKeyNotPresentDefaultsToEmptyArray() throws {
     // given
     let jsonData = #"{}"#.data(using: .utf8)!
 
@@ -40,11 +41,11 @@ final class DefaultEmptyArrayTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
 
     // then
-    XCTAssertEqual(fixture.values, [])
-    XCTAssertEqual(fixture.nonPrimitiveValues, [])
+    #expect(fixture.values == [])
+    #expect(fixture.nonPrimitiveValues == [])
   }
 
-  func testEncodingDecodedFailableArrayDefaultsToEmptyArray() throws {
+  @Test func testEncodingDecodedFailableArrayDefaultsToEmptyArray() throws {
     // given
     let jsonData = #"{ "values": null, "nonPrimitiveValues": null }"#.data(using: .utf8)!
     var _fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
@@ -56,11 +57,11 @@ final class DefaultEmptyArrayTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: fixtureData)
 
     // then
-    XCTAssertEqual(fixture.values, [1, 2, 3])
-    XCTAssertEqual(fixture.nonPrimitiveValues, [Fixture.NestedFixture(one: "a", two: ["b": ["c"]])])
+    #expect(fixture.values == [1, 2, 3])
+    #expect(fixture.nonPrimitiveValues == [Fixture.NestedFixture(one: "a", two: ["b": ["c"]])])
   }
 
-  func testEncodingDecodedFulfillableArrayRetainsContents() throws {
+  @Test func testEncodingDecodedFulfillableArrayRetainsContents() throws {
     // given
     let jsonData = #"{ "values": [1, 2], "nonPrimitiveValues": [{ "one": "one", "two": {"key": ["value"]}}] }"#
       .data(using: .utf8)!
@@ -71,7 +72,7 @@ final class DefaultEmptyArrayTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: fixtureData)
 
     // then
-    XCTAssertEqual(fixture.values, [1, 2])
-    XCTAssertEqual(fixture.nonPrimitiveValues, [Fixture.NestedFixture(one: "one", two: ["key": ["value"]])])
+    #expect(fixture.values == [1, 2])
+    #expect(fixture.nonPrimitiveValues == [Fixture.NestedFixture(one: "one", two: ["key": ["value"]])])
   }
 }

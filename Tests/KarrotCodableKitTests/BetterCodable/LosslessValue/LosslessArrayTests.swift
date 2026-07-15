@@ -5,11 +5,12 @@
 //  Created by Elon on 2023/04/25.
 //
 
-import XCTest
+import Testing
+import Foundation
 
 import KarrotCodableKit
 
-final class LosslessArrayTests: XCTestCase {
+struct LosslessArrayTests {
   struct Fixture: Equatable, Codable {
     @LosslessArray var values: [Int]
   }
@@ -18,7 +19,7 @@ final class LosslessArrayTests: XCTestCase {
     @LosslessArray var values: [String]
   }
 
-  func testDecodingLosslessArrayActsLikeLossyArray() throws {
+  @Test func testDecodingLosslessArrayActsLikeLossyArray() throws {
     // given
     let jsonData = #"{ "values": [1, null, 3, 4] }"#.data(using: .utf8)!
 
@@ -26,10 +27,10 @@ final class LosslessArrayTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
 
     // then
-    XCTAssertEqual(fixture.values, [1, 3, 4])
+    #expect(fixture.values == [1, 3, 4])
   }
 
-  func testDecodingIntsConvertsStringsIntoLosslessElements() throws {
+  @Test func testDecodingIntsConvertsStringsIntoLosslessElements() throws {
     // given
     let jsonData = #"{ "values": ["1", 2, null, "4"] }"#.data(using: .utf8)!
 
@@ -37,10 +38,10 @@ final class LosslessArrayTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
 
     // then
-    XCTAssertEqual(fixture.values, [1, 2, 4])
+    #expect(fixture.values == [1, 2, 4])
   }
 
-  func testDecodingStringsPreservesLosslessElements() throws {
+  @Test func testDecodingStringsPreservesLosslessElements() throws {
     // given
     let jsonData = #"{ "values": ["1", 2, 3.14, null, false, "4"] }"#.data(using: .utf8)!
 
@@ -48,10 +49,10 @@ final class LosslessArrayTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture2.self, from: jsonData)
 
     // then
-    XCTAssertEqual(fixture.values, ["1", "2", "3.14", "false", "4"])
+    #expect(fixture.values == ["1", "2", "3.14", "false", "4"])
   }
 
-  func testEncodingDecodedLosslessArrayIgnoresFailableElements() throws {
+  @Test func testEncodingDecodedLosslessArrayIgnoresFailableElements() throws {
     // given
     let jsonData = #"{ "values": [null, "2", null, 4] }"#.data(using: .utf8)!
 
@@ -66,10 +67,10 @@ final class LosslessArrayTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: fixtureData)
 
     // then
-    XCTAssertEqual(fixture.values, [2, 4, 5])
+    #expect(fixture.values == [2, 4, 5])
   }
 
-  func testEncodingDecodedLosslessArrayRetainsContents() throws {
+  @Test func testEncodingDecodedLosslessArrayRetainsContents() throws {
     // given
     let jsonData = #"{ "values": [1, 2, "3"] }"#.data(using: .utf8)!
 
@@ -81,6 +82,6 @@ final class LosslessArrayTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: fixtureData)
 
     // then
-    XCTAssertEqual(fixture.values, [1, 2, 3])
+    #expect(fixture.values == [1, 2, 3])
   }
 }

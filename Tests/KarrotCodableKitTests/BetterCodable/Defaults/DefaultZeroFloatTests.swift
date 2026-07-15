@@ -6,16 +6,17 @@
 //  Copyright © 2023 Danggeun Market Inc. All rights reserved.
 //
 
-import XCTest
+import Testing
+import Foundation
 
 import KarrotCodableKit
 
-final class DefaultZeroFloatTests: XCTestCase {
+struct DefaultZeroFloatTests {
   struct Fixture: Equatable, Codable {
     @DefaultZeroFloat var floatValue: Float
   }
 
-  func testDecodingFailableFloatDefaultZeroFloat() throws {
+  @Test func testDecodingFailableFloatDefaultZeroFloat() throws {
     // given
     let jsonData = #"{ "floatValue": null }"#.data(using: .utf8)!
 
@@ -23,10 +24,10 @@ final class DefaultZeroFloatTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
 
     // then
-    XCTAssertEqual(fixture.floatValue, 0.0)
+    #expect(fixture.floatValue == 0.0)
   }
 
-  func testDecodingKeyNotPresentDefaultZeroFloat() throws {
+  @Test func testDecodingKeyNotPresentDefaultZeroFloat() throws {
     // given
     let jsonData = #"{}"#.data(using: .utf8)!
 
@@ -34,10 +35,10 @@ final class DefaultZeroFloatTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
 
     // then
-    XCTAssertEqual(fixture.floatValue, 0.0)
+    #expect(fixture.floatValue == 0.0)
   }
 
-  func testDecodinSuccessDefaultZeroFloat() throws {
+  @Test func testDecodinSuccessDefaultZeroFloat() throws {
     // given
     let jsonData = #"{ "floatValue": 0.001 }"#.data(using: .utf8)!
 
@@ -45,6 +46,6 @@ final class DefaultZeroFloatTests: XCTestCase {
     let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
 
     // then
-    XCTAssertEqual(fixture.floatValue, 0.001)
+    #expect(fixture.floatValue == 0.001)
   }
 }

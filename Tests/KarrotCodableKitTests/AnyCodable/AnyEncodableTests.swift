@@ -5,10 +5,11 @@
 //  Created by Elon on 4/9/25.
 //
 
-import XCTest
+import Testing
+import Foundation
 @testable import KarrotCodableKit
 
-final class AnyEncodableTests: XCTestCase {
+struct AnyEncodableTests {
 
   @CustomEncodable(codingKeyStyle: .snakeCase)
   struct SomeEncodable {
@@ -18,7 +19,7 @@ final class AnyEncodableTests: XCTestCase {
     var hasUnderscore: String
   }
 
-  func testJSONEncoding() throws {
+  @Test func testJSONEncoding() throws {
     // given
     let someEncodable = AnyEncodable(SomeEncodable(
       string: "String",
@@ -71,10 +72,10 @@ final class AnyEncodableTests: XCTestCase {
       """.data(using: .utf8)!
     let expectedJSONObject = try JSONSerialization.jsonObject(with: expected, options: []) as! NSDictionary
 
-    XCTAssertEqual(encodedJSONObject, expectedJSONObject)
+    #expect(encodedJSONObject == expectedJSONObject)
   }
 
-  func testEncodeNSNumber() throws {
+  @Test func testEncodeNSNumber() throws {
     // given
     let dictionary: [String: NSNumber] = [
       "boolean": true,
@@ -115,25 +116,25 @@ final class AnyEncodableTests: XCTestCase {
       """.data(using: .utf8)!
     let expectedJSONObject = try JSONSerialization.jsonObject(with: expected, options: []) as! NSDictionary
 
-    XCTAssertEqual(encodedJSONObject, expectedJSONObject)
-    XCTAssert(encodedJSONObject["boolean"] is Bool)
+    #expect(encodedJSONObject == expectedJSONObject)
+    #expect(encodedJSONObject["boolean"] is Bool)
 
-    XCTAssert(encodedJSONObject["char"] is Int8)
-    XCTAssert(encodedJSONObject["int"] is Int16)
-    XCTAssert(encodedJSONObject["short"] is Int32)
-    XCTAssert(encodedJSONObject["long"] is Int32)
-    XCTAssert(encodedJSONObject["longlong"] is Int64)
+    #expect(encodedJSONObject["char"] is Int8)
+    #expect(encodedJSONObject["int"] is Int16)
+    #expect(encodedJSONObject["short"] is Int32)
+    #expect(encodedJSONObject["long"] is Int32)
+    #expect(encodedJSONObject["longlong"] is Int64)
 
-    XCTAssert(encodedJSONObject["uchar"] is UInt8)
-    XCTAssert(encodedJSONObject["uint"] is UInt16)
-    XCTAssert(encodedJSONObject["ushort"] is UInt32)
-    XCTAssert(encodedJSONObject["ulong"] is UInt32)
-    XCTAssert(encodedJSONObject["ulonglong"] is UInt64)
+    #expect(encodedJSONObject["uchar"] is UInt8)
+    #expect(encodedJSONObject["uint"] is UInt16)
+    #expect(encodedJSONObject["ushort"] is UInt32)
+    #expect(encodedJSONObject["ulong"] is UInt32)
+    #expect(encodedJSONObject["ulonglong"] is UInt64)
 
-    XCTAssert(encodedJSONObject["double"] is Double)
+    #expect(encodedJSONObject["double"] is Double)
   }
 
-  func testStringInterpolationEncoding() throws {
+  @Test func testStringInterpolationEncoding() throws {
     // given
     let dictionary: [String: AnyEncodable] = [
       "boolean": "\(true)",
@@ -160,6 +161,6 @@ final class AnyEncodableTests: XCTestCase {
       """.data(using: .utf8)!
     let expectedJSONObject = try JSONSerialization.jsonObject(with: expected, options: []) as! NSDictionary
 
-    XCTAssertEqual(encodedJSONObject, expectedJSONObject)
+    #expect(encodedJSONObject == expectedJSONObject)
   }
 }
