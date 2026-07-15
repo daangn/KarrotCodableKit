@@ -14,21 +14,30 @@ import Foundation
 /// Decoding Behavior:
 /// - It attempts to decode an unkeyed container (JSON array).
 /// - If the container is successfully obtained, it decodes each element using `PolymorphicValue<PolymorphicType>`.
-/// - **Crucially, if *any* element within the array fails to decode according to the `PolymorphicType` strategy, the entire decoding process for the wrapper fails, and an error is thrown.** This wrapper does **not** skip invalid elements.
-/// - If the initial step of obtaining the unkeyed container fails (e.g., the key is missing in the parent JSON object, or the corresponding value is `null` or not an array), it catches the error, assigns `[]` to `wrappedValue`, and logs the error using `print`.
+/// - **Crucially, if *any* element within the array fails to decode according to the `PolymorphicType` strategy,
+///   the error is caught and the *entire* array falls back to an empty array `[]`.** This wrapper does **not**
+///   skip individual invalid elements while keeping the valid ones.
+/// - If obtaining the unkeyed container fails (e.g., the key is missing, the value is `null`, or the value is
+///   not an array), it likewise catches the error and assigns `[]` to `wrappedValue`.
+/// - Every recovered error is recorded as a `.recoveredFrom` outcome and, in DEBUG builds, reported to the
+///   resilient decoding error reporter.
 ///
 /// Encoding Behavior:
-/// - Encodes the `wrappedValue` array. Each element is wrapped using `PolymorphicValue<PolymorphicType>` before being added to the encoded array.
+/// - Encodes the `wrappedValue` array. Each element is wrapped using `PolymorphicValue<PolymorphicType>`
+///   before being added to the encoded array.
 ///
-/// Use this wrapper when you expect an array that should either be present and entirely valid (according to the strategy) or completely absent/null, in which case an empty array is acceptable.
-/// If you need to gracefully handle individual invalid elements within the array, use `@PolymorphicLossyArrayValue` instead.
+/// Use this wrapper when you expect an array that should either be entirely valid (according to the strategy)
+/// or absent/null — any failure yields an empty array rather than a decoding error.
+/// If you need to gracefully handle individual invalid elements within the array,
+/// use `@PolymorphicLossyArrayValue` instead.
 ///
-/// **Note:** If you need to decode JSON arrays that may contain some invalid elements and want to ignore just those elements
-/// while keeping the valid ones, use `@PolymorphicLossyArrayValue` instead of this wrapper.
+/// **Note:** If you need to decode JSON arrays that may contain some invalid elements and want to ignore just
+/// those elements while keeping the valid ones, use `@PolymorphicLossyArrayValue` instead of this wrapper.
 ///
 @propertyWrapper
 public struct DefaultEmptyPolymorphicArrayValue<PolymorphicType: PolymorphicCodableStrategy> {
-  /// The decoded array of values. Defaults to an empty array `[]` if the array key is missing or decoding fails at the array level.
+  /// The decoded array of values. Defaults to an empty array `[]` if the array key is missing
+  /// or decoding fails at the array level.
   public var wrappedValue: [PolymorphicType.ExpectedType]
 
   /// Tracks the outcome of the decoding process for resilient decoding
