@@ -30,6 +30,7 @@ swift test --filter TestClassName                 # Specific test class
 swift test --filter TestClassName.testMethodName  # Specific test method
 swift test --filter UnnestedPolymorphic           # Tests matching pattern
 swiftformat .                 # Format (config: .swiftformat in repo root)
+swiftformat --lint .          # Verify formatting (must report 0 files requiring formatting)
 swift package resolve|update|clean|reset          # Package management
 ```
 
@@ -84,9 +85,15 @@ Adding a new UnnestedPolymorphic macro variant:
 3. Use template methods from the protocol extension for common functionality
 4. Register the macro in `KarrotCodableKitPlugin.swift`
 
+### Documentation & Provenance
+- Feature docs: `Docs/AnyCodable/README.md`, `Docs/BetterCodable/README.md`; the README "Key Features" section holds macro-expansion examples. Update these when the public API changes.
+- API reference (DocC) is built and hosted by Swift Package Index via `.spi.yml` — there is no local DocC catalog.
+- AnyCodable, BetterCodable, and Resilient are ports of Flight-School/AnyCodable, marksands/BetterCodable, and airbnb/ResilientDecoding. Keep behavior parity with BetterCodable when touching wrapper policies, and add attribution under `ThirdPartyLicenses/` when vendoring upstream code.
+
 ## Code Style
 
 - `.swiftformat` (repo root) is the source of truth: rule whitelist, 2-space indent, 120-column limit. Run `swiftformat .` before committing — it must produce no diff.
+- Claude Code auto-formats edited Swift files via the PostToolUse hook in `.claude/settings.json` — an unexpected post-edit diff is usually just the formatter.
 - Multiline string literals (JSON fixtures, expected macro expansions) indent their content and closing `"""` two spaces past the opening line; `--indent-strings true` preserves this — do not "fix" it.
 - `#if DEBUG` blocks add no extra indentation (`--ifdef no-indent`).
 - propertyTypes rule gotchas:
