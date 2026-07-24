@@ -1,0 +1,137 @@
+# SwiftFormat configuration for KarrotCodableKit.
+#
+# Based on the Karrot house style applied across this codebase in PR #30
+# (SwiftFormat 0.62.x). Uses an explicit rule whitelist: only the rules listed
+# under "rules" below run; everything else is disabled.
+#
+# `swiftformat .` must stay idempotent on a clean tree. Verify with:
+#   swiftformat --lint .
+#
+# Deliberate deviations from the house baseline, so the existing tree stays
+# untouched: isEmpty, wrapIfStatementBodies, and elseOnSameLine are not
+# enabled (tests intentionally assert `count == 0` for better failure
+# messages, and a few single-line if/else bodies are kept as written).
+
+# options
+--min-version 0.62.0
+--swift-version 6.2
+--language-mode 5
+--self remove # redundantSelf
+--import-grouping testable-bottom # sortedImports
+--trailing-commas multi-element-lists # trailingCommas
+--trim-whitespace always # trailingSpace
+--indent 2 #indent
+--ifdef no-indent #indent
+--indent-strings true #indent
+--wrap-arguments before-first # wrapArguments
+--wrap-parameters before-first # wrapArguments
+--wrap-collections before-first # wrapArguments
+--wrap-conditions before-first # wrapArguments
+--wrap-return-type never #wrapArguments
+--wrap-effects never #wrapArguments
+--closing-paren balanced # wrapArguments
+--call-site-paren balanced # wrapArguments
+--wrap-type-aliases before-first # wrapArguments
+--func-attributes prev-line # wrapAttributes
+--computed-var-attributes prev-line # wrapAttributes
+--stored-var-attributes preserve # wrapAttributes
+--complex-attributes prev-line # wrapAttributes
+--type-attributes prev-line # wrapAttributes
+--wrap-ternary before-operators # wrap
+--extension-acl on-declarations # extensionAccessControl
+--pattern-let inline # hoistPatternLet
+--property-types infer-locals-only # redundantType, propertyTypes
+--strip-unused-args closure-only # unusedArguments
+--type-blank-lines preserve # blankLinesAtStartOfScope, blankLinesAtEndOfScope
+--ranges preserve # spaceAroundOperators
+--some-any disabled # opaqueGenericParameters
+--single-line-for-each convert # preferForLoop
+--short-optionals always # typeSugar
+--semicolons never # semicolons
+--doc-comments preserve # docComments
+--max-width 120 # wrap
+--modifier-order private,fileprivate,internal,package,public,open,private(set),fileprivate(set),internal(set),package(set),public(set),open(set),override,final,dynamic,optional,required,convenience,indirect,isolated,nonisolated,nonisolated(unsafe),lazy,weak,unowned,unowned(safe),unowned(unsafe),static,class,borrowing,consuming,mutating,nonmutating,prefix,infix,postfix,async # modifierOrder
+
+# rules
+--rules anyObjectProtocol
+--rules blankLinesBetweenScopes
+--rules consecutiveSpaces
+--rules consecutiveBlankLines
+--rules duplicateImports
+--rules extensionAccessControl
+--rules environmentEntry
+--rules hoistPatternLet
+--rules indent
+--rules redundantParens
+--rules redundantReturn
+--rules redundantSelf
+--rules redundantType
+--rules redundantPattern
+--rules redundantGet
+--rules redundantFileprivate
+--rules redundantRawValues
+--rules redundantEquatable
+--rules sortImports
+--rules sortDeclarations
+--rules strongifiedSelf
+--rules trailingCommas
+--rules trailingSpace
+--rules linebreakAtEndOfFile
+--rules typeSugar
+--rules wrap
+--rules wrapMultilineStatementBraces
+--rules wrapArguments
+--rules wrapAttributes
+--rules wrapLoopBodies
+--rules braces
+--rules redundantClosure
+--rules redundantInit
+--rules redundantVoidReturnType
+--rules redundantOptionalBinding
+--rules redundantInternal
+--rules redundantVariable
+--rules unusedArguments
+--rules spaceInsideBrackets
+--rules spaceInsideBraces
+--rules spaceAroundBraces
+--rules spaceInsideParens
+--rules spaceAroundParens
+--rules spaceAroundOperators
+--rules enumNamespaces
+--rules blockComments
+--rules docComments
+--rules docCommentsBeforeModifiers
+--rules spaceAroundComments
+--rules spaceInsideComments
+--rules blankLinesAtStartOfScope
+--rules blankLinesAtEndOfScope
+--rules emptyBraces
+--rules andOperator
+--rules opaqueGenericParameters
+--rules genericExtensions
+--rules trailingClosures
+--rules sortTypealiases
+--rules preferForLoop
+--rules conditionalAssignment
+--rules wrapMultilineConditionalAssignment
+--rules void
+--rules blankLineAfterSwitchCase
+--rules consistentSwitchCaseSpacing
+--rules semicolons
+--rules propertyTypes
+--rules blankLinesBetweenChainedFunctions
+--rules emptyExtensions
+--rules preferCountWhere
+--rules preferFirstWhere
+--rules preferContains
+--rules swiftTestingTestCaseNames
+--rules modifiersOnSameLine
+--rules noForceTryInTests
+--rules noForceUnwrapInTests
+--rules redundantThrows
+--rules redundantAsync
+--rules noGuardInTests
+--rules redundantMemberwiseInit
+--rules redundantTypedThrows
+--rules redundantBreak
+--rules preferFinalClasses
