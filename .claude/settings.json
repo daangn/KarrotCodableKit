@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|MultiEdit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // .tool_response.filePath // empty' | { read -r f; case \"$f\" in *.swift) command -v swiftformat >/dev/null && swiftformat \"$f\";; esac; }"
+          },
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // .tool_response.filePath // empty' | { read -r f; case \"$f\" in *.swift) if [ -f \"${CLAUDE_PROJECT_DIR:-.}/.swiftlint.yml\" ]; then command -v swiftlint >/dev/null && swiftlint lint --strict --quiet \"$f\"; fi;; esac; }"
+          }
+        ]
+      }
+    ]
+  }
+}
