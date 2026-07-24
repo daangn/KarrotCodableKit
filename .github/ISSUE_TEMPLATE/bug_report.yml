@@ -1,0 +1,61 @@
+name: Bug Report
+description: Report incorrect behavior in KarrotCodableKit
+labels: ["Bug"]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: KarrotCodableKit version
+      placeholder: "2.1.0"
+    validations:
+      required: true
+  - type: input
+    id: toolchain
+    attributes:
+      label: Swift / Xcode version
+      placeholder: "Swift 6.2 / Xcode 26.3"
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: Platform and OS version
+      placeholder: "iOS 18.5 simulator"
+    validations:
+      required: false
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the actual behavior. Include the full error output (e.g. the `DecodingError`) if any.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproducible code
+      description: The smallest type + decoding/encoding code that reproduces the issue.
+      render: swift
+    validations:
+      required: true
+  - type: textarea
+    id: json
+    attributes:
+      label: JSON payload
+      description: The JSON involved, if the bug is about decoding or encoding.
+      render: json
+    validations:
+      required: false
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues and found no duplicate.
+          required: true
