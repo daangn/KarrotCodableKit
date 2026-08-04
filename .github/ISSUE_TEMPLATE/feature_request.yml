@@ -1,0 +1,32 @@
+name: Feature Request
+description: Suggest new functionality for KarrotCodableKit
+labels: ["Feature"]
+body:
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Problem / motivation
+      description: What problem would this solve? What are you trying to do that is currently hard or impossible?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed API or solution
+      description: Sketch the API you have in mind, if any.
+      render: swift
+    validations:
+      required: false
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+    validations:
+      required: false
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      options:
+        - label: I am willing to submit a PR for this.
+          required: false
