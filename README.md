@@ -209,6 +209,34 @@ struct UndefinedViewItem: ViewItem {
 }
 ```
 
+#### Enumerating a polymorphic family
+
+The generated strategy conforms to `PolymorphicMatchingTypesProviding`, which exposes the family as values. `decode(from:)` reads the very same properties, so the exposed list cannot drift away from what decoding resolves.
+
+```swift
+ViewItemCodableStrategy.matchingTypes  // [ImageViewItem.self, TextViewItem.self]
+ViewItemCodableStrategy.fallbackType   // UndefinedViewItem.self
+```
+
+Constrain a generic parameter to the protocol when a caller must be handed the production strategy rather than a list assembled by hand — for example, to check that every declared type has a registered handler:
+
+```swift
+func assertEveryTypeHasHandler<Strategy: PolymorphicMatchingTypesProviding>(
+  declaredIn _: Strategy.Type,
+  registeredIdentifiers: Set<String>,
+) {
+  let declared = Set(Strategy.matchingTypes.map { $0.polymorphicIdentifier })
+  #expect(declared.subtracting(registeredIdentifiers).isEmpty)
+}
+
+assertEveryTypeHasHandler(
+  declaredIn: ViewItemCodableStrategy.self,
+  registeredIdentifiers: Set(handlers.keys),
+)
+```
+
+`PolymorphicMatchingTypesProviding` refines `PolymorphicCodableStrategy` rather than adding requirements to it, so hand-written strategies keep working unchanged and adopt it only when they need to be enumerated.
+
 ### PolymorphicEnumCodable
 
 `PolymorphicEnumCodable` provides a convenient way to handle polymorphic types directly in Swift enums. Unlike `PolymorphicCodable` which works with protocol-conforming types, this macro allows you to define an enum where each case contains an associated value of a different type, and enables seamless JSON encoding and decoding.
