@@ -79,7 +79,7 @@ extension PolymorphicCodableStrategyProvidingMacro: PeerMacro {
     let strategyStructName = "\(identifier)CodableStrategy"
 
     let formattedMatchingTypes = matchingTypes
-      .formatted(using: .init(initialIndentation: .spaces(4)))
+      .formatted(using: .init(initialIndentation: .spaces(2)))
       .trimmed
 
     let fallbackType = SyntaxHelper.findArgument(named: "fallbackType", in: arguments)
@@ -87,7 +87,7 @@ extension PolymorphicCodableStrategyProvidingMacro: PeerMacro {
     return [
       DeclSyntax(
         """
-        \(raw: accessModifier)struct \(raw: strategyStructName): PolymorphicCodableStrategy {
+        \(raw: accessModifier)struct \(raw: strategyStructName): PolymorphicMatchingTypesProviding {
           enum PolymorphicMetaCodingKey: CodingKey {
             case \(raw: identifierCodingKeyString)
           }
@@ -96,11 +96,19 @@ extension PolymorphicCodableStrategyProvidingMacro: PeerMacro {
             PolymorphicMetaCodingKey.\(raw: identifierCodingKeyString)
           }
 
+          \(raw: accessModifier)static var matchingTypes: [PolymorphicDecodableType.Type] {
+            \(raw: formattedMatchingTypes)
+          }
+
+          \(raw: accessModifier)static var fallbackType: PolymorphicDecodableType.Type? {
+            \(raw: fallbackType ?? "nil")
+          }
+
           \(raw: accessModifier)static func decode(from decoder: Decoder) throws -> any \(raw: identifier) {
             try decoder.decode(
               codingKey: Self.polymorphicMetaCodingKey,
-              matchingTypes: \(raw: formattedMatchingTypes),
-              fallbackType: \(raw: fallbackType ?? "nil")
+              matchingTypes: Self.matchingTypes,
+              fallbackType: Self.fallbackType
             )
           }
         }

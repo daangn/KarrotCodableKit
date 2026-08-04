@@ -67,7 +67,7 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
           typealias DefaultEmptyPolymorphicArray = DefaultEmptyPolymorphicArrayValue<NoticeCodableStrategy>
         }
 
-        public struct NoticeCodableStrategy: PolymorphicCodableStrategy {
+        public struct NoticeCodableStrategy: PolymorphicMatchingTypesProviding {
           enum PolymorphicMetaCodingKey: CodingKey {
             case type
           }
@@ -76,14 +76,22 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
             PolymorphicMetaCodingKey.type
           }
 
+          public static var matchingTypes: [PolymorphicDecodableType.Type] {
+            [
+              ActionableCallout.self,
+              DismissibleCallout.self
+            ]
+          }
+
+          public static var fallbackType: PolymorphicDecodableType.Type? {
+            UndefinedCallout.self
+          }
+
           public static func decode(from decoder: Decoder) throws -> any Notice {
             try decoder.decode(
               codingKey: Self.polymorphicMetaCodingKey,
-              matchingTypes: [
-                ActionableCallout.self,
-                DismissibleCallout.self
-              ],
-              fallbackType: UndefinedCallout.self
+              matchingTypes: Self.matchingTypes,
+              fallbackType: Self.fallbackType
             )
           }
         }
@@ -137,7 +145,7 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
           typealias DefaultEmptyPolymorphicArray = DefaultEmptyPolymorphicArrayValue<NoticeCodableStrategy>
         }
 
-        public struct NoticeCodableStrategy: PolymorphicCodableStrategy {
+        public struct NoticeCodableStrategy: PolymorphicMatchingTypesProviding {
           enum PolymorphicMetaCodingKey: CodingKey {
             case type
           }
@@ -146,14 +154,22 @@ final class PolymorphicCodableStrategyProvidingMacroTests: XCTestCase {
             PolymorphicMetaCodingKey.type
           }
 
+          public static var matchingTypes: [PolymorphicDecodableType.Type] {
+            [
+              ActionableCallout.self,
+              DismissibleCallout.self
+            ]
+          }
+
+          public static var fallbackType: PolymorphicDecodableType.Type? {
+            nil
+          }
+
           public static func decode(from decoder: Decoder) throws -> any Notice {
             try decoder.decode(
               codingKey: Self.polymorphicMetaCodingKey,
-              matchingTypes: [
-                ActionableCallout.self,
-                DismissibleCallout.self
-              ],
-              fallbackType: nil
+              matchingTypes: Self.matchingTypes,
+              fallbackType: Self.fallbackType
             )
           }
         }
