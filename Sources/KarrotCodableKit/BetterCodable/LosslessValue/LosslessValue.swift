@@ -101,7 +101,8 @@ extension LosslessValueCodable: Hashable where Strategy.Value: Hashable {
   }
 }
 
-extension LosslessValueCodable: Sendable where Strategy.Value: Sendable {}
+// `type` is an immutable metatype (no shared mutable state); the where-clause keeps `wrappedValue` safe.
+extension LosslessValueCodable: @unchecked Sendable where Strategy.Value: Sendable {}
 
 public struct LosslessDefaultStrategy<Value: LosslessStringCodable>: LosslessDecodingStrategy {
   public static var losslessDecodableTypes: [(Decoder) -> LosslessStringCodable?] {

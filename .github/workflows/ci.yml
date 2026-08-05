@@ -40,3 +40,15 @@ jobs:
 
       - name: Run Swift Macro Compatibility Check
         uses: Matejkob/swift-macro-compatibility-check@v1
+
+  swift6-mode:
+    name: Swift 6 Language Mode
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode 16.4
+        run: sudo xcode-select -s /Applications/Xcode_16.4.app
+
+      - name: Build in Swift 6 language mode
+        run: swift build -Xswiftc -swift-version -Xswiftc 6

@@ -237,3 +237,6 @@ public struct UnknownNovelValueError: Error {
     self.novelValue = novelValue
   }
 }
+
+// Immutable; `novelValue` is captured once and only read for diagnostics.
+extension UnknownNovelValueError: @unchecked Sendable {}
