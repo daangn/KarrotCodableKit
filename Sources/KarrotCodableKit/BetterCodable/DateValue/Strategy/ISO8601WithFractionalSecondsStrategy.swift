@@ -16,7 +16,9 @@ import Foundation
 /// representing 39 minutes and 57 seconds after the 16th hour of December 19th, 1996 with an offset of -08:00 from UTC
 /// (Pacific Standard Time).
 public struct ISO8601WithFractionalSecondsStrategy: DateValueCodableStrategy {
-  private static let formatter: ISO8601DateFormatter = {
+  // `ISO8601DateFormatter` is configured once and never mutated, so concurrent reads are safe.
+  // `nonisolated(unsafe)` acknowledges this until the SDK annotates the type `Sendable`.
+  private nonisolated(unsafe) static let formatter: ISO8601DateFormatter = {
     let formatter = ISO8601DateFormatter()
     formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
     return formatter

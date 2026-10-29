@@ -38,3 +38,8 @@ extension ResilientDecodingOutcome {
   }
 }
 #endif
+
+#if DEBUG
+// DEBUG-only immutable diagnostic holder; `results` is read-only after init.
+extension ResilientDecodingOutcome.DictionaryDecodingError: @unchecked Sendable {}
+#endif

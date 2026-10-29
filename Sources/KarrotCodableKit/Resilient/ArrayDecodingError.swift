@@ -40,3 +40,8 @@ extension ResilientDecodingOutcome {
   }
 }
 #endif
+
+#if DEBUG
+// DEBUG-only immutable diagnostic holder; `results` is read-only after init.
+extension ResilientDecodingOutcome.ArrayDecodingError: @unchecked Sendable {}
+#endif

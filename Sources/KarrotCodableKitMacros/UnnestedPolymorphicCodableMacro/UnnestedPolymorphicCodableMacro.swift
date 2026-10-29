@@ -12,8 +12,8 @@ import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 
 public enum UnnestedPolymorphicCodableMacro: MemberMacro, UnnestedPolymorphicMacroType {
-  public static let protocolType = PolymorphicExtensionFactory.PolymorphicProtocolType.codable
-  public static let macroType = UnnestedPolymorphicCodeGenerator.MacroType.codable
+  public nonisolated(unsafe) static let protocolType = PolymorphicExtensionFactory.PolymorphicProtocolType.codable
+  public nonisolated(unsafe) static let macroType = UnnestedPolymorphicCodeGenerator.MacroType.codable
   public static let macroName = "UnnestedPolymorphicCodable"
 
   public static func expansion(

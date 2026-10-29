@@ -34,3 +34,6 @@ public enum PolymorphicCodableError: LocalizedError {
     }
   }
 }
+
+// Immutable error value; the `decoded` payload is only read for diagnostics.
+extension PolymorphicCodableError: @unchecked Sendable {}
