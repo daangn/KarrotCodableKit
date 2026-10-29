@@ -116,12 +116,15 @@ Conventions (see existing tests for reference):
 - Cover edge cases: missing key, null value, type mismatch, empty collections, and encode→decode round-trips.
 - Assert concrete error cases (e.g. specific `DecodingError`), not just "throws".
 - DEBUG-only features (Resilient `outcome`, projected values) get `#if DEBUG`-gated test files (`*ResilientTests.swift`).
+- Keep new test lines within 100 characters. `.coderabbit.yml` asks CodeRabbit to flag lines over 100 characters, which is stricter than the 120-column `.swiftformat` limit.
+- Declare `Fixture` and other helper types as direct members of the top-level suite, not inside a nested `@Suite`. CodeRabbit runs SwiftLint with default rules, and the `nesting` rule allows only one level of type nesting.
 
 ## Git & PR Conventions
 
 - Commit subjects: lowercase Conventional Commits — `feat:`, `fix:`, `docs:`, `test:`, `style:`, `refactor:`, `perf:`, `chore:`; optional scope, e.g. `fix(polymorphic):`. Imperative mood.
 - Branch names: `<type>/<slug>`, e.g. `fix/polymorphic-lossy-array-null-outcome`, `docs/update-readme`.
 - PRs are landed with **merge commits** (not squash). Structure work as one logical commit per unit of change — each commit should build and pass tests.
+- Write PR titles, descriptions, and review comments in English, like the code and docs.
 - Fill in the PR template. Report exact test counts for both configurations in Testing Methods, e.g. "`swift test` passes in debug (303) and release (295), 0 failures".
 - Keep PRs focused: defer unrelated changes (renames, drive-by cleanups) to follow-up PRs.
 - CodeRabbit reviews every PR automatically and applies one of the labels Bug / Feature / Improvement / Update / Docs / Breaking Changes / CI. These labels determine the release-note category (release-drafter) — verify the label matches the change.
